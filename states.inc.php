@@ -83,7 +83,6 @@ $machinestates = array(
         "type" => "activeplayer",
         "possibleactions" => array(
             "chooseStartingTile",
-            "choose_resource",
         ),
         "transitions" => array("next_player" => STATE_STARTING_TILES_DRAFT_CALCULATE_NEXT, "zombiePass" => STATE_STARTING_TILES_DRAFT_CALCULATE_NEXT)
     ),
@@ -129,7 +128,7 @@ $machinestates = array(
         "description" => '',
         "type" => "game",
         'action' => 'setStartingTilesBonus',
-        "transitions" => array("calculate_next_bonus" => STATE_CALCULATE_NEXT_TILES_BONUS)
+        "transitions" => array("calculate_next_bonus" => STATE_CALCULATE_NEXT_TILES_BONUS, "useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE)
     ),
 
     STATE_CALCULATE_NEXT_TILES_BONUS => array(
@@ -410,7 +409,7 @@ $machinestates = array(
         "possibleactions" => array(
             "choose_resource",
         ),
-        "transitions" => array("player_turn" => STATE_PLAYER_TURN, "construction" => STATE_PLAYER_TURN_CONSTRUCTION, "claim_starting_Discovery" => STATE_CLAIM_STARTING_DISCOVERY_TILES, "pay_salary" => STATE_PAY_SALARY, "choose_row" => STATE_PLAYER_TURN_NOBLES_BUILD, "alchemy" => STATE_PLAYER_TURN_ALCHEMY, "buy" => STATE_PLAYER_TURN_UPGRADE_WORKERS_BUY, "trade" => STATE_PLAYER_TURN_WORSHIP_TRADE, "board_action" => STATE_PLAYER_TURN_BOARD_ACTION, "choose_resources" => STATE_PLAYER_TURN_CHOOSE_TEMPLE_RESOURCES, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "avenue_of_dead" => STATE_PLAYER_TURN_AVENUE_OF_DEAD, "showBoardActions" => STATE_PLAYER_TURN_SHOW_BOARD_ACTIONS, "choose_worship" => STATE_PLAYER_TURN_CHOOSE_WORSHIP_ACTIONS, "action" => STATE_PLAYER_TURN_WORSHIP_ACTIONS, "choose_bonus" => STATE_PLAYER_TURN_CHOOSE_TEMPLE_BONUS, "check_pass" => STATE_PLAYER_TURN_PASS, "zombiePass" => STATE_PLAYER_TURN_CHECK_END_TURN)
+        "transitions" => array("player_turn" => STATE_PLAYER_TURN, "calculate_next_bonus" => STATE_CALCULATE_NEXT_TILES_BONUS, "construction" => STATE_PLAYER_TURN_CONSTRUCTION, "claim_starting_Discovery" => STATE_CLAIM_STARTING_DISCOVERY_TILES, "pay_salary" => STATE_PAY_SALARY, "choose_row" => STATE_PLAYER_TURN_NOBLES_BUILD, "alchemy" => STATE_PLAYER_TURN_ALCHEMY, "buy" => STATE_PLAYER_TURN_UPGRADE_WORKERS_BUY, "trade" => STATE_PLAYER_TURN_WORSHIP_TRADE, "board_action" => STATE_PLAYER_TURN_BOARD_ACTION, "choose_resources" => STATE_PLAYER_TURN_CHOOSE_TEMPLE_RESOURCES, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "avenue_of_dead" => STATE_PLAYER_TURN_AVENUE_OF_DEAD, "showBoardActions" => STATE_PLAYER_TURN_SHOW_BOARD_ACTIONS, "choose_worship" => STATE_PLAYER_TURN_CHOOSE_WORSHIP_ACTIONS, "action" => STATE_PLAYER_TURN_WORSHIP_ACTIONS, "choose_bonus" => STATE_PLAYER_TURN_CHOOSE_TEMPLE_BONUS, "check_pass" => STATE_PLAYER_TURN_PASS, "zombiePass" => STATE_PLAYER_TURN_CHECK_END_TURN)
     ),
 
     //////////////////////////////////////// CHECK END TURN /////////////////////////////////////////

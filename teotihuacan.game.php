@@ -1782,7 +1782,30 @@ class teotihuacan extends Table
 
         self::setGameStateValue('startingTileBonus', 1);
         self::setGameStateValue('worship_actions_discovery', 0);
-        $this->gamestate->nextState("calculate_next_bonus");
+
+        $maxResources = 0;
+
+        if ($startingTile0 == 6 || $startingTile0 == 17) {
+            $maxResources += 2;
+        }
+        if ($startingTile1 == 6 || $startingTile1 == 17) {
+            $maxResources += 2;
+        }
+
+        if($this->isDraftMode() && $maxResources > 0){
+            self::setGameStateValue('choose_resources_max', $maxResources);
+                self::setGameStateValue('useDiscovery', 1);
+            if ($startingTile0 == 6 || $startingTile0 == 17) {
+                self::setGameStateValue('useDiscoveryId', 100 + $startingTile0);
+            } else {
+                self::setGameStateValue('useDiscoveryId', 100 + $startingTile1);
+            }
+            $this->setPreviousState();
+            $this->gamestate->nextState("useDiscoveryTile");
+            $this->gamestate->nextState("choose_resources");
+        } else {
+            $this->gamestate->nextState("calculate_next_bonus");
+        }
     }
 
     function calculateNextBonus()
@@ -3451,14 +3474,24 @@ class teotihuacan extends Table
 
         if (self::getGameStateValue('useDiscovery')) {
             $id = self::getGameStateValue('useDiscoveryId');
-            $source = 'discoveryTile_' . $id;
+            if($id > 100){
+                $id = $id - 100;
+                $source = 'startingTile_' . $id;
+                $this->collectResource($player_id, $wood, 'wood', $source, clienttranslate('${player_name} choosed ${amount}${token_wood} as starting resource(s)'));
+                $this->collectResource($player_id, $stone, 'stone', $source, clienttranslate('${player_name} choosed ${amount}${token_stone} as starting resource(s)'));
+                $this->collectResource($player_id, $gold, 'gold', $source, clienttranslate('${player_name} choosed ${amount}${token_gold} as starting resource(s)'));
+            } else {
+                $source = 'discoveryTile_' . $id;
+                $this->collectResource($player_id, $wood, 'wood', $source);
+                $this->collectResource($player_id, $stone, 'stone', $source);
+                $this->collectResource($player_id, $gold, 'gold', $source);
+            }
         } else {
             $source = 'temple_blue_step_' . $step;
+            $this->collectResource($player_id, $wood, 'wood', $source);
+            $this->collectResource($player_id, $stone, 'stone', $source);
+            $this->collectResource($player_id, $gold, 'gold', $source);
         }
-
-        $this->collectResource($player_id, $wood, 'wood', $source);
-        $this->collectResource($player_id, $stone, 'stone', $source);
-        $this->collectResource($player_id, $gold, 'gold', $source);
 
         $this->goToNextState();
     }
@@ -3489,6 +3522,8 @@ class teotihuacan extends Table
             self::setGameStateValue('previous_game_state', STATE_CLAIM_STARTING_DISCOVERY_TILES);
         } else if ($this->gamestate->state()['name'] == 'playerTurn_construction') {
             self::setGameStateValue('previous_game_state', STATE_PLAYER_TURN_CONSTRUCTION);
+        } else if ($this->gamestate->state()['name'] == 'get_starting_tiles_bonus_auto') {
+            self::setGameStateValue('previous_game_state', STATE_CALCULATE_NEXT_TILES_BONUS);
         }
     }
 
@@ -3521,6 +3556,8 @@ class teotihuacan extends Table
             $this->gamestate->nextState("claim_starting_Discovery");
         } else if (self::getGameStateValue('previous_game_state') == STATE_PLAYER_TURN_CONSTRUCTION) {
             $this->gamestate->nextState("construction");
+        } else if (self::getGameStateValue('previous_game_state') == STATE_CALCULATE_NEXT_TILES_BONUS) {
+            $this->gamestate->nextState("calculate_next_bonus");
         }
         self::setGameStateValue('previous_game_state', 0);
     }

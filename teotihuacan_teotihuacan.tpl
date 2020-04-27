@@ -291,7 +291,7 @@
     var jstpl_some_game_item='<div class="my_game_item" id="my_game_item_${id}"></div>';
 
 */
-    var jstpl_playerTable = '<div class="table" id="player_table_${id}">' +
+    var jstpl_playerTable = '<div class="table whiteblock" id="player_table_${id}">' +
         '            <h3 style="color: #${player_color}">${player_name}</h3>' +
         '            <div class="playerOrder player${player_order}"></div>' +
         '            <div id="player_${id}_startingTiles" class="player_startingTiles"></div>' +

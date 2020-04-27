@@ -121,7 +121,7 @@ define([
                         }), target, "last");
                         this.addTooltipHtml("startingTile_" + player.startingTile1, this.gamedatas_local.startingTiles_data[player.startingTile1].tooltip);
 
-                        if (player.startingDiscovery1  != null && (player.startingTile1 == "3" || player.startingTile1 == "13")) {
+                        if (player.startingDiscovery1 != null && (player.startingTile1 == "3" || player.startingTile1 == "13")) {
                             var target_disc = "startingTile_" + player.startingTile1 + "-wrapper";
                             dojo.place(this.format_block('jstpl_discoveryTiles', {
                                 type_arg: player.startingDiscovery1,
@@ -1037,7 +1037,7 @@ define([
                             dojo.addClass(player_id + '_worker_' + args.args.selected_worker_id, 'selected');
 
                             if (args.args.global_moveTwoWorkers == true) {
-                                if($(player_id + '_worker_' + args.args.selected_worker_id) && $(player_id + '_worker_' + args.args.selected_worker2_id)){
+                                if ($(player_id + '_worker_' + args.args.selected_worker_id) && $(player_id + '_worker_' + args.args.selected_worker2_id)) {
                                     dojo.addClass(player_id + '_worker_' + args.args.selected_worker_id, 'firstWorker');
                                     dojo.addClass(player_id + '_worker_' + args.args.selected_worker2_id, 'selected');
                                 }
@@ -1139,7 +1139,7 @@ define([
                             dojo.query('.actionBoard .pyramidTile').addClass('clickable');
                             break;
                         case 'client_playerTurn_buildPyramid_confirm':
-                            if($(this.pyramidTile.id) && $(this.constructionWrapper.id)){
+                            if ($(this.pyramidTile.id) && $(this.constructionWrapper.id)) {
                                 dojo.addClass(this.pyramidTile.id, 'selected');
                                 dojo.addClass(this.constructionWrapper.id, 'selected');
                             }
@@ -1148,15 +1148,12 @@ define([
                             dojo.query('.actionBoard .decorationTile-wrapper:not(.deck) .decorationTile').addClass('clickable');
                             break;
                         case 'client_playerTurn_buildDecoration_confirm':
-                            if($(this.decorationTile.id) && $(this.decorationWrapper.id)){
+                            if ($(this.decorationTile.id) && $(this.decorationWrapper.id)) {
                                 dojo.addClass(this.decorationTile.id, 'selected');
                                 dojo.addClass(this.decorationWrapper.id, 'selected');
                             }
                             break;
                         case 'starting_tiles_place_workers':
-                            if($("startingTiles-zone") && dojo.getStyle("startingTiles-zone", "display") == "block"){
-                                $("startingTiles-zone").remove();
-                            }
                             this.isGamePreparation = true;
                             for (var i = 1; i <= 8; i++) {
                                 var board = this.gamedatas.actionBoards[i];
@@ -1210,12 +1207,16 @@ define([
                         this.clientStateArgs.wood = 0;
                         this.clientStateArgs.stone = 0;
                         this.clientStateArgs.gold = 0;
-                        if(dojo.getStyle("startingTiles-zone", "display") == "none"){
+                        if (dojo.getStyle("startingTiles-zone", "display") == "none") {
                             dojo.style("startingTiles-zone", 'display', "block");
                             this.setupStartingTiles();
                         }
+                        break;
                     case 'starting_tiles_place_workers':
                         this.isChoosingStartingTiles = false;
+                        if ($("startingTiles-zone") && dojo.getStyle("startingTiles-zone", "display") == "block") {
+                            $("startingTiles-zone").remove();
+                        }
                         break;
                 }
             },
@@ -1256,12 +1257,12 @@ define([
 
                     switch (stateName) {
                         case 'playerTurn':
-                            if(args.lockedWorkers > 0){
+                            if (args.lockedWorkers > 0) {
                                 this.addActionButton('button_1_id', _('Unlock all workers'), 'unlockAllWorkersClick', null, false, 'gray');
                             }
                             break;
                         case 'playerTurn_show_board_actions':
-                             var board_id = dojo.attr($('actionBoard_' + args.selected_board_id_to), "data-id");
+                            var board_id = dojo.attr($('actionBoard_' + args.selected_board_id_to), "data-id");
 
                             if (board_id != 1) {
                                 var amount = -this.getDiffrentColorsOnBoard(args.selected_board_id_to);
@@ -1433,12 +1434,12 @@ define([
                                 this.addTooltipHtml('incrementCocoa', _("Increment number of cocoa"));
 
                                 var isMax = this.clientStateArgs.multiplier == this.clientStateArgs.max;
-                                if(this.clientStateArgs.pay.cocoa == 0){
+                                if (this.clientStateArgs.pay.cocoa == 0) {
                                     dojo.query('#decrementCocoa').addClass('disabled');
                                 } else {
                                     dojo.query('#decrementCocoa').removeClass('disabled');
                                 }
-                                if(isMax){
+                                if (isMax) {
                                     dojo.query('#incrementCocoa').addClass('disabled');
                                 } else {
                                     dojo.query('#incrementCocoa').removeClass('disabled');
@@ -1477,22 +1478,22 @@ define([
                                 this.addTooltipHtml('incrementGetGold', _("Increment number of gold"));
 
                                 var isMax = (this.clientStateArgs.get.wood + this.clientStateArgs.get.stone + this.clientStateArgs.get.gold) == this.clientStateArgs.multiplier;
-                                if(this.clientStateArgs.get.wood == 0){
+                                if (this.clientStateArgs.get.wood == 0) {
                                     dojo.query('#decrementGetWood').addClass('disabled');
                                 } else {
                                     dojo.query('#decrementGetWood').removeClass('disabled');
                                 }
-                                if(this.clientStateArgs.get.stone == 0){
+                                if (this.clientStateArgs.get.stone == 0) {
                                     dojo.query('#decrementGetStone').addClass('disabled');
                                 } else {
                                     dojo.query('#decrementGetStone').removeClass('disabled');
                                 }
-                                if(this.clientStateArgs.get.gold == 0){
+                                if (this.clientStateArgs.get.gold == 0) {
                                     dojo.query('#decrementGetGold').addClass('disabled');
                                 } else {
                                     dojo.query('#decrementGetGold').removeClass('disabled');
                                 }
-                                if(isMax){
+                                if (isMax) {
                                     dojo.query('#incrementGetWood').addClass('disabled');
                                     dojo.query('#incrementGetStone').addClass('disabled');
                                     dojo.query('#incrementGetGold').addClass('disabled');
@@ -1508,7 +1509,7 @@ define([
                             }
                             break;
                         case 'playerTurn_upgrade_workers':
-                            if(args.lockedWorkers > 0){
+                            if (args.lockedWorkers > 0) {
                                 this.addActionButton('button_1_id', _('Unlock all Workers') + "(-3" + this.getTokenSymbol('cocoa', true) + ")", 'unlockWorkersAndPayConfirmed', null, false, 'gray');
 
                                 if (this.isFreeCocoa()) {
@@ -1574,12 +1575,12 @@ define([
                                 this.addTooltipHtml('incrementCocoa', _("Increment number of cocoa"));
 
                                 var isMax = this.clientStateArgs.cocoa == this.clientStateArgs.max;
-                                if(this.clientStateArgs.cocoa == 0){
+                                if (this.clientStateArgs.cocoa == 0) {
                                     dojo.query('#decrementCocoa').addClass('disabled');
                                 } else {
                                     dojo.query('#decrementCocoa').removeClass('disabled');
                                 }
-                                if(isMax){
+                                if (isMax) {
                                     dojo.query('#incrementCocoa').addClass('disabled');
                                 } else {
                                     dojo.query('#incrementCocoa').removeClass('disabled');
@@ -1672,22 +1673,22 @@ define([
             },
 
             checkIfButtonsAreEnabled: function (wood, stone, gold, isMax) {
-                if(wood == 0){
+                if (wood == 0) {
                     dojo.query('#decrementWood').addClass('disabled');
                 } else {
                     dojo.query('#decrementWood').removeClass('disabled');
                 }
-                if(stone == 0){
+                if (stone == 0) {
                     dojo.query('#decrementStone').addClass('disabled');
                 } else {
                     dojo.query('#decrementStone').removeClass('disabled');
                 }
-                if(gold == 0){
+                if (gold == 0) {
                     dojo.query('#decrementGold').addClass('disabled');
                 } else {
                     dojo.query('#decrementGold').removeClass('disabled');
                 }
-                if(isMax){
+                if (isMax) {
                     dojo.query('#incrementWood').addClass('disabled');
                     dojo.query('#incrementStone').addClass('disabled');
                     dojo.query('#incrementGold').addClass('disabled');
@@ -1802,7 +1803,7 @@ define([
                 dojo.query('.dice.clickable').removeClass('clickable');
                 for (var i = 0; i < clickableWorkers.length; i++) {
                     var workerName = this.getActivePlayerId() + '_worker_' + clickableWorkers[i];
-                    if($(workerName)){
+                    if ($(workerName)) {
                         dojo.addClass(workerName, 'clickable');
                     }
                 }
@@ -1892,7 +1893,7 @@ define([
             },
 
             /** More convenient version of ajaxcall, do not to specify game name, and any of the handlers */
-            ajaxAction : function(action, args, func, err, lock) {
+            ajaxAction: function (action, args, func, err, lock) {
                 if (!args) {
                     args = [];
                 }
@@ -1904,14 +1905,14 @@ define([
                 }
                 if (typeof func == "undefined" || func == null) {
                     var self = this;
-                    func = function(result) {
+                    func = function (result) {
                     };
                 }
 
                 // restore server server if error happened
                 if (typeof err == "undefined") {
                     var self = this;
-                    err = function(iserr, message) {
+                    err = function (iserr, message) {
                         if (iserr) {
                             self.cancelLocalStateEffects();
                         }
@@ -1921,10 +1922,10 @@ define([
                 this.ajaxcall("/" + name + "/" + name + "/" + action + ".html", args, this, func, err);
             },
 
-            cancelLocalStateEffects : function() {
+            cancelLocalStateEffects: function () {
                 if (this.on_client_state) {
                     this.clientStateArgs = {
-                        action : 'none',
+                        action: 'none',
                     };
                     this.gamedatas_local = dojo.clone(this.gamedatas);
                     if (this.restoreList) {
@@ -1938,14 +1939,14 @@ define([
                     }
                 }
                 //workaround for problem restoreServerGameState and error calculating reflexion times...
-                try{
-                    if (this.last_server_state && this.last_server_state && this.last_server_state.reflexion && !this.last_server_state.reflexion.initial_ts){
+                try {
+                    if (this.last_server_state && this.last_server_state && this.last_server_state.reflexion && !this.last_server_state.reflexion.initial_ts) {
                         this.last_server_state.reflexion.initial_ts = dojo.clone(this.gamedatas.gamestate.reflexion.initial_ts);
                     }
-                    if (this.last_server_state && this.last_server_state && this.last_server_state.reflexion && !this.last_server_state.reflexion.initial){
+                    if (this.last_server_state && this.last_server_state && this.last_server_state.reflexion && !this.last_server_state.reflexion.initial) {
                         this.last_server_state.reflexion.initial = dojo.clone(this.gamedatas.gamestate.reflexion.initial);
                     }
-                } catch(err){
+                } catch (err) {
                     //nothing
                 }
                 this.restoreServerGameState();
@@ -2211,7 +2212,7 @@ define([
                     target = target.parentElement;
                 }
                 if (dojo.hasClass(target, 'clickable')) {
-                    if(this.isGamePreparation){
+                    if (this.isGamePreparation) {
                         if (this.checkAction("placeWorker")) {
                             var board_pos = dojo.attr(target, "id").split('_')[1];
                             var board_id = dojo.attr(target, "data-id");
@@ -2441,21 +2442,21 @@ define([
                 if (!this.checkAction(action)) {
                     return;
                 }
-                if(this.stateName == 'playerTurn_worship_actions' && this.clientStateArgs && this.clientStateArgs.templeQueue || this.gamedatas_local.global.worship_actions_discovery || this.clientStateArgs.royalTileAction){
+                if (this.stateName == 'playerTurn_worship_actions' && this.gamedatas_local.global.worship_actions_discovery || this.clientStateArgs && (this.clientStateArgs.templeQueue || this.clientStateArgs.royalTileAction)) {
                     var message = '';
 
-                    if(this.clientStateArgs.templeQueue){
+                    if (this.clientStateArgs.templeQueue) {
                         message = message + _('<br>- step on Temple');
                     }
-                    if(this.clientStateArgs.royalTileAction){
+                    if (this.clientStateArgs.royalTileAction) {
                         message = message + _('<br>- royal tile');
                     }
-                    if(this.gamedatas_local.global.worship_actions_discovery){
+                    if (this.gamedatas_local.global.worship_actions_discovery) {
                         message = message + _('<br>- claim discovery tile');
                     }
-                    this.confirmationDialog( _('There are actions left:') + message, dojo.hitch( this, function() {
+                    this.confirmationDialog(_('There are actions left:') + message, dojo.hitch(this, function () {
                         this.ajaxAction(action);
-                    } ) );
+                    }));
                     return;
                 } else {
                     this.ajaxAction(action);
@@ -3080,7 +3081,7 @@ define([
                             var type_arg = id.split('_')[1];
                             this.hideOverlay();
                             this.claimDiscovery(type_arg);
-                        }else {
+                        } else {
                             this.hideOverlay();
                         }
                     } else if (dojo.hasClass(element.parentElement, 'non-mask')) {
@@ -3135,8 +3136,8 @@ define([
                 }
                 $('overlay-content').innerHTML = "";
 
-                for(var i = 0; i < type_args.length; i++){
-                    if(this.gamedatas_local.discoveryTiles_data[type_args[i]]){
+                for (var i = 0; i < type_args.length; i++) {
+                    if (this.gamedatas_local.discoveryTiles_data[type_args[i]]) {
                         this.addTooltipHtml("discoveryTile_" + type_args[i], this.gamedatas_local.discoveryTiles_data[type_args[i]].tooltip);
                     }
                 }
@@ -3165,27 +3166,27 @@ define([
                 if (this.checkAction(action)) {
                     var id = parseInt(dojo.attr(event.target, "data-id"));
 
-                    if(id == 1 && this.isFreeCocoa()){
+                    if (id == 1 && this.isFreeCocoa()) {
                         var action = 'ascension';
                         var actionConfirm = 'client_playerTurn_ascension_cocoaFree_confirm';
 
-                            this.clientStateArgs = {};
-                            this.clientStateArgs.action = action;
-                            this.clientStateArgs.id = id;
+                        this.clientStateArgs = {};
+                        this.clientStateArgs.action = action;
+                        this.clientStateArgs.id = id;
 
-                            var translated = _("Use discovery tile to pay cocoa?");
-                            this.setClientStateAction(actionConfirm, translated);
+                        var translated = _("Use discovery tile to pay cocoa?");
+                        this.setClientStateAction(actionConfirm, translated);
 
-                            dojo.query('#claimDiscovery-zone').addClass('show');
+                        dojo.query('#claimDiscovery-zone').addClass('show');
 
-                            $("claimDiscovery-zone").innerHTML = '';
+                        $("claimDiscovery-zone").innerHTML = '';
 
-                            dojo.place(this.format_block('jstpl_discoveryTiles', {
-                                type_arg: 45,
-                                location: "",
-                            }), "claimDiscovery-zone");
-                            this.addTooltipHtml("discoveryTile_" + id, this.gamedatas_local.discoveryTiles_data[id].tooltip);
-                            this.resizeGame();
+                        dojo.place(this.format_block('jstpl_discoveryTiles', {
+                            type_arg: 45,
+                            location: "",
+                        }), "claimDiscovery-zone");
+                        this.addTooltipHtml("discoveryTile_" + id, this.gamedatas_local.discoveryTiles_data[id].tooltip);
+                        this.resizeGame();
 
                     } else {
                         this.ajaxAction(action, {
@@ -3522,9 +3523,15 @@ define([
                     if (this.checkAction("chooseStartingTile")) {
                         if (dojo.hasClass(element, 'selected')) {
                             dojo.removeClass(event.target, 'selected');
+                            if (event.target.nextElementSibling) {
+                                dojo.removeClass(event.target.nextElementSibling, 'selected');
+                            }
                             dojo.addClass(event.target, 'unselected');
                         } else {
                             dojo.addClass(event.target, 'selected');
+                            if (event.target.nextElementSibling) {
+                                dojo.addClass(event.target.nextElementSibling, 'selected');
+                            }
                             dojo.removeClass(event.target, 'unselected');
                         }
                     }
@@ -3547,7 +3554,7 @@ define([
                         if (this.clientStateArgs.max > 0) {
                             for (var j in this.gamedatas_local.startingTiles) {
                                 var startingTile = this.gamedatas_local.startingTiles[j];
-                                if(startingTile.type == "startingTiles" && startingTile.type_arg != startingTile0 && startingTile.type_arg != startingTile1 ){
+                                if (startingTile.type == "startingTiles" && startingTile.type_arg != startingTile0 && startingTile.type_arg != startingTile1) {
                                     $("startingTile_" + startingTile.type_arg + "-wrapper").remove();
                                 }
                             }
@@ -3578,18 +3585,13 @@ define([
                         if (startingTile0 == "6" || startingTile0 == "17") {
                             this.clientStateArgs.max += 2;
                         }
-                        if (this.clientStateArgs.max > 0) {
-                            dojo.query('.startingTile').removeClass('clickable');
-                            this.StartResouceConfirm();
-                        } else {
-                            this.ajaxAction(action, {
-                                startingTile0: selectedStartingTiles[0].id.split('_')[1],
-                                startingTile1: 0,
-                                wood: this.clientStateArgs.wood,
-                                stone: this.clientStateArgs.stone,
-                                gold: this.clientStateArgs.gold
-                            });
-                        }
+                        this.ajaxAction(action, {
+                            startingTile0: selectedStartingTiles[0].id.split('_')[1],
+                            startingTile1: 0,
+                            wood: this.clientStateArgs.wood,
+                            stone: this.clientStateArgs.stone,
+                            gold: this.clientStateArgs.gold
+                        });
                     }
                 } else {
                     this.showMessage(_("You should select one starting Tile only"), "error");
@@ -3642,7 +3644,7 @@ define([
                 var selectedStartingTiles = dojo.query('.startingTile.selected');
                 var startingTile0 = selectedStartingTiles[0].id.split('_')[1];
                 var startingTile1 = 0;
-                if(selectedStartingTiles[1]){
+                if (selectedStartingTiles[1]) {
                     startingTile1 = selectedStartingTiles[1].id.split('_')[1];
                     $("startingTiles-zone").remove();
                 }
@@ -4019,7 +4021,7 @@ define([
                 this.bindData(this.gamedatas_local);
 
                 var worker = player_id + '_worker_' + worker_id;
-                if($(worker)){
+                if ($(worker)) {
                     dojo.style(worker, 'background-position-x', x + "%");
                     dojo.attr(worker, "data-worker-power", worker_power);
                 }
@@ -4090,7 +4092,7 @@ define([
 
                 this.gamedatas_local.pyramidTiles = pyramidTiles;
 
-                for(var id in newTiles){
+                for (var id in newTiles) {
                     var newTile = newTiles[id];
                     if (newTile && newTile.location) {
                         var target = 'pyramid_wrapper_' + newTile.location.split('_')[1];
