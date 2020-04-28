@@ -803,22 +803,22 @@
 
 .marker-group .marker-wrapper:nth-child(1) {
     top: 0;
-    left: 22%;
+    left: 32%;
 }
 
 .marker-group .marker-wrapper:nth-child(2) {
     top: 0;
-    right: 22%;
+    right: 32%;
 }
 
 .marker-group .marker-wrapper:nth-child(3) {
-    bottom: 7px;
-    left: 3%;
+    top: 0;
+    left: 11%;
 }
 
 .marker-group .marker-wrapper:nth-child(4) {
-    bottom: 0;
-    right: 6%;
+    top: 0;
+    right: 11%;
 }
 
 .marker.color_000000 {
@@ -1761,7 +1761,7 @@
 }
 
 .pyramid_track .marker-group .marker-wrapper:nth-child(3) {
-    top: 0;
+    top: -1%;
     left: 0;
 }
 .pyramid_track .marker-group .marker-wrapper:nth-child(1) {
@@ -1769,12 +1769,13 @@
     left: 0;
 }
 .pyramid_track .marker-group .marker-wrapper:nth-child(2) {
-    top: 50%;
+    top: 51%;
     left: 0;
 }
 .pyramid_track .marker-group .marker-wrapper:nth-child(4) {
     bottom: 0;
     left: 0;
+    top: unset;
 }
 
 .pyramid_track #pyramid_track_step_0 {

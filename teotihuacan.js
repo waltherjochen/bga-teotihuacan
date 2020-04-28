@@ -3677,9 +3677,28 @@ define([
                 var startingTile1 = 0;
                 if (selectedStartingTiles[1]) {
                     startingTile1 = selectedStartingTiles[1].id.split('_')[1];
-                    $("startingTiles-zone").remove();
                 }
                 var action = 'chooseStartingTile';
+                var current_player = this.gamedatas_local.players[this.getCurrentPlayerId()];
+                current_player.startingTile0 = startingTile0;
+                current_player.startingTile1 = startingTile1;
+                if ((current_player.startingTile0 == "3" || current_player.startingTile0 == "13")) {
+                    var selectedDiscoveryTiles = dojo.query('#startingTile_'+current_player.startingTile0+' + .discoveryTile.selected');
+                    if(selectedDiscoveryTiles[0]){
+                        current_player.startingDiscovery0 = selectedDiscoveryTiles[0].id.split('_')[1];
+                    }
+                }
+                if ((current_player.startingTile1 == "3" || current_player.startingTile1 == "13")) {
+                    var selectedDiscoveryTiles = dojo.query('#startingTile_'+current_player.startingTile1+' + .discoveryTile.selected');
+                    if(selectedDiscoveryTiles[0]){
+                        current_player.startingDiscovery1 = selectedDiscoveryTiles[0].id.split('_')[1];
+                    }
+                }
+
+                $("startingTiles-zone").remove();
+
+                this.setupStartingTilesOnTable(current_player);
+
                 this.ajaxAction(action, {
                     startingTile0: startingTile0,
                     startingTile1: startingTile1,
@@ -3687,8 +3706,6 @@ define([
                     stone: this.clientStateArgs.stone,
                     gold: this.clientStateArgs.gold
                 });
-                var current_player = this.gamedatas_local.players[this.getCurrentPlayerId()];
-                this.setupStartingTilesOnTable(current_player);
             },
 
             StartResouceConfirm: function () {
