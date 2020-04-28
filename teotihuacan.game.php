@@ -561,8 +561,9 @@ class teotihuacan extends Table
 
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-        $sql = "SELECT player_id id, player_no player_order, player_score score, player_color, player_name, startingTile0, startingTile1, startingDiscovery0, startingDiscovery1, cocoa, wood, stone, gold, temple_blue, temple_red, temple_green, avenue_of_dead, techTiles_r1_c1, techTiles_r1_c2, techTiles_r1_c3, techTiles_r2_c1, techTiles_r2_c2, techTiles_r2_c3, pyramid_track FROM player ";
+        $sql = "SELECT player_id id, player_no player_order, player_score score, player_color, player_name, startingTile0, startingTile1, startingDiscovery0, startingDiscovery1, cocoa, wood, stone, gold, temple_blue, temple_red, temple_green, avenue_of_dead, techTiles_r1_c1, techTiles_r1_c2, techTiles_r1_c3, techTiles_r2_c1, techTiles_r2_c2, techTiles_r2_c3, pyramid_track FROM player";
         $result['players'] = self::getCollectionFromDb($sql);
+        $result['players_count'] = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `player`");
 
         $gameinfos = self::getGameinfos();
         $default_colors = $gameinfos['player_colors'];
@@ -1794,7 +1795,7 @@ class teotihuacan extends Table
 
         if($this->isDraftMode() && $maxResources > 0){
             self::setGameStateValue('choose_resources_max', $maxResources);
-                self::setGameStateValue('useDiscovery', 1);
+            self::setGameStateValue('useDiscovery', 1);
             if ($startingTile0 == 6 || $startingTile0 == 17) {
                 self::setGameStateValue('useDiscoveryId', 100 + $startingTile0);
             } else {
@@ -1887,14 +1888,17 @@ class teotihuacan extends Table
             }
         }
 
-        if ($startingTileBonus <= 4) {
+        if ($startingTileBonus <= 5) {
             $discovery0 = $this->startingTiles[$startingTile0]['bonus']['discovery'];
             $discovery1 = $this->startingTiles[$startingTile1]['bonus']['discovery'];
 
             $discoveryMax = $discovery0 + $discovery1;
             if ($discoveryMax > 0) {
-                self::setGameStateValue('startingTileBonus', 4);
-                self::setGameStateValue('worship_actions_discovery', $discoveryMax);
+                if ($startingTileBonus < 5) {
+                    self::setGameStateValue('worship_actions_discovery', $discoveryMax);
+                }
+                self::setGameStateValue('startingTileBonus', 5);
+
                 $this->gamestate->nextState("claim_starting_Discovery");
                 return false;
             }
@@ -3337,7 +3341,7 @@ class teotihuacan extends Table
                 'startingDiscovery1' => $startingDiscovery1,
             ));
 
-            self::setGameStateValue('startingTileBonus', 5);
+            self::setGameStateValue('startingTileBonus', 6);
 
             $this->gamestate->nextState("calculate_next_bonus");
         } else if ($this->gamestate->state()['name'] == 'playerTurn_upgrade_workers_buy') {

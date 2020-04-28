@@ -81,11 +81,13 @@ define([
                 var current_player = this.gamedatas_local.players[this.getCurrentPlayerId()];
                 dojo.place(this.format_block('jstpl_playerTable', current_player), 'player_table', 'first');
 
-                for (var player_id in this.gamedatas_local.players) {
-                    var player = this.gamedatas_local.players[player_id];
+                for (var i = 1; i <= this.gamedatas_local.players_count; i++ ) {
+                    for (var player_id in this.gamedatas_local.players) {
+                        var player = this.gamedatas_local.players[player_id];
 
-                    if (player.id != current_player.id) {
-                        dojo.place(this.format_block('jstpl_playerTable', player), 'player_table', 'last');
+                        if (player.id != current_player.id && player.player_order == i) {
+                            dojo.place(this.format_block('jstpl_playerTable', player), 'player_table', 'last');
+                        }
                     }
                 }
                 var player = this.gamedatas_local.players[this.getCurrentPlayerId()];
@@ -2442,13 +2444,14 @@ define([
                 if (!this.checkAction(action)) {
                     return;
                 }
-                if (this.stateName == 'playerTurn_worship_actions' && this.gamedatas_local.global.worship_actions_discovery || this.clientStateArgs && (this.clientStateArgs.templeQueue || this.clientStateArgs.royalTileAction)) {
+                if ((this.stateName == 'playerTurn_worship_actions' || this.stateName == 'claim_starting_discovery_tiles') &&
+                    this.gamedatas_local.global.worship_actions_discovery || this.clientStateArgs && (this.clientStateArgs.templeQueue || this.clientStateArgs.royalTileAction)) {
                     var message = '';
 
-                    if (this.clientStateArgs.templeQueue) {
+                    if (this.clientStateArgs && this.clientStateArgs.templeQueue) {
                         message = message + _('<br>- step on Temple');
                     }
-                    if (this.clientStateArgs.royalTileAction) {
+                    if (this.clientStateArgs && this.clientStateArgs.royalTileAction) {
                         message = message + _('<br>- royal tile');
                     }
                     if (this.gamedatas_local.global.worship_actions_discovery) {
