@@ -861,6 +861,7 @@ class teotihuacan extends Table
 
         self::incGameStateValue('turn', 1);
         self::setGameStateValue('worship_actions_discovery', 0);
+        self::setGameStateValue('startingTileBonus', 0);
 
         $player_id = self::activeNextPlayer();
         self::giveExtraTime($player_id);
