@@ -80,6 +80,7 @@ define([
             setupPlayerTable: function () {
                 var current_player = this.gamedatas_local.players[this.getCurrentPlayerId()];
                 dojo.place(this.format_block('jstpl_playerTable', current_player), 'player_table', 'first');
+                var allStartingTilesChoosed = true;
 
                 for (var i = 1; i <= this.gamedatas_local.players_count; i++ ) {
                     for (var player_id in this.gamedatas_local.players) {
@@ -90,47 +91,55 @@ define([
                         }
                     }
                 }
-                var player = this.gamedatas_local.players[this.getCurrentPlayerId()];
-                if (player.startingTile0 != null || player.startingTile1 != null || this.global_isDraftMode) {
-                    this.setupStartingTilesOnTable();
-                }
-            },
-
-            setupStartingTilesOnTable: function () {
                 for (var player_id in this.gamedatas_local.players) {
                     var player = this.gamedatas_local.players[player_id];
 
-                    if (player.startingTile0 != null) {
-                        var target = "player_" + player.id + "_startingTiles";
-                        dojo.place(this.format_block('jstpl_startingTiles', {
-                            type_arg: player.startingTile0
-                        }), target, "last");
-                        this.addTooltipHtml("startingTile_" + player.startingTile0, this.gamedatas_local.startingTiles_data[player.startingTile0].tooltip);
-
-                        if (player.startingDiscovery0 != null && (player.startingTile0 == "3" || player.startingTile0 == "13")) {
-                            var target_disc = "startingTile_" + player.startingTile0 + "-wrapper";
-                            dojo.place(this.format_block('jstpl_discoveryTiles', {
-                                type_arg: player.startingDiscovery0,
-                                location: ''
-                            }), target_disc);
-                            this.addTooltipHtml("discoveryTile_" + player.startingDiscovery0, this.gamedatas_local.discoveryTiles_data[player.startingDiscovery0].tooltip);
-                        }
+                    if (player.startingTile0 == null && player.startingTile1 == null) {
+                        allStartingTilesChoosed = false;
                     }
+                }
+                if (allStartingTilesChoosed || this.global_isDraftMode) {
+                    for (var player_id in this.gamedatas_local.players) {
+                        var player = this.gamedatas_local.players[player_id];
+                        this.setupStartingTilesOnTable(player);
+                    }
+                } else {
+                    this.setupStartingTilesOnTable(current_player);
+                }
+            },
 
-                    if (player.startingTile1 != null) {
-                        dojo.place(this.format_block('jstpl_startingTiles', {
-                            type_arg: player.startingTile1
-                        }), target, "last");
-                        this.addTooltipHtml("startingTile_" + player.startingTile1, this.gamedatas_local.startingTiles_data[player.startingTile1].tooltip);
+            setupStartingTilesOnTable: function (player) {
+                if (player.startingTile0 != null) {
+                    var target = "player_" + player.id + "_startingTiles";
+                    dojo.place(this.format_block('jstpl_startingTiles', {
+                        type_arg: player.startingTile0
+                    }), target, "last");
+                    this.addTooltipHtml("startingTile_" + player.startingTile0, this.gamedatas_local.startingTiles_data[player.startingTile0].tooltip);
 
-                        if (player.startingDiscovery1 != null && (player.startingTile1 == "3" || player.startingTile1 == "13")) {
-                            var target_disc = "startingTile_" + player.startingTile1 + "-wrapper";
-                            dojo.place(this.format_block('jstpl_discoveryTiles', {
-                                type_arg: player.startingDiscovery1,
-                                location: ''
-                            }), target_disc);
-                            this.addTooltipHtml("discoveryTile_" + player.startingDiscovery1, this.gamedatas_local.discoveryTiles_data[player.startingDiscovery1].tooltip);
-                        }
+
+                    if (player.startingDiscovery0 != null && (player.startingTile0 == "3" || player.startingTile0 == "13")) {
+                        var target_disc = "startingTile_" + player.startingTile0 + "-wrapper";
+                        dojo.place(this.format_block('jstpl_discoveryTiles', {
+                            type_arg: player.startingDiscovery0,
+                            location: ''
+                        }), target_disc);
+                        this.addTooltipHtml("discoveryTile_" + player.startingDiscovery0, this.gamedatas_local.discoveryTiles_data[player.startingDiscovery0].tooltip);
+                    }
+                }
+
+                if (player.startingTile1 != null) {
+                    dojo.place(this.format_block('jstpl_startingTiles', {
+                        type_arg: player.startingTile1
+                    }), target, "last");
+                    this.addTooltipHtml("startingTile_" + player.startingTile1, this.gamedatas_local.startingTiles_data[player.startingTile1].tooltip);
+
+                    if (player.startingDiscovery1 != null && (player.startingTile1 == "3" || player.startingTile1 == "13")) {
+                        var target_disc = "startingTile_" + player.startingTile1 + "-wrapper";
+                        dojo.place(this.format_block('jstpl_discoveryTiles', {
+                            type_arg: player.startingDiscovery1,
+                            location: ''
+                        }), target_disc);
+                        this.addTooltipHtml("discoveryTile_" + player.startingDiscovery1, this.gamedatas_local.discoveryTiles_data[player.startingDiscovery1].tooltip);
                     }
                 }
                 this.queryAndAddEvent('.discoveryTile', 'onclick', 'onDiscoveryClick');
@@ -1209,7 +1218,7 @@ define([
                         this.clientStateArgs.wood = 0;
                         this.clientStateArgs.stone = 0;
                         this.clientStateArgs.gold = 0;
-                        if (dojo.getStyle("startingTiles-zone", "display") == "none") {
+                        if (this.gamedatas_local.players[player_id].startingTile0 == null && dojo.getStyle("startingTiles-zone", "display") == "none") {
                             dojo.style("startingTiles-zone", 'display', "block");
                             this.setupStartingTiles();
                         }
@@ -3564,7 +3573,26 @@ define([
                             dojo.query('.startingTile').removeClass('clickable');
                             this.StartResouceConfirm();
                         } else {
+                            var current_player = this.gamedatas_local.players[this.getCurrentPlayerId()];
+                            current_player.startingTile0 = selectedStartingTiles[0].id.split('_')[1];
+                            current_player.startingTile1 = selectedStartingTiles[1].id.split('_')[1];
+                            if ((current_player.startingTile0 == "3" || current_player.startingTile0 == "13")) {
+                                var selectedDiscoveryTiles = dojo.query('#startingTile_'+current_player.startingTile0+' + .discoveryTile.selected');
+                                if(selectedDiscoveryTiles[0]){
+                                    current_player.startingDiscovery0 = selectedDiscoveryTiles[0].id.split('_')[1];
+                                }
+                            }
+                            if ((current_player.startingTile1 == "3" || current_player.startingTile1 == "13")) {
+                                var selectedDiscoveryTiles = dojo.query('#startingTile_'+current_player.startingTile1+' + .discoveryTile.selected');
+                                if(selectedDiscoveryTiles[0]){
+                                    current_player.startingDiscovery1 = selectedDiscoveryTiles[0].id.split('_')[1];
+                                }
+                            }
+
                             $("startingTiles-zone").remove();
+
+                            this.setupStartingTilesOnTable(current_player);
+
                             this.ajaxAction(action, {
                                 startingTile0: selectedStartingTiles[0].id.split('_')[1],
                                 startingTile1: selectedStartingTiles[1].id.split('_')[1],
@@ -3659,6 +3687,8 @@ define([
                     stone: this.clientStateArgs.stone,
                     gold: this.clientStateArgs.gold
                 });
+                var current_player = this.gamedatas_local.players[this.getCurrentPlayerId()];
+                this.setupStartingTilesOnTable(current_player);
             },
 
             StartResouceConfirm: function () {
@@ -4182,7 +4212,14 @@ define([
             notif_choosedStartingTiles: function (notif) {
                 var players = notif.args.players;
                 this.gamedatas_local.players = players;
-                this.setupStartingTilesOnTable();
+
+                var current_player = this.gamedatas_local.players[this.getCurrentPlayerId()];
+                for (var player_id in this.gamedatas_local.players) {
+                    var player = this.gamedatas_local.players[player_id];
+                    if (player.id != current_player.id) {
+                        this.setupStartingTilesOnTable(player);
+                    }
+                }
             },
 
             notif_choosedStartingTilesDraft: function (notif) {

@@ -65,7 +65,7 @@ $machinestates = array(
 
     STATE_CHOOSE_STARTING_TILES => array(
         "name" => "choose_starting_tiles",
-        "description" => clienttranslate('${actplayer} must choose their starting tiles'),
+        "description" => clienttranslate('All Players must choose their starting tiles'),
         "descriptionmyturn" => clienttranslate('${you} must select two starting tiles'),
         "type" => "multipleactiveplayer",
         'action' => 'stGameStart',
