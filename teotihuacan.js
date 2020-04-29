@@ -87,7 +87,6 @@ define([
                     if(next > this.gamedatas_local.players_count){
                         next -= this.gamedatas_local.players_count;
                     }
-                    console.log("next",next);
 
                     for (var player_id in this.gamedatas_local.players) {
                         var player = this.gamedatas_local.players[player_id];
@@ -562,6 +561,9 @@ define([
                 var dice_selected = "";
                 var dice_locked = "";
                 if (locked == false && player_id === this.getActivePlayerId() && this.isCurrentPlayerActive()) {
+                    if(this.clickableWorkers && this.clickableWorkers.includes(worker_id.toString())){
+                        dice_clickable = 'clickable';
+                    }
                     if (this.checkPossibleActions("selectDice")) {
                         if (worker_id == this.selected_worker_id || worker_id == this.selected_worker2_id) {
                             dice_selected = 'selected';
@@ -1049,7 +1051,6 @@ define([
                             this.setAllWorkersClickable(args.args.clickableWorkers);
                             break;
                         case 'playerTurn_show_board_actions':
-                            this.isPalaceTechAquired = args.args.isPalaceTechAquired;
                             dojo.addClass('actionBoard_' + args.args.selected_board_id_to, 'selected');
                             dojo.addClass(player_id + '_worker_' + args.args.selected_worker_id, 'selected');
 
@@ -1102,6 +1103,7 @@ define([
                             }
                             break;
                         case 'playerTurn_upgrade_workers':
+                            this.clickableWorkers = args.args.clickableWorkers;
                             this.setAllWorkersClickable(args.args.clickableWorkers);
                             break;
                         case 'playerTurn_ascension_choose_bonus':
@@ -1279,22 +1281,16 @@ define([
                             }
                             break;
                         case 'playerTurn_show_board_actions':
+                            this.isPalaceTechAquired = args.isPalaceTechAquired;
+
                             var board_id = dojo.attr($('actionBoard_' + args.selected_board_id_to), "data-id");
 
                             if (board_id != 1) {
                                 var amount = -this.getDiffrentColorsOnBoard(args.selected_board_id_to);
 
-                                if (args.selected_board_id_to == args.selected_board_id_from) {
-                                    amount--;
-                                }
-
                                 this.addActionButton('button_1_id', _('Main Action') + " (" + amount + this.getTokenSymbol('cocoa', true) + ")", 'doBoardMainActionClick', null, false, 'gray');
                             }
                             var amount = (this.getDiffrentColorsOnBoard(args.selected_board_id_to) + 1);
-
-                            if (args.selected_board_id_to == args.selected_board_id_from) {
-                                amount++;
-                            }
                             this.addActionButton('button_2_id', _('Collect Cocoa') + " (+" + amount + this.getTokenSymbol('cocoa', true) + ")", 'doBoardCollectCocoaClick', null, false, 'gray');
 
                             if (board_id == 2 || board_id == 3 || board_id == 4 || board_id == 7) {
@@ -1808,7 +1804,11 @@ define([
                     for (j in map_player) {
                         var map = map_player[j];
                         if (board_id == map.actionboard_id && map.locked == false) {
-                            workers++;
+                            var selectedWorker = $(this.getActivePlayerId() + '_worker_' + this.selected_worker_id);
+                            var selectedWorkerBoard = dojo.attr(selectedWorker, "data-board-id");
+                            if(!(this.isPalaceTechAquired && board_id == selectedWorkerBoard && map.worker_id == this.selected_worker_id && map.player_id == this.getActivePlayerId())){
+                                workers++;
+                            }
                         }
                     }
                     if (workers > 0) {
@@ -2380,10 +2380,6 @@ define([
                     this.clientStateArgs.price = this.getDiffrentColorsOnBoard(this.selected_board_id_to);
                     this.clientStateArgs.price_token = 0;
 
-                    if (this.selected_board_id_to == this.selected_board_id_from) {
-                        this.clientStateArgs.price--;
-                    }
-
                     if (this.clientStateArgs.price != 0) {
                         var translated = _("Perform Main Action?") + " " + this.moneyPreview("cocoa");
                         this.setClientStateAction(actionConfirm, translated);
@@ -2541,10 +2537,6 @@ define([
 
                     this.clientStateArgs.action = action;
                     this.clientStateArgs.price = -(this.getDiffrentColorsOnBoard(this.selected_board_id_to) + 1);
-
-                    if (this.selected_board_id_to == this.selected_board_id_from) {
-                        this.clientStateArgs.price++;
-                    }
 
                     this.clientStateArgs.price_token = 0;
                     var translated = _("Collect cocoa?") + " " + this.moneyPreview("cocoa");

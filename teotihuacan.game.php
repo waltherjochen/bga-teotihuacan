@@ -1627,6 +1627,9 @@ class teotihuacan extends Table
         if($this->isTechAquired(7)){
             $countWorkers++;
         }
+        if(self::getGameStateValue('extraWorker')){
+            $countWorkers++;
+        }
 
         $canBuildPyramidTiles = (int)self::getGameStateValue('canBuildPyramidTiles');
 
@@ -2289,7 +2292,7 @@ class teotihuacan extends Table
             }
         }
 
-        if ($selected_board_id_to <= $selected_board_id_from && $selected_board_id_from != 1 && $this->isTechAquired(0)) {
+        if ($selected_board_id_to <= $selected_board_id_from && $selected_board_id_from != 1 && $this->isTechAquired(0) && !self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')) {
             $actionBoard_1 = 'actionBoard_1';
             $this->collectResource($player_id, 1, 'cocoa', $actionBoard_1, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 1)'));
         }
@@ -2297,10 +2300,6 @@ class teotihuacan extends Table
         if (!$freeCocoa) {
 
             $colors = $this->getDiffrentColorsOnBoard();
-
-            if ($selected_board_id_from == $selected_board_id_to) {
-                $colors--;
-            }
             $this->payResource($player_id, -$colors, 'cocoa', $target);
         } else {
             $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (45,46,47) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
@@ -2648,7 +2647,7 @@ class teotihuacan extends Table
             throw new BgaUserException(self::_("This move is not possible."));
         }
 
-        if ($selected_board_id_to <= $selected_board_id_from && $this->isTechAquired(0)) {
+        if ($selected_board_id_to <= $selected_board_id_from && $this->isTechAquired(0) && !self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')) {
             $actionBoard_1 = 'actionBoard_1';
             $this->collectResource($player_id, 1, 'cocoa', $actionBoard_1, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 1)'));
         }
@@ -2887,16 +2886,12 @@ class teotihuacan extends Table
         $selected_board_id_to = self::getGameStateValue('selected_board_id_to');
         $selected_board_id_from = self::getGameStateValue('selected_board_id_from');
 
-        if ($selected_board_id_to <= $selected_board_id_from && $this->isTechAquired(0)) {
+        if ($selected_board_id_to <= $selected_board_id_from && $this->isTechAquired(0) && !self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')) {
             $actionBoard_1 = 'actionBoard_1';
             $this->collectResource($player_id, 1, 'cocoa', $actionBoard_1, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 1)'));
         }
 
         $colors = $this->getDiffrentColorsOnBoard() + 1;
-
-        if ($selected_board_id_from == $selected_board_id_to) {
-            $colors--;
-        }
 
         $this->updateCocoa($colors);
 
@@ -2925,11 +2920,19 @@ class teotihuacan extends Table
 
     function getDiffrentColorsOnBoard()
     {
+        $player_id = self::getActivePlayerId();
         $board_id = self::getGameStateValue('selected_board_id_to');
-        $sql = "SELECT COUNT(DISTINCT `player_id`) AS Count
-            FROM `map` 
-            WHERE `actionboard_id` = $board_id and locked = false
-        ";
+        $selected_worker_id = (int)self::getGameStateValue('selected_worker_id');
+
+        if($this->isTechAquired(0) && self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')){
+            $sql = "SELECT COUNT(DISTINCT `player_id`) AS Count FROM `map` WHERE `actionboard_id` = $board_id and locked = false and not (`worker_id` = $selected_worker_id and `player_id` = $player_id)";
+        } else {
+
+            $sql = "SELECT COUNT(DISTINCT `player_id`) AS Count
+                FROM `map` 
+                WHERE `actionboard_id` = $board_id and locked = false
+            ";
+        }
 
         return (int)self::getUniqueValueFromDB($sql);
     }
