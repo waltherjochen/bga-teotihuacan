@@ -83,10 +83,16 @@ define([
                 var allStartingTilesChoosed = true;
 
                 for (var i = 1; i <= this.gamedatas_local.players_count; i++ ) {
+                    var next = parseInt(current_player.player_order) + i;
+                    if(next > this.gamedatas_local.players_count){
+                        next -= this.gamedatas_local.players_count;
+                    }
+                    console.log("next",next);
+
                     for (var player_id in this.gamedatas_local.players) {
                         var player = this.gamedatas_local.players[player_id];
 
-                        if (player.id != current_player.id && player.player_order == i) {
+                        if (player.id != current_player.id && player.player_order == next) {
                             dojo.place(this.format_block('jstpl_playerTable', player), 'player_table', 'last');
                         }
                     }
@@ -1218,7 +1224,7 @@ define([
                         this.clientStateArgs.wood = 0;
                         this.clientStateArgs.stone = 0;
                         this.clientStateArgs.gold = 0;
-                        if (this.gamedatas_local.players[player_id].startingTile0 == null && dojo.getStyle("startingTiles-zone", "display") == "none") {
+                        if (this.gamedatas_local.players[player_id].startingTile1 == null && dojo.getStyle("startingTiles-zone", "display") == "none") {
                             dojo.style("startingTiles-zone", 'display', "block");
                             this.setupStartingTiles();
                         }
