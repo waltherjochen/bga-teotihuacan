@@ -711,6 +711,11 @@
     position: absolute;
 }
 
+.avenue .discoveryTiles-wrapper:hover,
+.temple .discoveryTiles-wrapper:hover {
+    opacity: 0;
+}
+
 .btnAvenue.clickable {
     width: 7.5%;
     height: 33.5%;

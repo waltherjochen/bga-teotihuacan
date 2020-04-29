@@ -142,8 +142,8 @@ $machinestates = array(
 
     STATE_CLAIM_STARTING_DISCOVERY_TILES => array(
         "name" => "claim_starting_discovery_tiles",
-        "description" => clienttranslate('${actplayer} can claim discovery tiles'),
-        "descriptionmyturn" => clienttranslate('${you} can claim discovery tiles'),
+        "description" => clienttranslate('${actplayer} can claim their discovery tile from starting tile'),
+        "descriptionmyturn" => clienttranslate('${you} can claim your discovery tile from starting tile'),
         "type" => "activeplayer",
         "args" => "getWorshipInfo",
         "possibleactions" => array(
@@ -428,6 +428,7 @@ $machinestates = array(
         "description" => clienttranslate('${actplayer} can end turn or use discovery Tiles'),
         "descriptionmyturn" => clienttranslate('${you} can end your turn or use discovery Tiles'),
         "type" => "activeplayer",
+        "action" => "areDiscoveryTilesLeft",
         "possibleactions" => array(
             "useDiscoveryTile",
             "pass",

@@ -2458,7 +2458,7 @@ define([
                     return;
                 }
                 if ((this.stateName == 'playerTurn_worship_actions' || this.stateName == 'claim_starting_discovery_tiles') &&
-                    this.gamedatas_local.global.worship_actions_discovery || this.clientStateArgs && (this.clientStateArgs.templeQueue || this.clientStateArgs.royalTileAction)) {
+                    (this.gamedatas_local.global.worship_actions_discovery || this.clientStateArgs && (this.clientStateArgs.templeQueue || this.clientStateArgs.royalTileAction))) {
                     var message = '';
 
                     if (this.clientStateArgs && this.clientStateArgs.templeQueue) {

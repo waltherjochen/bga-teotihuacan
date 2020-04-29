@@ -935,7 +935,7 @@ class teotihuacan extends Table
                     self::setGameStateValue('lastRound', 0);
                     $this->eclipse();
                 } else {
-                    self::notifyAllPlayers("scoreBuildings", clienttranslate('*** Eclipse is triggert ***'), array());
+                    self::notifyAllPlayers("scoreBuildings", clienttranslate('*** Eclipse is triggered ***'), array());
                     self::notifyAllPlayers("scoreBuildings", clienttranslate('*** One round left ***'), array());
                     self::setGameStateValue('lastRound', 1);
                     $this->gamestate->nextState("next_player");
@@ -1068,7 +1068,7 @@ class teotihuacan extends Table
             array(''),
             array(
                 array('str' => clienttranslate('${amount} VP for each step on Avenue of Dead: (summary)'),
-                    'args' => array( 'amount'=>'$buildingVP' ),
+                    'args' => array( 'amount'=> $buildingVP ),
                 )
             ),
             array(
@@ -1078,7 +1078,7 @@ class teotihuacan extends Table
             ),
             array(
                 array('str' => clienttranslate('${amount} VP for each step on Pyramid track: (summary)'),
-                    'args' => array( 'amount'=>'$buildingVP' ),
+                    'args' => array( 'amount'=> $pyramidVP ),
                 )
             ),
             array(
@@ -1535,6 +1535,25 @@ class teotihuacan extends Table
         }
     }
 
+    function areDiscoveryTilesLeft()
+    {
+        $current_player_id = self::getCurrentPlayerId();
+        $possibleDiscoveryTiles = [17, 18, 19, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41];
+        $isInArray = false;
+        $playerHand = $this->getAllDatas()['playersHand'][$current_player_id]['other'];
+
+        for ($i = 0; $i < count($playerHand); $i++) {
+            $type_arg = (int)$playerHand[$i]['type_arg'];
+            if (in_array($type_arg, $possibleDiscoveryTiles)) {
+                $isInArray = true;
+                break;
+            }
+        }
+        if (!$isInArray) {
+            $this->gamestate->nextState("pass");
+        }
+    }
+
     function useDiscoveryTemple($temple, $steps = 1)
     {
         self::setGameStateValue('useDiscovery', 1);
@@ -1785,6 +1804,32 @@ class teotihuacan extends Table
         $this->setStartingBonusAuto($startingTile0);
         $this->setStartingBonusAuto($startingTile1);
 
+        $temple_red0 = $this->startingTiles[$startingTile0]['bonus']['temple_red'];
+        $temple_red1 = $this->startingTiles[$startingTile1]['bonus']['temple_red'];
+
+        $temple_redMax = $temple_red0 + $temple_red1;
+        if ($temple_redMax > 0) {
+            if ($temple_redMax == 1) {
+                $this->startingTileStepTemple($player_id, 'red');
+            } else {
+                $this->startingTileStepTemple($player_id, 'red', false);
+                $this->startingTileStepTemple($player_id, 'red');
+            }
+        }
+
+        $temple_green0 = $this->startingTiles[$startingTile0]['bonus']['temple_green'];
+        $temple_green1 = $this->startingTiles[$startingTile1]['bonus']['temple_green'];
+
+        $temple_greenMax = $temple_green0 + $temple_green1;
+        if ($temple_greenMax > 0) {
+            if ($temple_greenMax == 1) {
+                $this->startingTileStepTemple($player_id, 'green');
+            } else {
+                $this->startingTileStepTemple($player_id, 'green', false);
+                $this->startingTileStepTemple($player_id, 'green');
+            }
+        }
+
         $resource0 = $this->startingTiles[$startingTile0]['bonus']['resource'];
         $resource1 = $this->startingTiles[$startingTile1]['bonus']['resource'];
         $resourceMax = $resource0 + $resource1;
@@ -2010,8 +2055,6 @@ class teotihuacan extends Table
         $wood = $statingTile_details['wood'];
         $stone = $statingTile_details['stone'];
         $gold = $statingTile_details['gold'];
-        $temple_red = $statingTile_details['temple_red'];
-        $temple_green = $statingTile_details['temple_green'];
         $avenue = $statingTile_details['avenue'];
 
         $source = 'startingTile_' . $id;
@@ -2027,12 +2070,6 @@ class teotihuacan extends Table
         }
         if ($gold > 0) {
             $this->collectResource($player_id, $gold, 'gold', $source);
-        }
-        if ($temple_red > 0) {
-            $this->startingTileStepTemple($player_id, 'red');
-        }
-        if ($temple_green > 0) {
-            $this->startingTileStepTemple($player_id, 'green');
         }
         if ($avenue > 0) {
             $sql = "UPDATE `player` SET `avenue_of_dead`  = `avenue_of_dead` + 1 WHERE player_id = $player_id";
@@ -2054,7 +2091,7 @@ class teotihuacan extends Table
 
     }
 
-    function startingTileStepTemple($player_id, $temple)
+    function startingTileStepTemple($player_id, $temple, $notification = true)
     {
         $sql = "UPDATE `player` SET `temple_$temple`  = `temple_$temple` + 1 WHERE player_id = $player_id";
         self::DbQuery($sql);
@@ -2063,21 +2100,31 @@ class teotihuacan extends Table
         $step = (int)self::getUniqueValueFromDB($sql);
 
         $bonus = explode(":", $this->temples[$temple][1]);
+        $source = "temple_" . $temple . "_step_" . $step;
 
         if ($bonus[1] == 'vp') {
-            $this->updateVP($bonus[0]);
+            $this->collectResource($player_id, $bonus[0], 'vp', $source);
         } else if ($bonus[1] == 'c') {
-            $this->updateCocoa($bonus[0]);
+            $this->collectResource($player_id, $bonus[0], 'cocoa', $source);
         }
 
-        self::notifyAllPlayers("stepTemple", clienttranslate('${player_name} advanced one space on temple ${temple}'), array(
-            'i18n' => array('temple'),
-            'player_id' => $player_id,
-            'player_name' => self::getActivePlayerName(),
-            'temple' => $temple,
-            'step' => $step,
-            'bonus' => $bonus,
-        ));
+        if($notification){
+            self::notifyAllPlayers("stepTemple", clienttranslate('${player_name} advanced one space on temple ${temple}'), array(
+                'i18n' => array('temple'),
+                'player_id' => $player_id,
+                'player_name' => self::getActivePlayerName(),
+                'temple' => $temple,
+                'step' => $step,
+                'bonus' => $bonus,
+            ));
+        } else {
+            self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} advanced one space on temple ${temple}'), array(
+                'i18n' => array('temple'),
+                'player_id' => $player_id,
+                'player_name' => self::getActivePlayerName(),
+                'temple' => $temple,
+            ));
+        }
 
         self::incStat(1, "temple_$temple", $player_id);
     }
@@ -2281,7 +2328,7 @@ class teotihuacan extends Table
 
             if ($this->isTechAquired(7)) {
                 $stonePlayer = (int)self::getUniqueValueFromDB("SELECT `stone` FROM `player` WHERE `player_id` = $player_id");
-                $woodPlayer = (int)self::getUniqueValueFromDB("SELECT `stone` FROM `player` WHERE `player_id` = $player_id");
+                $woodPlayer = (int)self::getUniqueValueFromDB("SELECT `wood` FROM `player` WHERE `player_id` = $player_id");
                 if (!($stonePlayer >= $stone && ($woodPlayer + 1) >= $wood || ($stonePlayer + 1) >= $stone && $woodPlayer >= $wood)) {
                     throw new BgaUserException(self::_("You have not enough resources for the main action."));
                 }
