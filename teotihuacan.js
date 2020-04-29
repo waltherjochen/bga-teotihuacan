@@ -1534,7 +1534,9 @@ define([
                             this.addActionButton('button_pass_id', _('Pass'), 'onPassClick', null, false, "red");
                             break;
                         case 'playerTurn_construction':
-                            this.addActionButton('button_pass_id', _('Pass'), 'onPassClick', null, false, "red");
+                            if(args.canPass){
+                                this.addActionButton('button_pass_id', _('Pass'), 'onPassClick', null, false, "red");
+                            }
                             break;
                         case 'client_playerTurn_buildPyramid_confirm':
 

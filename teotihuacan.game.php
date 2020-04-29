@@ -1618,8 +1618,21 @@ class teotihuacan extends Table
 
     function isConstructionWorkerTechAquired()
     {
+        $player_id = self::getActivePlayerId();
+        $selected_board_id_to = self::getGameStateValue('selected_board_id_to');
+
+        $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
+        $countWorkers = (int)self::getUniqueValueFromDB($sql);
+
+        if($this->isTechAquired(7)){
+            $countWorkers++;
+        }
+
+        $canBuildPyramidTiles = (int)self::getGameStateValue('canBuildPyramidTiles');
+
         return array(
             'isConstructionWorkerTechAquired' => $this->isTechAquired(7) && self::getGameStateValue('getTechnologyDiscount'),
+            'canPass' => $canBuildPyramidTiles != $countWorkers
         );
     }
 
@@ -2217,7 +2230,6 @@ class teotihuacan extends Table
             }
             $this->updateGold(-$gold, false, null, clienttranslate("You have not enough gold for the main action."));
         } else if ($card_id == 8) {
-            $this->updateStone(-2, false, null, clienttranslate("You have not enough stone for the main action."));
             $pyramid = self::getObjectListFromDB("SELECT `card_location_arg` FROM `card` WHERE `card_type` = 'pyramidTiles' and `card_location` like 'pyra_rotate_%'", true);
             $bottom = array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
             $level1 = array(100, 101, 102, 103, 104, 105, 106, 107, 108);
@@ -2262,7 +2274,19 @@ class teotihuacan extends Table
                 }
             }
 
-            $this->updateWood(-$wood, false, null, clienttranslate("You have not enough wood for the main action."));
+            $stone = 2;
+
+            if ($this->isTechAquired(7)) {
+                $stonePlayer = (int)self::getUniqueValueFromDB("SELECT `stone` FROM `player` WHERE `player_id` = $player_id");
+                $woodPlayer = (int)self::getUniqueValueFromDB("SELECT `stone` FROM `player` WHERE `player_id` = $player_id");
+                if (!($stonePlayer >= $stone && ($woodPlayer + 1) >= $wood || ($stonePlayer + 1) >= $stone && $woodPlayer >= $wood)) {
+                    throw new BgaUserException(self::_("You have not enough resources for the main action."));
+                }
+            } else {
+
+                $this->updateStone(-2, false, null, clienttranslate("You have not enough stone for the main action."));
+                $this->updateWood(-$wood, false, null, clienttranslate("You have not enough wood for the main action."));
+            }
         }
 
         if ($selected_board_id_to <= $selected_board_id_from && $selected_board_id_from != 1 && $this->isTechAquired(0)) {
