@@ -128,7 +128,7 @@ define([
                             type_arg: player.startingDiscovery0,
                             location: ''
                         }), target_disc);
-                        this.addTooltipHtml("discoveryTile_" + player.startingDiscovery0, this.gamedatas_local.discoveryTiles_data[player.startingDiscovery0].tooltip);
+                        this.addTooltipHtml("discoveryTile_" + player.startingDiscovery0, this.getDiscoveryTileTooltip(player.startingDiscovery0));
                     }
                 }
 
@@ -144,7 +144,7 @@ define([
                             type_arg: player.startingDiscovery1,
                             location: ''
                         }), target_disc);
-                        this.addTooltipHtml("discoveryTile_" + player.startingDiscovery1, this.gamedatas_local.discoveryTiles_data[player.startingDiscovery1].tooltip);
+                        this.addTooltipHtml("discoveryTile_" + player.startingDiscovery1, this.getDiscoveryTileTooltip(player.startingDiscovery1));
                     }
                 }
                 this.queryAndAddEvent('.discoveryTile', 'onclick', 'onDiscoveryClick');
@@ -344,7 +344,7 @@ define([
                     tooltip = tooltip.replace('{token_temple_red}', this.getTokenSymbol('temple_red', true));
                     tooltip = tooltip.replace('{token_temple_green}', this.getTokenSymbol('temple_green', true));
 
-                    this.addTooltipHtml("actionBoard_" + board.card_location_arg, tooltip);
+                    this.addTooltipHtml("help_actionBoard_" + board.card_location_arg, tooltip);
 
                     if (board.card_location_arg == this.selected_board_id_to && this.isCurrentPlayerActive()) {
                         if (this.checkPossibleActions("selectBoard")) {
@@ -357,7 +357,7 @@ define([
                             var discoveryTile = this.gamedatas_local.discoveryTiles.b1[j];
                             var target = "POS_aBoard_" + board.card_location_arg + "_discoveryTile_1";
                             dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
-                            this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.gamedatas_local.discoveryTiles_data[discoveryTile.type_arg].tooltip);
+                            this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                         }
                         var royalTiles = this.gamedatas_local.royalTiles.royalTiles0;
                         for (var j in royalTiles) {
@@ -391,21 +391,21 @@ define([
                             var discoveryTile = this.gamedatas_local.discoveryTiles.b2[j];
                             var target = "POS_aBoard_" + board.card_location_arg + "_discoveryTile_0";
                             dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
-                            this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.gamedatas_local.discoveryTiles_data[discoveryTile.type_arg].tooltip);
+                            this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                         }
                     } else if (board.card_id == "3") {
                         for (var j in this.gamedatas_local.discoveryTiles.b3) {
                             var discoveryTile = this.gamedatas_local.discoveryTiles.b3[j];
                             var target = "POS_aBoard_" + board.card_location_arg + "_discoveryTile_0";
                             dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
-                            this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.gamedatas_local.discoveryTiles_data[discoveryTile.type_arg].tooltip);
+                            this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                         }
                     } else if (board.card_id == "4") {
                         for (var j in this.gamedatas_local.discoveryTiles.b4) {
                             var discoveryTile = this.gamedatas_local.discoveryTiles.b4[j];
                             var target = "POS_aBoard_" + board.card_location_arg + "_discoveryTile_0";
                             dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
-                            this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.gamedatas_local.discoveryTiles_data[discoveryTile.type_arg].tooltip);
+                            this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                         }
                     } else if (board.card_id == "5") {
                         var technologyTiles = this.gamedatas_local.technologyTiles.r1_c1;
@@ -464,7 +464,7 @@ define([
                             var discoveryTile = this.gamedatas_local.discoveryTiles.b7[j];
                             var target = "POS_aBoard_" + board.card_location_arg + "_discoveryTile_0";
                             dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
-                            this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.gamedatas_local.discoveryTiles_data[discoveryTile.type_arg].tooltip);
+                            this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                         }
                         pyramidTiles = this.gamedatas_local.decorationTiles.decoTiles_0;
                         for (var j in pyramidTiles) {
@@ -742,43 +742,43 @@ define([
                     var discoveryTile = this.gamedatas_local.discoveryTiles.tb0[j];
                     var target = "btnTemple_blue_discoveryTile_0";
                     dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
-                    this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.gamedatas_local.discoveryTiles_data[discoveryTile.type_arg].tooltip);
+                    this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                 }
                 for (var j in this.gamedatas_local.discoveryTiles.tr0) {
                     var discoveryTile = this.gamedatas_local.discoveryTiles.tr0[j];
                     var target = "btnTemple_red_discoveryTile_0";
                     dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
-                    this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.gamedatas_local.discoveryTiles_data[discoveryTile.type_arg].tooltip);
+                    this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                 }
                 for (var j in this.gamedatas_local.discoveryTiles.tg0) {
                     var discoveryTile = this.gamedatas_local.discoveryTiles.tg0[j];
                     var target = "btnTemple_green_discoveryTile_0";
                     dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
-                    this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.gamedatas_local.discoveryTiles_data[discoveryTile.type_arg].tooltip);
+                    this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                 }
                 for (var j in this.gamedatas_local.discoveryTiles.tg1) {
                     var discoveryTile = this.gamedatas_local.discoveryTiles.tg1[j];
                     var target = "btnTemple_green_discoveryTile_1";
                     dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
-                    this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.gamedatas_local.discoveryTiles_data[discoveryTile.type_arg].tooltip);
+                    this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                 }
                 for (var j in this.gamedatas_local.discoveryTiles.a0) {
                     var discoveryTile = this.gamedatas_local.discoveryTiles.a0[j];
                     var target = "avenue_discoveryTile_0";
                     dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
-                    this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.gamedatas_local.discoveryTiles_data[discoveryTile.type_arg].tooltip);
+                    this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                 }
                 for (var j in this.gamedatas_local.discoveryTiles.a1) {
                     var discoveryTile = this.gamedatas_local.discoveryTiles.a1[j];
                     var target = "avenue_discoveryTile_1";
                     dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
-                    this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.gamedatas_local.discoveryTiles_data[discoveryTile.type_arg].tooltip);
+                    this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                 }
                 for (var j in this.gamedatas_local.discoveryTiles.a2) {
                     var discoveryTile = this.gamedatas_local.discoveryTiles.a2[j];
                     var target = "avenue_discoveryTile_2";
                     dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
-                    this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.gamedatas_local.discoveryTiles_data[discoveryTile.type_arg].tooltip);
+                    this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                 }
 
                 this.queryAndAddEvent('.discoveryTile', 'onclick', 'onDiscoveryClick');
@@ -797,7 +797,7 @@ define([
                         for (var discoveryTile_index in discoveryTiles_mask) {
                             var discoveryTile = discoveryTiles_mask[discoveryTile_index];
                             dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), row);
-                            this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.gamedatas_local.discoveryTiles_data[discoveryTile.type_arg].tooltip);
+                            this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                         }
                     }
                 }
@@ -809,7 +809,7 @@ define([
                     for (var discoveryTile_index in discoveryTiles_other) {
                         var discoveryTile = discoveryTiles_other[discoveryTile_index];
                         dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
-                        this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.gamedatas_local.discoveryTiles_data[discoveryTile.type_arg].tooltip);
+                        this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                     }
 
                     var discoveryTiles_used = this.gamedatas_local.playersHand[player_id]['used'];
@@ -818,7 +818,7 @@ define([
                         var discoveryTile = discoveryTiles_used[discoveryTile_index];
                         dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
                         dojo.query('#discoveryTile_' + discoveryTile['type_arg']).addClass('used');
-                        this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.gamedatas_local.discoveryTiles_data[discoveryTile.type_arg].tooltip);
+                        this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                     }
                 }
 
@@ -987,7 +987,7 @@ define([
                                 if (discoveryTile.type == "discoveryTiles" && discoveryTile.location_arg == startingTile.type_arg) {
                                     var target = "startingTile_" + discoveryTile.location_arg + "-wrapper";
                                     dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
-                                    this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.gamedatas_local.discoveryTiles_data[discoveryTile.type_arg].tooltip);
+                                    this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                                     break;
                                 }
                             }
@@ -2154,7 +2154,7 @@ define([
 
                 var _this = this;
 
-                var tooltip = this.gamedatas_local.discoveryTiles_data[discTile.type_arg].tooltip;
+                var tooltip = this.getDiscoveryTileTooltip(discTile.type_arg);
 
                 setTimeout(function () {
                     $("discoveryTile_-1").remove();
@@ -3018,7 +3018,7 @@ define([
                         type_arg: id,
                         location: "",
                     }), "claimDiscovery-zone");
-                    this.addTooltipHtml("discoveryTile_" + id, this.gamedatas_local.discoveryTiles_data[id].tooltip);
+                    this.addTooltipHtml("discoveryTile_" + id, this.getDiscoveryTileTooltip(id));
 
                     this.clientStateArgs = {};
                     this.clientStateArgs.action = action;
@@ -3110,7 +3110,8 @@ define([
                                 type_arg: type_arg,
                                 location: ""
                             }), "overlay-content");
-                            this.addTooltipHtml("discoveryTile_" + type_arg, this.gamedatas_local.discoveryTiles_data[type_arg].tooltip);
+
+                            this.addTooltipHtml("discoveryTile_" + type_arg, this.getDiscoveryTileTooltip(type_arg));
                         }
 
                         this.queryAndAddEvent('.discoveryTile', 'onclick', 'onDiscoveryClick');
@@ -3132,11 +3133,40 @@ define([
                                 location: ""
                             }), "overlay-content");
                             dojo.style('overlay', 'display', "block");
-                            this.addTooltipHtml("discoveryTile_" + type_arg, this.gamedatas_local.discoveryTiles_data[type_arg].tooltip);
+                            this.addTooltipHtml("discoveryTile_" + type_arg, this.getDiscoveryTileTooltip(type_arg));
                         }
                     }
 
                 }
+            },
+
+            getDiscoveryTileTooltip: function (id) {
+                var tooltip = this.gamedatas_local.discoveryTiles_data[id].tooltip;
+
+                var cocoa = this.gamedatas_local.discoveryTiles_data[id].price.cocoa;
+                if(cocoa > 0){
+                    tooltip = tooltip.replace('{cocoa}', cocoa + this.getTokenSymbol('cocoa', true));
+                } else {
+                    tooltip = tooltip.replace('{cocoa}', '');
+                }
+                var wood = this.gamedatas_local.discoveryTiles_data[id].price.wood;
+                if(wood > 0){
+                    tooltip = tooltip.replace('{wood}', wood + this.getTokenSymbol('wood', true));
+                } else {
+                    tooltip = tooltip.replace('{wood}', '');
+                }
+                var gold = this.gamedatas_local.discoveryTiles_data[id].price.gold;
+                if(gold > 0){
+                    tooltip = tooltip.replace('{gold}', gold + this.getTokenSymbol('gold', true));
+                } else {
+                    tooltip = tooltip.replace('{gold}', '');
+                }
+
+                if(cocoa == 0 && wood == 0 && gold == 0){
+                    tooltip = tooltip.replace('Price: ', 'Price: ' + _('free'));
+                }
+
+                return tooltip;
             },
 
             hideOverlay: function (event) {
@@ -3150,7 +3180,7 @@ define([
 
                 for (var i = 0; i < type_args.length; i++) {
                     if (this.gamedatas_local.discoveryTiles_data[type_args[i]]) {
-                        this.addTooltipHtml("discoveryTile_" + type_args[i], this.gamedatas_local.discoveryTiles_data[type_args[i]].tooltip);
+                        this.addTooltipHtml("discoveryTile_" + type_args[i], this.getDiscoveryTileTooltip(type_args[i]));
                     }
                 }
             },
@@ -3197,7 +3227,7 @@ define([
                             type_arg: 45,
                             location: "",
                         }), "claimDiscovery-zone");
-                        this.addTooltipHtml("discoveryTile_" + id, this.gamedatas_local.discoveryTiles_data[id].tooltip);
+                        this.addTooltipHtml("discoveryTile_" + id, this.getDiscoveryTileTooltip(id));
                         this.resizeGame();
 
                     } else {
@@ -4001,7 +4031,7 @@ define([
                         for (var disc in discoveryTiles[i]) {
                             if (discoveryTiles[i][disc].location == 'discTiles_b' + board_id) {
                                 dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTiles[i][disc]), target);
-                                this.addTooltipHtml("discoveryTile_" + discoveryTiles[i][disc].type_arg, this.gamedatas_local.discoveryTiles_data[discoveryTiles[i][disc].type_arg].tooltip);
+                                this.addTooltipHtml("discoveryTile_" + discoveryTiles[i][disc].type_arg, this.getDiscoveryTileTooltip(discoveryTiles[i][disc].type_arg));
                                 break;
                             }
                         }
@@ -4258,7 +4288,7 @@ define([
                         type_arg: discoveryTile,
                         location: ''
                     }), target_disc);
-                    this.addTooltipHtml("discoveryTile_" + discoveryTile, this.gamedatas_local.discoveryTiles_data[discoveryTile].tooltip);
+                    this.addTooltipHtml("discoveryTile_" + discoveryTile, this.getDiscoveryTileTooltip(discoveryTile));
                 }
                 this.queryAndAddEvent('.discoveryTile', 'onclick', 'onDiscoveryClick');
                 this.resizeGame();

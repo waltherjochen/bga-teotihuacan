@@ -37,6 +37,7 @@
 
                 <!-- BEGIN actionBoards -->
                 <div class="actionBoard" id="actionBoard_{ACTION_BOARD_POS}">
+                    <div class="help-icon" id="help_actionBoard_{ACTION_BOARD_POS}">?</div>
                     <!-- BEGIN diceGroup -->
                     <div class="dice-group">
                         <div class="dice-wrapper"
