@@ -711,6 +711,11 @@
     position: absolute;
 }
 
+.btnAvenue.clickable ~ .discoveryTiles-group .discoveryTiles-wrapper:hover,
+.btnTemple.clickable ~ .discoveryTiles-group .discoveryTiles-wrapper:hover {
+    opacity: 1 !important;
+}
+
 .avenue .discoveryTiles-wrapper:hover,
 .temple .discoveryTiles-wrapper:hover {
     opacity: 0;

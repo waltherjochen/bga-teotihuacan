@@ -860,8 +860,6 @@ class teotihuacan extends Table
         self::trace("stStartTurn");
 
         self::incGameStateValue('turn', 1);
-        self::setGameStateValue('worship_actions_discovery', 0);
-        self::setGameStateValue('startingTileBonus', 0);
 
         $player_id = self::activeNextPlayer();
         self::giveExtraTime($player_id);
@@ -870,7 +868,7 @@ class teotihuacan extends Table
 
     }
 
-    function prepareNextPlayer()
+    function resetGameStateValues()
     {
         self::setGameStateValue('selected_board_id_to', 0);
         self::setGameStateValue('selected_board_id_from', 0);
@@ -908,6 +906,11 @@ class teotihuacan extends Table
 
         $sql = "TRUNCATE temple_queue";
         self::DbQuery($sql);
+    }
+
+    function prepareNextPlayer()
+    {
+        $this->resetGameStateValues();
 
         $player_id = self::getActivePlayerId();
         $sql = "SELECT `player_no` FROM `player` WHERE `player_id` = $player_id";
@@ -1975,7 +1978,7 @@ class teotihuacan extends Table
         $progression = 8 * $player_no / $count_player;
         self::setGameStateValue('progression', $progression);
 
-        self::setGameStateValue('startingTileBonus', 0);
+        $this->resetGameStateValues();
 
         if ($player_no == $count_player) {
             $this->setNonPlayerWorkers();
@@ -3791,7 +3794,7 @@ class teotihuacan extends Table
 
         self::setGameStateValue('last_temple_id', 0);
 
-        if (self::getGameStateValue('startingTileBonus')) {
+        if ((int)self::getGameStateValue('startingTileBonus') > 0) {
             $this->gamestate->nextState("calculate_next_bonus");
         } else if ($queueCount > 0 || $worship_actions_discovery > 0 || $royalTileAction > 0) {
             $this->gamestate->nextState("action");
