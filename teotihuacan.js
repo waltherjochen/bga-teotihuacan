@@ -1045,6 +1045,7 @@ define([
                     switch (stateName) {
 
                         case 'playerTurn':
+                            this.clickableWorkers = args.args.clickableWorkers;
                             this.isGamePreparation = false;
                             this.gamedatas_local.global = args.args.global;
                             this.setupGlobalVariables();
@@ -1103,6 +1104,7 @@ define([
                             }
                             break;
                         case 'playerTurn_upgrade_workers':
+                            this.clickableWorkers = args.args.clickableWorkers;
                             this.setAllWorkersClickable(args.args.clickableWorkers);
                             break;
                         case 'playerTurn_ascension_choose_bonus':
@@ -1275,7 +1277,6 @@ define([
 
                     switch (stateName) {
                         case 'playerTurn':
-                            this.clickableWorkers = args.clickableWorkers;
                             if (args.lockedWorkers > 0) {
                                 this.addActionButton('button_1_id', _('Unlock all workers'), 'unlockAllWorkersClick', null, false, 'gray');
                             }
@@ -1522,7 +1523,6 @@ define([
                             }
                             break;
                         case 'playerTurn_upgrade_workers':
-                            this.clickableWorkers = args.clickableWorkers;
                             if (args.lockedWorkers > 0) {
                                 this.addActionButton('button_1_id', _('Unlock all Workers') + "(-3" + this.getTokenSymbol('cocoa', true) + ")", 'unlockWorkersAndPayConfirmed', null, false, 'gray');
 
@@ -1865,6 +1865,8 @@ define([
                 dojo.query('.pyramid_decoration-wrapper.selected').removeClass('selected');
                 dojo.query('.royalTile .number.show').removeClass('show');
                 dojo.query('#claimDiscovery-zone.show').removeClass('show');
+
+                this.clickableWorkers = [];
             },
 
             moneyPreview: function (moneySymbol) {

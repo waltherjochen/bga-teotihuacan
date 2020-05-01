@@ -74,7 +74,7 @@ $this->actionBoards = array(
 $this->temples = array(
     "blue" => array('0:0', '1:r', '1:r', '1:r', '1:r', '2:r', '2:r', '2:vp', '2:r', '4:vp', '0:0', '6:vp'),
     "red" => array('0:0', '1:vp', '1:vp', '2:vp', '2:vp', '2:vp', '3:vp', '3:vp', '4:vp', '5:vp', '0:0', '7:vp'),
-    "green" => array('0:0', '1:c', '1:c', '1:c', '2:c', '2:c', '2:c', '3:c', '2:c', '4:c', '0:0', '5:vp')
+    "green" => array('0:0', '1:c', '1:c', '1:c', '2:c', '2:c', '2:c', '3:c', '3:c', '4:c', '0:0', '5:vp')
 );
 
 $this->nobles = array(
