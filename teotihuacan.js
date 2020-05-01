@@ -119,7 +119,7 @@ define([
                     dojo.place(this.format_block('jstpl_startingTiles', {
                         type_arg: player.startingTile0
                     }), target, "last");
-                    this.addTooltipHtml("startingTile_" + player.startingTile0, this.gamedatas_local.startingTiles_data[player.startingTile0].tooltip);
+                    this.addTooltipHtml("startingTile_" + player.startingTile0, this.getStartingTileTooltip(player.startingTile0));
 
 
                     if (player.startingDiscovery0 != null && (player.startingTile0 == "3" || player.startingTile0 == "13")) {
@@ -136,7 +136,7 @@ define([
                     dojo.place(this.format_block('jstpl_startingTiles', {
                         type_arg: player.startingTile1
                     }), target, "last");
-                    this.addTooltipHtml("startingTile_" + player.startingTile1, this.gamedatas_local.startingTiles_data[player.startingTile1].tooltip);
+                    this.addTooltipHtml("startingTile_" + player.startingTile1, this.getStartingTileTooltip(player.startingTile1));
 
                     if (player.startingDiscovery1 != null && (player.startingTile1 == "3" || player.startingTile1 == "13")) {
                         var target_disc = "startingTile_" + player.startingTile1 + "-wrapper";
@@ -979,7 +979,7 @@ define([
                     if (startingTile.type == "startingTiles") {
                         var target = "startingTiles-zone";
                         dojo.place(this.format_block('jstpl_startingTiles', startingTile), target, "last");
-                        this.addTooltipHtml("startingTile_" + startingTile.type_arg, this.gamedatas_local.startingTiles_data[startingTile.type_arg].tooltip);
+                        this.addTooltipHtml("startingTile_" + startingTile.type_arg, this.getStartingTileTooltip(startingTile.type_arg));
 
                         if (startingTile.type_arg == "3" || startingTile.type_arg == "13") {
                             for (var k in this.gamedatas_local.startingTiles) {
@@ -1052,6 +1052,7 @@ define([
                             this.setAllWorkersClickable(args.args.clickableWorkers);
                             break;
                         case 'playerTurn_show_board_actions':
+                            this.gamedatas_local.map = args.args.map;
                             dojo.addClass('actionBoard_' + args.args.selected_board_id_to, 'selected');
                             dojo.addClass(player_id + '_worker_' + args.args.selected_worker_id, 'selected');
 
@@ -1882,6 +1883,9 @@ define([
                 }
                 if (this.isPalaceTechAquired && this.selected_board_id_to <= this.selected_board_id_from && this.selected_board_id_from != 1) {
                     money++;
+                    if(this.global_moveTwoWorkers && this.selected_worker2_id){
+                        money++;
+                    }
                 }
                 return dojo.string.substitute(_("${money}${price} = ${result}${moneySymbol}"), {
                     money: money,
@@ -3186,6 +3190,17 @@ define([
                 return tooltip;
             },
 
+            getStartingTileTooltip: function (id) {
+                var tooltip = this.gamedatas_local.startingTiles_data[id].tooltip;
+
+                var board0 = this.gamedatas_local.startingTiles_data[id].board[0];
+                tooltip = tooltip.replace('{board0}', '<div class="board_color board_color_'+board0+'">'+board0+'</div>');
+                var board1 = this.gamedatas_local.startingTiles_data[id].board[1];
+                tooltip = tooltip.replace('{board1}', '<div class="board_color board_color_'+board1+'">'+board1+'</div>');
+
+                return tooltip;
+            },
+
             hideOverlay: function (event) {
                 dojo.style('overlay', 'display', "none");
                 var type_args = [];
@@ -4293,7 +4308,7 @@ define([
                 dojo.place(this.format_block('jstpl_startingTiles', {
                     type_arg: startingTile0
                 }), target, "last");
-                this.addTooltipHtml("startingTile_" + startingTile0, this.gamedatas_local.startingTiles_data[startingTile0].tooltip);
+                this.addTooltipHtml("startingTile_" + startingTile0, this.getStartingTileTooltip(startingTile0));
 
                 if (discoveryTile != null && (startingTile0 == "3" || startingTile0 == "13")) {
                     var target_disc = "startingTile_" + startingTile0 + "-wrapper";

@@ -2089,6 +2089,38 @@
     margin-right: 10px;
 }
 
+.board_color {
+    display: inline-block;
+    border-radius: 2px;
+    padding: 2px;
+    margin-right: 5px;
+    color: #FFFFFF;
+}
+.board_color.board_color_1 {
+    background: #924d46;
+}
+.board_color.board_color_2 {
+    background: #a9998a;
+}
+.board_color.board_color_3 {
+    background: #a9998a;
+}
+.board_color.board_color_4 {
+    background: #a9998a;
+}
+.board_color.board_color_5 {
+    background: #ccab8c;
+}
+.board_color.board_color_6 {
+    background: #8c959e;
+}
+.board_color.board_color_7 {
+    background: #809f8d;
+}
+.board_color.board_color_8 {
+    background: #b18079;
+}
+
 .startingTile.clickable:hover {
     cursor: pointer;
 }

@@ -1627,6 +1627,7 @@ class teotihuacan extends Table
         $selected_worker_id = self::getGameStateValue('selected_worker_id');
         $selected_worker2_id = self::getGameStateValue('selected_worker2_id');
         $useDiscoveryMoveTwoWorkers = self::getGameStateValue('useDiscoveryMoveTwoWorkers');
+        $map = $this->getAllDatas()['map'];
 
         return array(
             'isPalaceTechAquired' => $this->isTechAquired(0),
@@ -1635,6 +1636,7 @@ class teotihuacan extends Table
             'selected_worker_id' => $selected_worker_id,
             'selected_worker2_id' => $selected_worker2_id,
             'useDiscoveryMoveTwoWorkers' => $useDiscoveryMoveTwoWorkers,
+            'map' => $map
         );
     }
 
@@ -2344,7 +2346,14 @@ class teotihuacan extends Table
 
         if ($selected_board_id_to <= $selected_board_id_from && $selected_board_id_from != 1 && $this->isTechAquired(0) && !self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')) {
             $actionBoard_1 = 'actionBoard_1';
-            $this->collectResource($player_id, 1, 'cocoa', $actionBoard_1, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 1)'));
+
+            $selected_worker2_id = self::getGameStateValue('selected_worker2_id');
+
+            if (self::getGameStateValue('useDiscoveryMoveTwoWorkers') && $selected_worker2_id != 0) {
+                $this->collectResource($player_id, 2, 'cocoa', $actionBoard_1, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 1)'));
+            } else {
+                $this->collectResource($player_id, 1, 'cocoa', $actionBoard_1, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 1)'));
+            }
         }
 
         if (!$freeCocoa) {
@@ -2906,23 +2915,23 @@ class teotihuacan extends Table
 
                 $this->useDiscoveryTile($id, true);
 
-                $this->gamestate->nextState("playerTurn");
                 self::notifyAllPlayers("unlockAllWorkers", clienttranslate('${player_name} unlocked all Workers and do a normal turn'), array(
                     'player_id' => $player_id,
                     'player_name' => self::getActivePlayerName(),
                     'token_cocoa' => 'cocoa',
                     'pay' => $pay,
                 ));
+                $this->gamestate->nextState("playerTurn");
             }
 
 
         } else {
-            $this->gamestate->nextState("check_end_turn");
             self::notifyAllPlayers("unlockAllWorkers", clienttranslate('${player_name} unlocked all Workers'), array(
                 'player_id' => $player_id,
                 'player_name' => self::getActivePlayerName(),
                 'pay' => $pay,
             ));
+            $this->gamestate->nextState("check_end_turn");
         }
 
     }
@@ -2938,7 +2947,14 @@ class teotihuacan extends Table
 
         if ($selected_board_id_to <= $selected_board_id_from && $this->isTechAquired(0) && !self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')) {
             $actionBoard_1 = 'actionBoard_1';
-            $this->collectResource($player_id, 1, 'cocoa', $actionBoard_1, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 1)'));
+
+            $selected_worker2_id = self::getGameStateValue('selected_worker2_id');
+
+            if (self::getGameStateValue('useDiscoveryMoveTwoWorkers') && $selected_worker2_id != 0) {
+                $this->collectResource($player_id, 2, 'cocoa', $actionBoard_1, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 1)'));
+            } else {
+                $this->collectResource($player_id, 1, 'cocoa', $actionBoard_1, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 1)'));
+            }
         }
 
         $colors = $this->getDiffrentColorsOnBoard() + 1;
