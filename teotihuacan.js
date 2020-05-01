@@ -78,7 +78,7 @@ define([
             },
 
             setupPlayerTable: function () {
-                var current_player = this.gamedatas_local.players[this.getCurrentPlayerId()];
+                var current_player = this.gamedatas_local.players[this.getThisPlayerId()];
                 dojo.place(this.format_block('jstpl_playerTable', current_player), 'player_table', 'first');
                 var allStartingTilesChoosed = true;
 
@@ -1034,7 +1034,7 @@ define([
                 console.log('Entering state: ', args);
 
                 this.deselectAll();
-                var player_id = this.getCurrentPlayerId();
+                var player_id = this.getThisPlayerId();
 
                 if (this.isCurrentPlayerActive()) {
 
@@ -1103,7 +1103,6 @@ define([
                             }
                             break;
                         case 'playerTurn_upgrade_workers':
-                            this.clickableWorkers = args.args.clickableWorkers;
                             this.setAllWorkersClickable(args.args.clickableWorkers);
                             break;
                         case 'playerTurn_ascension_choose_bonus':
@@ -1276,6 +1275,7 @@ define([
 
                     switch (stateName) {
                         case 'playerTurn':
+                            this.clickableWorkers = args.clickableWorkers;
                             if (args.lockedWorkers > 0) {
                                 this.addActionButton('button_1_id', _('Unlock all workers'), 'unlockAllWorkersClick', null, false, 'gray');
                             }
@@ -1522,6 +1522,7 @@ define([
                             }
                             break;
                         case 'playerTurn_upgrade_workers':
+                            this.clickableWorkers = args.clickableWorkers;
                             if (args.lockedWorkers > 0) {
                                 this.addActionButton('button_1_id', _('Unlock all Workers') + "(-3" + this.getTokenSymbol('cocoa', true) + ")", 'unlockWorkersAndPayConfirmed', null, false, 'gray');
 
@@ -1751,6 +1752,20 @@ define([
                     _this.disconnect(queueEntries[i], event); //disconnect same event
                     _this.connect(queueEntries[i], event, callback);
                 }
+            },
+
+            /**
+             * function wrapper for this.player_id,
+             * it checks if spectator
+             */
+            getThisPlayerId: function(){
+                if (!this.isSpectator){
+                    return this.player_id;
+                }
+                if (!this.cocFirstPlayerId){
+                    this.cocFirstPlayerId = Object.keys(this.gamedatas_local.players)[0];
+                }
+                return this.cocFirstPlayerId;
             },
 
             bindData: function (object) {
@@ -1986,7 +2001,7 @@ define([
             },
 
             isFreeCocoa: function () {
-                var player_id = this.getCurrentPlayerId();
+                var player_id = this.getThisPlayerId();
                 var discoveryTiles_other = this.gamedatas_local.playersHand[player_id]['other'];
 
                 for (var discoveryTile_index in discoveryTiles_other) {
@@ -3603,7 +3618,7 @@ define([
                             dojo.query('.startingTile').removeClass('clickable');
                             this.StartResouceConfirm();
                         } else {
-                            var current_player = this.gamedatas_local.players[this.getCurrentPlayerId()];
+                            var current_player = this.gamedatas_local.players[this.getThisPlayerId()];
                             current_player.startingTile0 = selectedStartingTiles[0].id.split('_')[1];
                             current_player.startingTile1 = selectedStartingTiles[1].id.split('_')[1];
                             if ((current_player.startingTile0 == "3" || current_player.startingTile0 == "13")) {
@@ -3709,7 +3724,7 @@ define([
                     startingTile1 = selectedStartingTiles[1].id.split('_')[1];
                 }
                 var action = 'chooseStartingTile';
-                var current_player = this.gamedatas_local.players[this.getCurrentPlayerId()];
+                var current_player = this.gamedatas_local.players[this.getThisPlayerId()];
                 current_player.startingTile0 = startingTile0;
                 current_player.startingTile1 = startingTile1;
                 if ((current_player.startingTile0 == "3" || current_player.startingTile0 == "13")) {
@@ -3993,10 +4008,6 @@ define([
                 var discTile = notif.args.discTile;
                 var board_location = notif.args.selected_board_id_to;
 
-                this.gamedatas_local.players[player_id].cocoa = parseInt(this.gamedatas_local.players[player_id].cocoa) - cocoa;
-                this.gamedatas_local.players[player_id].wood = parseInt(this.gamedatas_local.players[player_id].wood) - wood;
-                this.gamedatas_local.players[player_id].gold = parseInt(this.gamedatas_local.players[player_id].gold) - gold;
-
                 this.gamedatas_local.playersHand = notif.args.player_hand;
 
                 this.gamedatas_local.discoveryTiles = discoveryTiles;
@@ -4260,7 +4271,7 @@ define([
                 var players = notif.args.players;
                 this.gamedatas_local.players = players;
 
-                var current_player = this.gamedatas_local.players[this.getCurrentPlayerId()];
+                var current_player = this.gamedatas_local.players[this.getThisPlayerId()];
                 for (var player_id in this.gamedatas_local.players) {
                     var player = this.gamedatas_local.players[player_id];
                     if (player.id != current_player.id) {

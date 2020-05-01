@@ -3950,7 +3950,8 @@ class teotihuacan extends Table
             $messageParts[] = clienttranslate(' ability to move two workers');
             self::setGameStateValue('useDiscoveryMoveTwoWorkers', 1);
         } else if ($upgrade > 0) {
-            if ($this->gamestate->state()['name'] == 'playerTurn_show_board_actions') {
+            $countWorkers = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false");
+            if ($this->gamestate->state()['name'] == 'playerTurn_show_board_actions' || $countWorkers == 0) {
                 throw new BgaUserException(self::_("You cannot use this Discovery Tile right now"));
             }
             $messageParts[] = ' ${upgrade}${token_upgrade}';// NOI18N

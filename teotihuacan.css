@@ -337,6 +337,10 @@
     color: #000000;
     user-select: none;
     display: none;
+    background: rgba(255,255,255,0.6);
+    z-index: 9999;
+    padding: 0 5px;
+    border-radius: 5px;
 }
 
 .actionBoard:hover .help-icon {
