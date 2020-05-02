@@ -339,12 +339,7 @@ define([
                     $('actionBoard_' + board.card_location_arg).dataset.id = board.card_id;
                     dojo.attr('actionBoard_' + board.card_location_arg, "data-pos", board.card_location_arg);
 
-                    var tooltip = this.gamedatas_local.actionBoards_data[i].tooltip;
-                    tooltip = tooltip.replace('{token_temple_blue}', this.getTokenSymbol('temple_blue', true));
-                    tooltip = tooltip.replace('{token_temple_red}', this.getTokenSymbol('temple_red', true));
-                    tooltip = tooltip.replace('{token_temple_green}', this.getTokenSymbol('temple_green', true));
-
-                    this.addTooltipHtml("help_actionBoard_" + board.card_location_arg, tooltip);
+                    this.addTooltipHtml("help_actionBoard_" + board.card_location_arg, this.getActionBoardTooltip(i));
 
                     if (board.card_location_arg == this.selected_board_id_to && this.isCurrentPlayerActive()) {
                         if (this.checkPossibleActions("selectBoard")) {
@@ -366,7 +361,7 @@ define([
                                 location: royalTiles[j].location,
                                 number: 1
                             }), 'royal_wrapper_0');
-                            this.addTooltipHtml("royalTile_" + royalTiles[j].type_arg, this.gamedatas_local.royalTiles_data[royalTiles[j].type_arg].tooltip);
+                            this.addTooltipHtml("royalTile_" + royalTiles[j].type_arg, this.getRoyalTileTooltip(royalTiles[j].type_arg));
                         }
                         royalTiles = this.gamedatas_local.royalTiles.royalTiles1;
                         for (var j in royalTiles) {
@@ -375,7 +370,7 @@ define([
                                 location: royalTiles[j].location,
                                 number: 2
                             }), 'royal_wrapper_1');
-                            this.addTooltipHtml("royalTile_" + royalTiles[j].type_arg, this.gamedatas_local.royalTiles_data[royalTiles[j].type_arg].tooltip);
+                            this.addTooltipHtml("royalTile_" + royalTiles[j].type_arg, this.getRoyalTileTooltip(royalTiles[j].type_arg));
                         }
                         royalTiles = this.gamedatas_local.royalTiles.royalTiles2;
                         for (var j in royalTiles) {
@@ -384,7 +379,7 @@ define([
                                 location: royalTiles[j].location,
                                 number: 3
                             }), 'royal_wrapper_2');
-                            this.addTooltipHtml("royalTile_" + royalTiles[j].type_arg, this.gamedatas_local.royalTiles_data[royalTiles[j].type_arg].tooltip);
+                            this.addTooltipHtml("royalTile_" + royalTiles[j].type_arg, this.getRoyalTileTooltip(royalTiles[j].type_arg));
                         }
                     } else if (board.card_id == "2") {
                         for (var j in this.gamedatas_local.discoveryTiles.b2) {
@@ -411,32 +406,32 @@ define([
                         var technologyTiles = this.gamedatas_local.technologyTiles.r1_c1;
                         for (var j in technologyTiles) {
                             dojo.place(this.format_block('jstpl_technologyTiles', technologyTiles[j]), 'r1_c1');
-                            this.addTooltipHtml("technologyTile_" + technologyTiles[j].type_arg, this.gamedatas_local.technologyTiles_data[technologyTiles[j].type_arg].tooltip.replace('{token_gold}', this.getTokenSymbol('gold', true)));
+                            this.addTooltipHtml("technologyTile_" + technologyTiles[j].type_arg, this.getTechnologyTileTooltip(technologyTiles[j].type_arg));
                         }
                         technologyTiles = this.gamedatas_local.technologyTiles.r1_c2;
                         for (var j in technologyTiles) {
                             dojo.place(this.format_block('jstpl_technologyTiles', technologyTiles[j]), 'r1_c2');
-                            this.addTooltipHtml("technologyTile_" + technologyTiles[j].type_arg, this.gamedatas_local.technologyTiles_data[technologyTiles[j].type_arg].tooltip.replace('{token_gold}', this.getTokenSymbol('gold', true)));
+                            this.addTooltipHtml("technologyTile_" + technologyTiles[j].type_arg, this.getTechnologyTileTooltip(technologyTiles[j].type_arg));
                         }
                         technologyTiles = this.gamedatas_local.technologyTiles.r1_c3;
                         for (var j in technologyTiles) {
                             dojo.place(this.format_block('jstpl_technologyTiles', technologyTiles[j]), 'r1_c3');
-                            this.addTooltipHtml("technologyTile_" + technologyTiles[j].type_arg, this.gamedatas_local.technologyTiles_data[technologyTiles[j].type_arg].tooltip.replace('{token_gold}', this.getTokenSymbol('gold', true)));
+                            this.addTooltipHtml("technologyTile_" + technologyTiles[j].type_arg, this.getTechnologyTileTooltip(technologyTiles[j].type_arg));
                         }
                         technologyTiles = this.gamedatas_local.technologyTiles.r2_c1;
                         for (var j in technologyTiles) {
                             dojo.place(this.format_block('jstpl_technologyTiles', technologyTiles[j]), 'r2_c1');
-                            this.addTooltipHtml("technologyTile_" + technologyTiles[j].type_arg, this.gamedatas_local.technologyTiles_data[technologyTiles[j].type_arg].tooltip.replace('{token_gold}', this.getTokenSymbol('gold', true)));
+                            this.addTooltipHtml("technologyTile_" + technologyTiles[j].type_arg, this.getTechnologyTileTooltip(technologyTiles[j].type_arg));
                         }
                         technologyTiles = this.gamedatas_local.technologyTiles.r2_c2;
                         for (var j in technologyTiles) {
                             dojo.place(this.format_block('jstpl_technologyTiles', technologyTiles[j]), 'r2_c2');
-                            this.addTooltipHtml("technologyTile_" + technologyTiles[j].type_arg, this.gamedatas_local.technologyTiles_data[technologyTiles[j].type_arg].tooltip.replace('{token_gold}', this.getTokenSymbol('gold', true)));
+                            this.addTooltipHtml("technologyTile_" + technologyTiles[j].type_arg, this.getTechnologyTileTooltip(technologyTiles[j].type_arg));
                         }
                         technologyTiles = this.gamedatas_local.technologyTiles.r2_c3;
                         for (var j in technologyTiles) {
                             dojo.place(this.format_block('jstpl_technologyTiles', technologyTiles[j]), 'r2_c3');
-                            this.addTooltipHtml("technologyTile_" + technologyTiles[j].type_arg, this.gamedatas_local.technologyTiles_data[technologyTiles[j].type_arg].tooltip.replace('{token_gold}', this.getTokenSymbol('gold', true)));
+                            this.addTooltipHtml("technologyTile_" + technologyTiles[j].type_arg, this.getTechnologyTileTooltip(technologyTiles[j].type_arg));
                         }
                     } else if (board.card_id == "6") {
                         var row1 = parseInt(this.gamedatas_local.global.row1);
@@ -599,19 +594,19 @@ define([
                 var templeBonusTiles = this.gamedatas_local.templeBonusTiles.tblueTile;
                 for (var j in templeBonusTiles) {
                     dojo.place(this.format_block('jstpl_templeBonusTiles', templeBonusTiles[j]), 'temple_blue_bonus');
-                    this.addTooltipHtml("templeBonusTile_" + templeBonusTiles[j].type_arg, this.gamedatas_local.templeBonusTiles_data[templeBonusTiles[j].type_arg].tooltip);
+                    this.addTooltipHtml("templeBonusTile_" + templeBonusTiles[j].type_arg, this.getTempleBonusTileTooltip(templeBonusTiles[j].type_arg));
                 }
 
                 templeBonusTiles = this.gamedatas_local.templeBonusTiles.tredTile;
                 for (var j in templeBonusTiles) {
                     dojo.place(this.format_block('jstpl_templeBonusTiles', templeBonusTiles[j]), 'temple_red_bonus');
-                    this.addTooltipHtml("templeBonusTile_" + templeBonusTiles[j].type_arg, this.gamedatas_local.templeBonusTiles_data[templeBonusTiles[j].type_arg].tooltip);
+                    this.addTooltipHtml("templeBonusTile_" + templeBonusTiles[j].type_arg, this.getTempleBonusTileTooltip(templeBonusTiles[j].type_arg));
                 }
 
                 templeBonusTiles = this.gamedatas_local.templeBonusTiles.tgreenTile;
                 for (var j in templeBonusTiles) {
                     dojo.place(this.format_block('jstpl_templeBonusTiles', templeBonusTiles[j]), 'temple_green_bonus');
-                    this.addTooltipHtml("templeBonusTile_" + templeBonusTiles[j].type_arg, this.gamedatas_local.templeBonusTiles_data[templeBonusTiles[j].type_arg].tooltip);
+                    this.addTooltipHtml("templeBonusTile_" + templeBonusTiles[j].type_arg, this.getTempleBonusTileTooltip(templeBonusTiles[j].type_arg));
                 }
             },
 
@@ -1448,7 +1443,9 @@ define([
                                 this.addActionButton('incrementCocoa', "+1" + this.getTokenSymbol('cocoa', true), 'incrementTradeCocoa', null, false, 'gray');
                                 this.addTooltipHtml('incrementCocoa', _("Increment number of cocoa"));
 
-                                var isMax = this.clientStateArgs.multiplier == this.clientStateArgs.max;
+                                var max = Math.min(parseInt(this.gamedatas_local.players[this.getActivePlayerId()].cocoa), this.clientStateArgs.max);
+
+                                var isMax = this.clientStateArgs.multiplier == max;
                                 if (this.clientStateArgs.pay.cocoa == 0) {
                                     dojo.query('#decrementCocoa').addClass('disabled');
                                 } else {
@@ -3164,6 +3161,8 @@ define([
             getDiscoveryTileTooltip: function (id) {
                 var tooltip = this.gamedatas_local.discoveryTiles_data[id].tooltip;
 
+                tooltip = tooltip.replace(/{token_vp}/g, this.getTokenSymbol('vp', true));
+
                 var cocoa = this.gamedatas_local.discoveryTiles_data[id].price.cocoa;
                 if(cocoa > 0){
                     tooltip = tooltip.replace('{cocoa}', cocoa + this.getTokenSymbol('cocoa', true));
@@ -3190,6 +3189,49 @@ define([
                 return tooltip;
             },
 
+            getActionBoardTooltip: function (id) {
+                var tooltip = this.gamedatas_local.actionBoards_data[id].tooltip;
+
+                tooltip = tooltip.replace('{token_temple_blue}', this.getTokenSymbol('temple_blue', true));
+                tooltip = tooltip.replace('{token_temple_red}', this.getTokenSymbol('temple_red', true));
+                tooltip = tooltip.replace('{token_temple_green}', this.getTokenSymbol('temple_green', true));
+                tooltip = tooltip.replace(/{token_vp}/g, this.getTokenSymbol('vp', true));
+
+                for (var i = 1; i <= 8; i++) {
+                    tooltip = tooltip.replace('{board'+i+'}', '<div class="board_color board_color_'+i+'">'+i+'</div>');
+                }
+
+                return tooltip;
+            },
+
+            getRoyalTileTooltip: function (id) {
+                var tooltip = this.gamedatas_local.royalTiles_data[id].tooltip;
+
+                tooltip = tooltip.replace(/{token_vp}/g, this.getTokenSymbol('vp', true));
+
+                return tooltip;
+            },
+
+            getTempleBonusTileTooltip: function (id) {
+                var tooltip = this.gamedatas_local.templeBonusTiles_data[id].tooltip;
+
+                tooltip = tooltip.replace(/{token_vp}/g, this.getTokenSymbol('vp', true));
+
+                return tooltip;
+            },
+            getTechnologyTileTooltip: function (id) {
+                var tooltip = this.gamedatas_local.technologyTiles_data[id].tooltip;
+
+                tooltip = tooltip.replace('{token_gold}', this.getTokenSymbol('gold', true));
+                tooltip = tooltip.replace(/{token_vp}/g, this.getTokenSymbol('vp', true));
+
+                for (var i = 1; i <= 8; i++) {
+                    tooltip = tooltip.replace('{board'+i+'}', '<div class="board_color board_color_'+i+'">'+i+'</div>');
+                }
+
+                return tooltip;
+            },
+
             getStartingTileTooltip: function (id) {
                 var tooltip = this.gamedatas_local.startingTiles_data[id].tooltip;
 
@@ -3197,6 +3239,8 @@ define([
                 tooltip = tooltip.replace('{board0}', '<div class="board_color board_color_'+board0+'">'+board0+'</div>');
                 var board1 = this.gamedatas_local.startingTiles_data[id].board[1];
                 tooltip = tooltip.replace('{board1}', '<div class="board_color board_color_'+board1+'">'+board1+'</div>');
+
+                tooltip = tooltip.replace('{token_vp}', this.getTokenSymbol('vp', true));
 
                 return tooltip;
             },

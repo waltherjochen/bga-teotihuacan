@@ -32,7 +32,7 @@ $this->actionBoards = array(
     ACTION_BOARD_PALACE => array(
         "id" => ACTION_BOARD_PALACE,
         "name" => clienttranslate("Palace"),
-        "tooltip" => clienttranslate("The Palace (1) Action Board does NOT have a Main action. When moving a worker here, you may only place it on a Royal tile to take a Worship action or in the general area to take a Collect Cocoa action.")
+        "tooltip" => clienttranslate("The Palace {board1} Action Board does NOT have a Main action. When moving a worker here, you may only place it on a Royal tile to take a Worship action or in the general area to take a Collect Cocoa action.")
     ),
     ACTION_BOARD_FOREST => array(
         "id" => ACTION_BOARD_FOREST,
@@ -52,22 +52,22 @@ $this->actionBoards = array(
     ACTION_BOARD_ALCHEMY => array(
         "id" => ACTION_BOARD_ALCHEMY,
         "name" => clienttranslate("Alchemy"),
-        "tooltip" => clienttranslate("Select one Technology tile on the Alchemy (5) Action Board observing the following restrictions:<br><br>- If you have only one worker on this Action Board, you must select from the first row.<br> - If you have two or more workers on this Action Board, you may select from either row.<br> - EXCEPTION: If you have only one worker on this Action Board but its power is 4 or 5, you may still choose from the second row, but doing this will forfeit the power-up you would gain from this action.<br><br> Pay the cost in gold as shown on the selected tile and place one of your Technology markers (wooden discs) on it to mark that you have acquired this Technology. Refer to the Appendix for an explanation of the ongoing benefit of each Technology tile. Any other player who already had a disc on the tile you develop immediately scores 3 Victory Points. You may never develop a Technology you have previously acquired (you may not place a Technology marker on a Technology tile with one of your markers present). <br><br>After placing the Technology marker, advance once on one temple, depending on which column the selected Technology belongs to:{token_temple_blue} for the left column,{token_temple_red} for the centre column,{token_temple_green} for the right column.")
+        "tooltip" => clienttranslate("Select one Technology tile on the Alchemy {board5} Action Board observing the following restrictions:<br><br>- If you have only one worker on this Action Board, you must select from the first row.<br> - If you have two or more workers on this Action Board, you may select from either row.<br> - EXCEPTION: If you have only one worker on this Action Board but its power is 4 or 5, you may still choose from the second row, but doing this will forfeit the power-up you would gain from this action.<br><br> Pay the cost in gold as shown on the selected tile and place one of your Technology markers (wooden discs) on it to mark that you have acquired this Technology. Refer to the Appendix for an explanation of the ongoing benefit of each Technology tile. Any other player who already had a disc on the tile you develop immediately scores 3{token_vp}. You may never develop a Technology you have previously acquired (you may not place a Technology marker on a Technology tile with one of your markers present). <br><br>After placing the Technology marker, advance once on one temple, depending on which column the selected Technology belongs to:{token_temple_blue} for the left column,{token_temple_red} for the centre column,{token_temple_green} for the right column.")
     ),
     ACTION_BOARD_NOBLES => array(
         "id" => ACTION_BOARD_NOBLES,
         "name" => clienttranslate("Nobles"),
-        "tooltip" => clienttranslate("Pay 2 wood to take the first available Building from the left side of the Buildings row on the Main Board (it is important that these Buildings are always taken from left to right), and place it in the leftmost available space of one of the Building rows of the Nobles (6) Action Board:<br><br>- If you have 1 worker on this Action Board: Place the Building in the leftmost empty space of the top row. If there are no empty spaces, you may not take this action.<br>- If you have 2 workers on this Action Board: Place it in the leftmost empty space of the centre row. If there are no empty spaces on the second row, place it in the row above, if possible.<br>-If you have 3 workers on this Action Board: Place it in the leftmost empty space of the bottom row. If there are no empty spaces on the third row, place it in one of the rows above, if possible.<br><br>Then, score a number of Victory Points equal to the printed value of the space you covered with the Building, and advance your marker one step on the Avenue of the Dead track, to a maximum of 9.")
+        "tooltip" => clienttranslate("Pay 2 wood to take the first available Building from the left side of the Buildings row on the Main Board (it is important that these Buildings are always taken from left to right), and place it in the leftmost available space of one of the Building rows of the Nobles {board6} Action Board:<br><br>- If you have 1 worker on this Action Board: Place the Building in the leftmost empty space of the top row. If there are no empty spaces, you may not take this action.<br>- If you have 2 workers on this Action Board: Place it in the leftmost empty space of the centre row. If there are no empty spaces on the second row, place it in the row above, if possible.<br>-If you have 3 workers on this Action Board: Place it in the leftmost empty space of the bottom row. If there are no empty spaces on the third row, place it in one of the rows above, if possible.<br><br>Then, score a number of{token_vp} equal to the printed value of the space you covered with the Building, and advance your marker one step on the Avenue of the Dead track, to a maximum of 9.")
     ),
     ACTION_BOARD_DECORATIONS => array(
         "id" => ACTION_BOARD_DECORATIONS,
         "name" => clienttranslate("Decorations"),
-        "tooltip" => clienttranslate("Pay 3 gold to select one of the 4 available Decoration tiles. For each additional worker you have on this Action Board you receive a 1 gold discount to the cost (to a minimum of 1 gold). Add the selected Decoration tile to the Pyramid using the following restrictions:<br><br>- It must be placed in one of the marked spaces.<br>- The tile must be placed so that its arrow points towards the centre of the Pyramid.<br>- You can only place on the spaces if there is a layer of Pyramid tiles under both of its squares AND there is a Decoration one step lower<br><br> When placing the tile, check the icons you are covering. For each icon being covered by an icon of the same type on the Decoration tile, score 1 Victory Point. If you scored 1 Victory Point for an icon that is red {token_temple_red}, green {token_temple_green}, or blue {token_temple_blue} on the Decoration tile (the colour of the icon that is being covered does not matter), also advance on the corresponding temple. Then score an additional 3 Victory Points and advance your marker one step on the Pyramid track.")
+        "tooltip" => clienttranslate("Pay 3 gold to select one of the 4 available Decoration tiles. For each additional worker you have on this Action Board you receive a 1 gold discount to the cost (to a minimum of 1 gold). Add the selected Decoration tile to the Pyramid using the following restrictions:<br><br>- It must be placed in one of the marked spaces.<br>- The tile must be placed so that its arrow points towards the centre of the Pyramid.<br>- You can only place on the spaces if there is a layer of Pyramid tiles under both of its squares AND there is a Decoration one step lower<br><br> When placing the tile, check the icons you are covering. For each icon being covered by an icon of the same type on the Decoration tile, score 1{token_vp}. If you scored 1{token_vp} for an icon that is red {token_temple_red}, green {token_temple_green}, or blue {token_temple_blue} on the Decoration tile (the colour of the icon that is being covered does not matter), also advance on the corresponding temple. Then score an additional 3{token_vp} and advance your marker one step on the Pyramid track.")
     ),
     ACTION_BOARD_CONSTRUCTION => array(
         "id" => ACTION_BOARD_CONSTRUCTION,
         "name" => clienttranslate("Construction"),
-        "tooltip" => clienttranslate("You may select one of the available Pyramid tiles and add it to the Pyramid for each worker you have on the Construction (8) Action Board. You must add at least one tile.<br><br>- You can place a Pyramid tile on the first (bottom) level, into one of the empty squares, by paying 2 stone. Score 1 Victory Point for each tile added to the first level.<br>-You can place a Pyramid tile on the second level, over the intersection of four tiles of the first level, by paying 2 stone and 1 wood. Score 3 Victory Points for each tile added to the second level.<br>- Same with other levels.<br>-If a tile was placed on the fourth level of the Pyramid, the Pyramid is considered finished. The active player must immediately move the white Calendar disc to the position of the black Calendar disc. This will trigger a final Eclipse, as described in the Eclipse & End of Game section, and end the game.<br><br>You may rotate the tile any way you choose. When placing the tile, check the icons you are covering. For each icon being covered by an icon of the same type on the newly placed Pyramid tile, score 1 Victory Point.<br><br>If you scored 1 Victory Point for an icon that is red {token_temple_red}, green {token_temple_green}, or blue {token_temple_blue} on the newly placed Pyramid tile (the colour of the icon that is being covered does not matter), also advance on the corresponding temple.<br>Then advance your marker one step on the Pyramid track.<br><br>If adding more than one tile to the Pyramid, always fully resolve all effects before adding the next tile, including the scoring of Victory Points, advancement on the Pyramid track, as well as temple advancements, if any.")
+        "tooltip" => clienttranslate("You may select one of the available Pyramid tiles and add it to the Pyramid for each worker you have on the Construction {board8} Action Board. You must add at least one tile.<br><br>- You can place a Pyramid tile on the first (bottom) level, into one of the empty squares, by paying 2 stone. Score 1{token_vp} for each tile added to the first level.<br>-You can place a Pyramid tile on the second level, over the intersection of four tiles of the first level, by paying 2 stone and 1 wood. Score 3{token_vp} for each tile added to the second level.<br>- Same with other levels.<br>-If a tile was placed on the fourth level of the Pyramid, the Pyramid is considered finished. The active player must immediately move the white Calendar disc to the position of the black Calendar disc. This will trigger a final Eclipse, as described in the Eclipse & End of Game section, and end the game.<br><br>You may rotate the tile any way you choose. When placing the tile, check the icons you are covering. For each icon being covered by an icon of the same type on the newly placed Pyramid tile, score 1{token_vp}.<br><br>If you scored 1{token_vp} for an icon that is red {token_temple_red}, green {token_temple_green}, or blue {token_temple_blue} on the newly placed Pyramid tile (the colour of the icon that is being covered does not matter), also advance on the corresponding temple.<br>Then advance your marker one step on the Pyramid track.<br><br>If adding more than one tile to the Pyramid, always fully resolve all effects before adding the next tile, including the scoring of Victory Points, advancement on the Pyramid track, as well as temple advancements, if any.")
     ),
 );
 
@@ -161,27 +161,27 @@ $this->templeBonusTiles = array(
         "bonus" => array("mask" => 1, "technology" => 0, "vp15" => 0, "vp_ad" => 0, "vp_bonus" => 0, "vp_discovery" => 0, "vp_workers" => 0)),
     1 => array(
         "id" => 1,
-        "tooltip" => clienttranslate("Score 5 Victory Points for each Technology tile with one of your markers."),
+        "tooltip" => clienttranslate("Score 5{token_vp} for each Technology tile with one of your markers."),
         "bonus" => array("mask" => 0, "technology" => 1, "vp15" => 0, "vp_ad" => 0, "vp_bonus" => 0, "vp_discovery" => 0, "vp_workers" => 0)),
     2 => array(
         "id" => 2,
-        "tooltip" => clienttranslate("Score 15 Victory Points"),
+        "tooltip" => clienttranslate("Score 15{token_vp}"),
         "bonus" => array("mask" => 0, "technology" => 0, "vp15" => 1, "vp_ad" => 0, "vp_bonus" => 0, "vp_discovery" => 0, "vp_workers" => 0)),
     3 => array(
         "id" => 3,
-        "tooltip" => clienttranslate("Score 3 Victory Points for each step you progressed on the Avenue of the Dead track."),
+        "tooltip" => clienttranslate("Score 3{token_vp} for each step you progressed on the Avenue of the Dead track."),
         "bonus" => array("mask" => 0, "technology" => 0, "vp15" => 0, "vp_ad" => 1, "vp_bonus" => 0, "vp_discovery" => 0, "vp_workers" => 0)),
     4 => array(
         "id" => 4,
-        "tooltip" => clienttranslate("Score 9 Victory Points for each Bonus tile you reached, including this tile."),
+        "tooltip" => clienttranslate("Score 9{token_vp} for each Bonus tile you reached, including this tile."),
         "bonus" => array("mask" => 0, "technology" => 0, "vp15" => 0, "vp_ad" => 0, "vp_bonus" => 1, "vp_discovery" => 0, "vp_workers" => 0)),
     5 => array(
         "id" => 5,
-        "tooltip" => clienttranslate("Score 2 Victory Points for each nonmask Discovery tile you have (used or unused)."),
+        "tooltip" => clienttranslate("Score 2{token_vp} for each nonmask Discovery tile you have (used or unused)."),
         "bonus" => array("mask" => 0, "technology" => 0, "vp15" => 0, "vp_ad" => 0, "vp_bonus" => 0, "vp_discovery" => 1, "vp_workers" => 0)),
     6 => array(
         "id" => 6,
-        "tooltip" => clienttranslate("Score for your workers: for each worker with 1-3 power, score 4 Victory Points; for each worker with 4-5 power, score 9 Victory Points."),
+        "tooltip" => clienttranslate("Score for your workers: for each worker with 1-3 power, score 4{token_vp}; for each worker with 4-5 power, score 9{token_vp}."),
         "bonus" => array("mask" => 0, "technology" => 0, "vp15" => 0, "vp_ad" => 0, "vp_bonus" => 0, "vp_discovery" => 0, "vp_workers" => 1)),
 );
 
@@ -200,11 +200,11 @@ $this->royalTiles = array(
         "bonus" => array("cocoa_locked" => 0, "trade_c_ws" => 0, "trade_r_2c" => 1, "vp_technology" => 0, "vp_pyramid" => 0, "trade_c_sg" => 0, "trade_cr_r" => 0, "trade_c_t" => 0, "vp_ad" => 0)),
     3 => array(
         "id" => 3,
-        "tooltip" => clienttranslate("Score 2 Victory Points each for whichever is lower: the number of Technologies with your marker, or the power of the locked worker."),
+        "tooltip" => clienttranslate("Score 2{token_vp} each for whichever is lower: the number of Technologies with your marker, or the power of the locked worker."),
         "bonus" => array("cocoa_locked" => 0, "trade_c_ws" => 0, "trade_r_2c" => 0, "vp_technology" => 1, "vp_pyramid" => 0, "trade_c_sg" => 0, "trade_cr_r" => 0, "trade_c_t" => 0, "vp_ad" => 0)),
     4 => array(
         "id" => 4,
-        "tooltip" => clienttranslate("Score 2 Victory Points each for whichever is lower: your position on the Pyramid track, or the power of the locked worker."),
+        "tooltip" => clienttranslate("Score 2{token_vp} each for whichever is lower: your position on the Pyramid track, or the power of the locked worker."),
         "bonus" => array("cocoa_locked" => 0, "trade_c_ws" => 0, "trade_r_2c" => 0, "vp_technology" => 0, "vp_pyramid" => 1, "trade_c_sg" => 0, "trade_cr_r" => 0, "trade_c_t" => 0, "vp_ad" => 0)),
     5 => array(
         "id" => 5,
@@ -220,7 +220,7 @@ $this->royalTiles = array(
         "bonus" => array("cocoa_locked" => 0, "trade_c_ws" => 0, "trade_r_2c" => 0, "vp_technology" => 0, "vp_pyramid" => 0, "trade_c_sg" => 0, "trade_cr_r" => 0, "trade_c_t" => 1, "vp_ad" => 0)),
     8 => array(
         "id" => 8,
-        "tooltip" => clienttranslate("Score 1 Victory Point each for whichever is lower: your position on the Avenue of the Dead track, or the power of the locked worker plus one."),
+        "tooltip" => clienttranslate("Score 1{token_vp} each for whichever is lower: your position on the Avenue of the Dead track, or the power of the locked worker plus one."),
         "bonus" => array("cocoa_locked" => 0, "trade_c_ws" => 0, "trade_r_2c" => 0, "vp_technology" => 0, "vp_pyramid" => 0, "trade_c_sg" => 0, "trade_cr_r" => 0, "trade_c_t" => 0, "vp_ad" => 1)),
 );
 $this->royalTilesTrade = array(
@@ -249,32 +249,32 @@ $this->royalTilesTrade = array(
 $this->technologyTiles = array(
     0 => array(
         "id" => 0,
-        "tooltip" => clienttranslate("Each time you move a worker onto or past the Palace (1) Action Board, you gain 1 cocoa. (Nr. 01) (Price: 1 {token_gold})"),
+        "tooltip" => clienttranslate("Each time you move a worker onto or past the Palace {board1} Action Board, you gain 1 cocoa. (Nr. 01) (Price: 1 {token_gold})"),
         "price" => array("gold" => 1),
         "bonus" => array("cocoa_palace" => 1, "alchemy" => 0, "resources" => 0, "resources_c_vp" => 0, "decorations_vp" => 0, "construction_vp" => 0, "power_up" => 0, "construction_extra" => 0, "construction_temple" => 0)),
     1 => array(
         "id" => 1,
-        "tooltip" => clienttranslate("After performing the Main action of Alchemy (5) or Nobles (6) Action Boards, gain 3 Victory Points. (Nr. 03) (Price: 1 {token_gold})"),
+        "tooltip" => clienttranslate("After performing the Main action of Alchemy {board5} or Nobles {board6} Action Boards, gain 3{token_vp}. (Nr. 03) (Price: 1 {token_gold})"),
         "price" => array("gold" => 1),
         "bonus" => array("cocoa_palace" => 0, "alchemy" => 1, "resources" => 0, "resources_c_vp" => 0, "decorations_vp" => 0, "construction_vp" => 0, "power_up" => 0, "construction_extra" => 0, "construction_temple" => 0)),
     2 => array(
         "id" => 2,
-        "tooltip" => clienttranslate("After performing the Main action of Forest (2), Stone Quarry (3), Gold Deposits (4), you get one (additional) wood, stone, gold, respectively. (Nr. 05) (Price: 1 {token_gold})"),
+        "tooltip" => clienttranslate("After performing the Main action of Forest {board2}, Stone Quarry {board3}, Gold Deposits {board4}, you get one (additional) wood, stone, gold, respectively. (Nr. 05) (Price: 1 {token_gold})"),
         "price" => array("gold" => 1),
         "bonus" => array("cocoa_palace" => 0, "alchemy" => 0, "resources" => 1, "resources_c_vp" => 0, "decorations_vp" => 0, "construction_vp" => 0, "power_up" => 0, "construction_extra" => 0, "construction_temple" => 0)),
     3 => array(
         "id" => 3,
-        "tooltip" => clienttranslate("After performing the Main action of the Forest (2), Stone Quarry (3), or Gold Deposits (4) Action Boards, gain 1 cocoa and 1 Victory Point. (Nr. 07) (Price: 1 {token_gold})"),
+        "tooltip" => clienttranslate("After performing the Main action of the Forest {board2}, Stone Quarry {board3}, or Gold Deposits {board4} Action Boards, gain 1 cocoa and 1{token_vp}. (Nr. 07) (Price: 1 {token_gold})"),
         "price" => array("gold" => 1),
         "bonus" => array("cocoa_palace" => 0, "alchemy" => 0, "resources" => 0, "resources_c_vp" => 1, "decorations_vp" => 0, "construction_vp" => 0, "power_up" => 0, "construction_extra" => 0, "construction_temple" => 0)),
     4 => array(
         "id" => 4,
-        "tooltip" => clienttranslate("After performing the Main action of the Decorations (7) Action Board, gain 4 Victory Points. (Nr. 09) (Price: 2 {token_gold})"),
+        "tooltip" => clienttranslate("After performing the Main action of the Decorations {board7} Action Board, gain 4{token_vp}. (Nr. 09) (Price: 2 {token_gold})"),
         "price" => array("gold" => 2),
         "bonus" => array("cocoa_palace" => 0, "alchemy" => 0, "resources" => 0, "resources_c_vp" => 0, "decorations_vp" => 1, "construction_vp" => 0, "power_up" => 0, "construction_extra" => 0, "construction_temple" => 0)),
     5 => array(
         "id" => 5,
-        "tooltip" => clienttranslate("After performing the Main action of the Construction (8) Action Board, gain 3 Victory Points (regardless of the number of tiles placed). (Nr. 11) (Price: 2 {token_gold})"),
+        "tooltip" => clienttranslate("After performing the Main action of the Construction {board8} Action Board, gain 3{token_vp} (regardless of the number of tiles placed). (Nr. 11) (Price: 2 {token_gold})"),
         "price" => array("gold" => 2),
         "bonus" => array("cocoa_palace" => 0, "alchemy" => 0, "resources" => 0, "resources_c_vp" => 0, "decorations_vp" => 0, "construction_vp" => 1, "power_up" => 0, "construction_extra" => 0, "construction_temple" => 0)),
     6 => array(
@@ -284,12 +284,12 @@ $this->technologyTiles = array(
         "bonus" => array("cocoa_palace" => 0, "alchemy" => 0, "resources" => 0, "resources_c_vp" => 0, "decorations_vp" => 0, "construction_vp" => 0, "power_up" => 1, "construction_extra" => 0, "construction_temple" => 0)),
     7 => array(
         "id" => 7,
-        "tooltip" => clienttranslate("When performing the Main action of the Construction (8) Action Board, resolve it as if you had an additional worker that also granted a discount of 1 resource. (Nr. 15) (Price: 2 {token_gold})"),
+        "tooltip" => clienttranslate("When performing the Main action of the Construction {board8} Action Board, resolve it as if you had an additional worker that also granted a discount of 1 resource. (Nr. 15) (Price: 2 {token_gold})"),
         "price" => array("gold" => 2),
         "bonus" => array("cocoa_palace" => 0, "alchemy" => 0, "resources" => 0, "resources_c_vp" => 0, "decorations_vp" => 0, "construction_vp" => 0, "power_up" => 0, "construction_extra" => 1, "construction_temple" => 0)),
     8 => array(
         "id" => 8,
-        "tooltip" => clienttranslate("After performing the Main action of the Construction (8) Action Board, advance your marker once on one temple (regardless of the number of tiles placed). (Nr. 17) (Price: 2 {token_gold})"),
+        "tooltip" => clienttranslate("After performing the Main action of the Construction {board8} Action Board, advance your marker once on one temple (regardless of the number of tiles placed). (Nr. 17) (Price: 2 {token_gold})"),
         "price" => array("gold" => 2),
         "bonus" => array("cocoa_palace" => 0, "alchemy" => 0, "resources" => 0, "resources_c_vp" => 0, "decorations_vp" => 0, "construction_vp" => 0, "power_up" => 0, "construction_extra" => 0, "construction_temple" => 1))
 );
@@ -351,9 +351,9 @@ $this->discoveryTiles = array(
     14 => array("id" => 14, "tooltip" => clienttranslate("<b>Common Mask</b> (3 Copies)<br><br>Price: {cocoa}{wood}{gold}<br><br>These are masks, used to score during Eclipse. The small number in the bottom right corner shows how many copies of that mask exist. Lower numbered masks are less common, which makes them more valuable."), "price" => array("cocoa" => 0, "wood" => 1, "gold" => 0), "bonus" => array("mask" => 7, "vp" => 0, "r" => 0, "ad" => 0, "temple_choose" => 0, "temple_blue" => 0, "temple_red" => 0, "temple_green" => 0, "cocoa" => 0, "upgrade" => 0, "move_double" => 0, "free_cocoa" => 0, "move_choose" => 0, "extra_worker" => 0)),
     15 => array("id" => 15, "tooltip" => clienttranslate("<b>Common Mask</b> (3 Copies)<br><br>Price: {cocoa}{wood}{gold}<br><br>These are masks, used to score during Eclipse. The small number in the bottom right corner shows how many copies of that mask exist. Lower numbered masks are less common, which makes them more valuable."), "price" => array("cocoa" => 0, "wood" => 1, "gold" => 0), "bonus" => array("mask" => 7, "vp" => 0, "r" => 0, "ad" => 0, "temple_choose" => 0, "temple_blue" => 0, "temple_red" => 0, "temple_green" => 0, "cocoa" => 0, "upgrade" => 0, "move_double" => 0, "free_cocoa" => 0, "move_choose" => 0, "extra_worker" => 0)),
     16 => array("id" => 16, "tooltip" => clienttranslate("<b>Common Mask</b> (3 Copies)<br><br>Price: {cocoa}{wood}{gold}<br><br>These are masks, used to score during Eclipse. The small number in the bottom right corner shows how many copies of that mask exist. Lower numbered masks are less common, which makes them more valuable."), "price" => array("cocoa" => 0, "wood" => 1, "gold" => 0), "bonus" => array("mask" => 7, "vp" => 0, "r" => 0, "ad" => 0, "temple_choose" => 0, "temple_blue" => 0, "temple_red" => 0, "temple_green" => 0, "cocoa" => 0, "upgrade" => 0, "move_double" => 0, "free_cocoa" => 0, "move_choose" => 0, "extra_worker" => 0)),
-    17 => array("id" => 17, "tooltip" => clienttranslate("Price: {cocoa}{wood}{gold}<br><br>Score 4 Victory Points"), "price" => array("cocoa" => 0, "wood" => 1, "gold" => 0), "bonus" => array("mask" => 0, "vp" => 4, "r" => 0, "ad" => 0, "temple_choose" => 0, "temple_blue" => 0, "temple_red" => 0, "temple_green" => 0, "cocoa" => 0, "upgrade" => 0, "move_double" => 0, "free_cocoa" => 0, "move_choose" => 0, "extra_worker" => 0)),
-    18 => array("id" => 18, "tooltip" => clienttranslate("Price: {cocoa}{wood}{gold}<br><br>Score 4 Victory Points"), "price" => array("cocoa" => 0, "wood" => 1, "gold" => 0), "bonus" => array("mask" => 0, "vp" => 4, "r" => 0, "ad" => 0, "temple_choose" => 0, "temple_blue" => 0, "temple_red" => 0, "temple_green" => 0, "cocoa" => 0, "upgrade" => 0, "move_double" => 0, "free_cocoa" => 0, "move_choose" => 0, "extra_worker" => 0)),
-    19 => array("id" => 19, "tooltip" => clienttranslate("Price: {cocoa}{wood}{gold}<br><br>Score 4 Victory Points"), "price" => array("cocoa" => 0, "wood" => 1, "gold" => 0), "bonus" => array("mask" => 0, "vp" => 4, "r" => 0, "ad" => 0, "temple_choose" => 0, "temple_blue" => 0, "temple_red" => 0, "temple_green" => 0, "cocoa" => 0, "upgrade" => 0, "move_double" => 0, "free_cocoa" => 0, "move_choose" => 0, "extra_worker" => 0)),
+    17 => array("id" => 17, "tooltip" => clienttranslate("Price: {cocoa}{wood}{gold}<br><br>Score 4{token_vp}"), "price" => array("cocoa" => 0, "wood" => 1, "gold" => 0), "bonus" => array("mask" => 0, "vp" => 4, "r" => 0, "ad" => 0, "temple_choose" => 0, "temple_blue" => 0, "temple_red" => 0, "temple_green" => 0, "cocoa" => 0, "upgrade" => 0, "move_double" => 0, "free_cocoa" => 0, "move_choose" => 0, "extra_worker" => 0)),
+    18 => array("id" => 18, "tooltip" => clienttranslate("Price: {cocoa}{wood}{gold}<br><br>Score 4{token_vp}"), "price" => array("cocoa" => 0, "wood" => 1, "gold" => 0), "bonus" => array("mask" => 0, "vp" => 4, "r" => 0, "ad" => 0, "temple_choose" => 0, "temple_blue" => 0, "temple_red" => 0, "temple_green" => 0, "cocoa" => 0, "upgrade" => 0, "move_double" => 0, "free_cocoa" => 0, "move_choose" => 0, "extra_worker" => 0)),
+    19 => array("id" => 19, "tooltip" => clienttranslate("Price: {cocoa}{wood}{gold}<br><br>Score 4{token_vp}"), "price" => array("cocoa" => 0, "wood" => 1, "gold" => 0), "bonus" => array("mask" => 0, "vp" => 4, "r" => 0, "ad" => 0, "temple_choose" => 0, "temple_blue" => 0, "temple_red" => 0, "temple_green" => 0, "cocoa" => 0, "upgrade" => 0, "move_double" => 0, "free_cocoa" => 0, "move_choose" => 0, "extra_worker" => 0)),
     20 => array("id" => 20, "tooltip" => clienttranslate("Price: {cocoa}{wood}{gold}<br><br>Gain 3 resources"), "price" => array("cocoa" => 1, "wood" => 0, "gold" => 0), "bonus" => array("mask" => 0, "vp" => 0, "r" => 3, "ad" => 0, "temple_choose" => 0, "temple_blue" => 0, "temple_red" => 0, "temple_green" => 0, "cocoa" => 0, "upgrade" => 0, "move_double" => 0, "free_cocoa" => 0, "move_choose" => 0, "extra_worker" => 0)),
     21 => array("id" => 21, "tooltip" => clienttranslate("Price: {cocoa}{wood}{gold}<br><br>Gain 3 resources"), "price" => array("cocoa" => 1, "wood" => 0, "gold" => 0), "bonus" => array("mask" => 0, "vp" => 0, "r" => 3, "ad" => 0, "temple_choose" => 0, "temple_blue" => 0, "temple_red" => 0, "temple_green" => 0, "cocoa" => 0, "upgrade" => 0, "move_double" => 0, "free_cocoa" => 0, "move_choose" => 0, "extra_worker" => 0)),
     22 => array("id" => 22, "tooltip" => clienttranslate("Price: {cocoa}{wood}{gold}<br><br>Gain 2 resources"), "price" => array("cocoa" => 0, "wood" => 0, "gold" => 0), "bonus" => array("mask" => 0, "vp" => 0, "r" => 2, "ad" => 0, "temple_choose" => 0, "temple_blue" => 0, "temple_red" => 0, "temple_green" => 0, "cocoa" => 0, "upgrade" => 0, "move_double" => 0, "free_cocoa" => 0, "move_choose" => 0, "extra_worker" => 0)),
