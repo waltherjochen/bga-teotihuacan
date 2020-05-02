@@ -109,7 +109,7 @@ class teotihuacan extends Table
             "upgradeWorkers" => 25,
             "ascension" => 26,
             "ascensionTempleSteps" => 27,
-            "ascensionWorkerId" => 28,
+            "ascensionCount" => 28,
             "ascensionBoardFrom" => 29,
             "ascensionBonusChoosed" => 30,
             "temple_referrer" => 31,
@@ -196,7 +196,7 @@ class teotihuacan extends Table
         self::setGameStateInitialValue('upgradeWorkers', 0);
         self::setGameStateInitialValue('ascension', 0);
         self::setGameStateInitialValue('ascensionTempleSteps', 0);
-        self::setGameStateInitialValue('ascensionWorkerId', 0);
+        self::setGameStateInitialValue('ascensionCount', 0);
         self::setGameStateInitialValue('ascensionBoardFrom', 0);
         self::setGameStateInitialValue('ascensionBonusChoosed', 0);
         self::setGameStateInitialValue('temple_referrer', 0);
@@ -888,7 +888,7 @@ class teotihuacan extends Table
         self::setGameStateValue('upgradeWorkers', 0);
         self::setGameStateValue('ascension', 0);
         self::setGameStateValue('ascensionTempleSteps', 0);
-        self::setGameStateValue('ascensionWorkerId', 0);
+        self::setGameStateValue('ascensionCount', 0);
         self::setGameStateValue('ascensionBoardFrom', 0);
         self::setGameStateValue('ascensionBonusChoosed', 0);
         self::setGameStateValue('temple_referrer', 0);
@@ -1721,9 +1721,9 @@ class teotihuacan extends Table
         $lockedWorkers = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = true AND `worship_pos` > 0");
 
         if($useDiscovery || $useStartingTile){
-            $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false",true);
+            $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `worker_power` < 6",true);
         } else {
-            $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id` = $selected_board_id_to",true);
+            $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `worker_power` < 6 AND `actionboard_id` = $selected_board_id_to",true);
         }
 
         return array(
@@ -3486,6 +3486,8 @@ class teotihuacan extends Table
             $this->gamestate->nextState("check_end_turn");
         } else if (self::getGameStateValue('ascension')) {
             $this->gamestate->nextState("ascension");
+        } else if (self::getGameStateValue('useDiscovery')) {
+            $this->goToPreviousState();
         } else {
             $this->gamestate->nextState("pass");
         }
@@ -3513,21 +3515,26 @@ class teotihuacan extends Table
         $player_id = self::getActivePlayerId();
         $bonus = array();
 
+
         if (self::getGameStateValue('temple_bonus_cocoa') > 0) {
-            $bonus[0] = self::getGameStateValue('temple_bonus_cocoa');
-            $bonus[1] = 'c';
-            $this->updateCocoa($bonus[0]);
+            $bonus = self::getGameStateValue('temple_bonus_cocoa');
             $temple = 'green';
+
+            $step = (int)self::getUniqueValueFromDB("SELECT `temple_$temple` FROM `player` WHERE `player_id` = $player_id");
+
+            $source = "temple_" . $temple . "_step_" . $step;
+            $this->collectResource($player_id, $bonus, 'cocoa', $source);
         } else if (self::getGameStateValue('temple_bonus_vp') > 0) {
-            $bonus[0] = self::getGameStateValue('temple_bonus_vp');
-            $bonus[1] = 'vp';
-            $this->updateVP($bonus[0]);
+            $bonus = self::getGameStateValue('temple_bonus_vp');
             $temple = 'red';
+
+            $step = (int)self::getUniqueValueFromDB("SELECT `temple_$temple` FROM `player` WHERE `player_id` = $player_id");
+
+            $source = "temple_" . $temple . "_step_" . $step;
+            $this->collectResource($player_id, $bonus, 'vp', $source);
         } else if (self::getGameStateValue('temple_bonus_resource') > 0) {
-            $bonus[0] = self::getGameStateValue('temple_bonus_resource');
-            $bonus[1] = 'r';
-            $temple = 'blue';
-            self::setGameStateValue('choose_resources_max', $bonus[0]);
+            $bonus = self::getGameStateValue('temple_bonus_resource');
+            self::setGameStateValue('choose_resources_max', $bonus);
             $this->gamestate->nextState("choose_resources");
         } else {
             throw new BgaUserException(self::_("This move is not possible."));
@@ -3537,17 +3544,6 @@ class teotihuacan extends Table
         self::setGameStateValue('temple_bonus_vp', 0);
         self::setGameStateValue('temple_bonus_cocoa', 0);
         self::setGameStateValue('last_temple_id', 0);
-
-        $sql = "SELECT `temple_$temple` FROM `player` WHERE `player_id` = $player_id";
-        $step = (int)self::getUniqueValueFromDB($sql);
-
-        self::notifyAllPlayers("animate_temple_resouce", "", array(
-            'player_id' => $player_id,
-            'player_name' => self::getActivePlayerName(),
-            'temple' => $temple,
-            'step' => $step,
-            'bonus' => $bonus,
-        ));
 
         if ($temple != 'blue') {
             $this->goToNextState();
@@ -3622,6 +3618,8 @@ class teotihuacan extends Table
             self::setGameStateValue('previous_game_state', STATE_PLAYER_TURN_CONSTRUCTION);
         } else if ($this->gamestate->state()['name'] == 'get_starting_tiles_bonus_auto') {
             self::setGameStateValue('previous_game_state', STATE_CALCULATE_NEXT_TILES_BONUS);
+        } else if ($this->gamestate->state()['name'] == 'playerTurn_ascension_choose_bonus') {
+            self::setGameStateValue('previous_game_state', STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS);
         }
     }
 
@@ -3656,6 +3654,8 @@ class teotihuacan extends Table
             $this->gamestate->nextState("construction");
         } else if (self::getGameStateValue('previous_game_state') == STATE_CALCULATE_NEXT_TILES_BONUS) {
             $this->gamestate->nextState("calculate_next_bonus");
+        } else if (self::getGameStateValue('previous_game_state') == STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS) {
+            $this->gamestate->nextState("ascension");
         }
         self::setGameStateValue('previous_game_state', 0);
     }
@@ -4123,7 +4123,9 @@ class teotihuacan extends Table
         $upgradeWorkers = (int)self::getGameStateValue('upgradeWorkers');
         $selected_board_id_to = (int)self::getGameStateValue('selected_board_id_to');
 
-        if ($upgradeWorkers <= 0) {
+        $worker_power = (int)self::getUniqueValueFromDB("SELECT `worker_power` FROM `map` WHERE `player_id` = $player_id AND `worker_id` = $worker_id");
+
+        if ($upgradeWorkers <= 0 || $worker_power > 5) {
             throw new BgaUserException(self::_("This move is not possible."));
         }
 
@@ -4143,14 +4145,13 @@ class teotihuacan extends Table
         //done all checks
         $upgradeWorkers = $upgradeWorkers - 1;
         self::incGameStateValue('upgradeWorkers', -1);
-        self::setGameStateValue('ascensionWorkerId', $worker_id);
-        self::setGameStateValue('ascensionBoardFrom', $board_id_from);
 
         $sql = "SELECT `worker_power` FROM `map` WHERE `player_id` = $player_id AND `worker_id` = $worker_id";
         $worker_power = (int)self::getUniqueValueFromDB($sql);
 
         if ($worker_power >= 5) {
             self::setGameStateValue('ascension', 1);
+            self::incGameStateValue('ascensionCount', 1);
             $selected_board_id_to = self::getGameStateValue('selected_board_id_to');
             $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
             $countWorkers = (int)self::getUniqueValueFromDB($sql);
@@ -4204,17 +4205,13 @@ class teotihuacan extends Table
             ));
         }
 
-        if ((int)self::getGameStateValue('startingTileBonus') > 0) {
-            if ($upgradeWorkers <= 0) {
-                self::setGameStateValue('startingTileBonus', 2);
-                $this->gamestate->nextState("calculate_next_bonus");
-            } else {
-                $this->gamestate->nextState("upgrade_workers");
-            }
-        } else if (self::getGameStateValue('ascension')) {
+        if (self::getGameStateValue('ascension')) {
             $this->gamestate->nextState("avenue_of_dead");
         } else if ($upgradeWorkers > 0) {
             $this->gamestate->nextState("upgrade_workers");
+        } else if ((int)self::getGameStateValue('startingTileBonus') > 0) {
+            self::setGameStateValue('startingTileBonus', 2);
+            $this->gamestate->nextState("calculate_next_bonus");
         } else if (self::getGameStateValue('useDiscovery')) {
             $this->goToPreviousState();
         } else if ($this->isTechAquired(6) && !self::getGameStateValue('paidPowerUp')) {
@@ -4325,29 +4322,39 @@ class teotihuacan extends Table
         }
     }
 
+    function preAscension()
+    {
+        $player_id = self::getActivePlayerId();
+        
+        if((int)self::getGameStateValue('ascensionCount') == 1){
+            $this->advanceCalenderTrack();
+        }
+        $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
+        if($worker && count($worker) > 0){
+            $worker_id = $worker[0]['worker_id'];
+            $board_id_from = $worker[0]['actionboard_id'];
+
+            self::notifyAllPlayers("upgradeWorker", '', array(
+                'player_id' => $player_id,
+                'player_name' => self::getActivePlayerName(),
+                'worker_id' => $worker_id,
+                'worker_power' => 1,
+            ));
+
+            $sql = "UPDATE `map` SET worker_power  = 1 WHERE player_id = $player_id AND `worker_id` = $worker_id";
+            self::DbQuery($sql);
+
+            $this->moveWorkerToBoard(0, $worker_id, $board_id_from, 1);
+        }
+    }
+
     function ascensionCleanUp()
     {
         $player_id = self::getActivePlayerId();
-        $worker_id = (int)self::getGameStateValue('ascensionWorkerId');
-        $board_id_from = (int)self::getGameStateValue('ascensionBoardFrom');
         $upgradeWorkers = (int)self::getGameStateValue('upgradeWorkers');
         $selected_board_id_to = self::getGameStateValue('selected_board_id_to');
 
-        self::notifyAllPlayers("upgradeWorker", '', array(
-            'player_id' => $player_id,
-            'player_name' => self::getActivePlayerName(),
-            'worker_id' => $worker_id,
-            'worker_power' => 1,
-        ));
-
-        $sql = "UPDATE `map` SET worker_power  = 1 WHERE player_id = $player_id AND `worker_id` = $worker_id";
-        self::DbQuery($sql);
-
         self::setGameStateValue('ascensionBonusChoosed', 0);
-        self::setGameStateValue('ascensionWorkerId', 0);
-        self::setGameStateValue('ascensionBoardFrom', 0);
-
-        $this->moveWorkerToBoard(0, $worker_id, $board_id_from, 1);
 
         $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
         $countWorkers = (int)self::getUniqueValueFromDB($sql);
@@ -5275,7 +5282,7 @@ class teotihuacan extends Table
 
             self::DbQuery("UPDATE `card` SET card_location  = 'startTiles_deck' WHERE card_type = 'startingTiles' AND card_type_arg = $startingTile0");
 
-            self::notifyAllPlayers("choosedStartingTilesDraft", clienttranslate('${player_name} choosed one starting tile'), array(
+            self::notifyAllPlayers("choosedStartingTilesDraft", clienttranslate('${player_name} chose one starting tile'), array(
                 'player_id' => $player_id,
                 'player_name' => self::getCurrentPlayerName(),
                 'startingTile0' => $startingTile0,
@@ -5303,7 +5310,7 @@ class teotihuacan extends Table
             self::DbQuery("UPDATE `player` SET startingResourceStone = $stone WHERE player_id = $player_id");
             self::DbQuery("UPDATE `player` SET startingResourceGold = $gold WHERE player_id = $player_id");
 
-            self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} choosed the starting tiles'), array(
+            self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} chose the starting tiles'), array(
                 'player_id' => $player_id,
                 'player_name' => self::getCurrentPlayerName(),
             ));
@@ -5453,7 +5460,7 @@ class teotihuacan extends Table
 
                     self::DbQuery("UPDATE `card` SET card_location  = 'startTiles_deck' WHERE card_type = 'startingTiles' AND card_type_arg = $startingTile0");
 
-                    self::notifyAllPlayers("choosedStartingTilesDraft", clienttranslate('${player_name} choosed one starting tile'), array(
+                    self::notifyAllPlayers("choosedStartingTilesDraft", clienttranslate('${player_name} chose one starting tile'), array(
                         'player_id' => $player_id,
                         'player_name' => self::getActivePlayerName(),
                         'startingTile0' => $startingTile0,

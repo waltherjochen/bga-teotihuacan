@@ -319,8 +319,8 @@ $machinestates = array(
 
     STATE_PLAYER_TURN_CHOOSE_TEMPLE_BONUS => array(
         "name" => "playerTurn_choose_temple_bonus",
-        "description" => clienttranslate('${actplayer} must choose the temple bonus'),
-        "descriptionmyturn" => clienttranslate('${you} must choose the temple bonus'),
+        "description" => clienttranslate('${actplayer} must choose the temple bonus or'),
+        "descriptionmyturn" => clienttranslate('${you} must choose the temple bonus or'),
         "type" => "activeplayer",
         "possibleactions" => array(
             "useDiscoveryTile",
@@ -389,10 +389,10 @@ $machinestates = array(
     ),
     STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS => array(
         "name" => "playerTurn_ascension_choose_bonus",
-        "description" => clienttranslate('${actplayer} chooses a Ascensio bonus'),
-        "descriptionmyturn" => clienttranslate('${you} must choose a Ascensio bonus'),
+        "description" => clienttranslate('${actplayer} chooses a ascension bonus'),
+        "descriptionmyturn" => clienttranslate('${you} must choose a ascension bonus'),
         "type" => "activeplayer",
-        "action" => "advanceCalenderTrack",
+        "action" => "preAscension",
         "possibleactions" => array(
             "useDiscoveryTile",
             "ascension",
@@ -409,7 +409,7 @@ $machinestates = array(
         "possibleactions" => array(
             "choose_resource",
         ),
-        "transitions" => array("player_turn" => STATE_PLAYER_TURN, "calculate_next_bonus" => STATE_CALCULATE_NEXT_TILES_BONUS, "construction" => STATE_PLAYER_TURN_CONSTRUCTION, "claim_starting_Discovery" => STATE_CLAIM_STARTING_DISCOVERY_TILES, "pay_salary" => STATE_PAY_SALARY, "choose_row" => STATE_PLAYER_TURN_NOBLES_BUILD, "alchemy" => STATE_PLAYER_TURN_ALCHEMY, "buy" => STATE_PLAYER_TURN_UPGRADE_WORKERS_BUY, "trade" => STATE_PLAYER_TURN_WORSHIP_TRADE, "board_action" => STATE_PLAYER_TURN_BOARD_ACTION, "choose_resources" => STATE_PLAYER_TURN_CHOOSE_TEMPLE_RESOURCES, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "avenue_of_dead" => STATE_PLAYER_TURN_AVENUE_OF_DEAD, "showBoardActions" => STATE_PLAYER_TURN_SHOW_BOARD_ACTIONS, "choose_worship" => STATE_PLAYER_TURN_CHOOSE_WORSHIP_ACTIONS, "action" => STATE_PLAYER_TURN_WORSHIP_ACTIONS, "choose_bonus" => STATE_PLAYER_TURN_CHOOSE_TEMPLE_BONUS, "check_pass" => STATE_PLAYER_TURN_PASS, "zombiePass" => STATE_PLAYER_TURN_CHECK_END_TURN)
+        "transitions" => array("player_turn" => STATE_PLAYER_TURN, "ascension" => STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS, "calculate_next_bonus" => STATE_CALCULATE_NEXT_TILES_BONUS, "construction" => STATE_PLAYER_TURN_CONSTRUCTION, "claim_starting_Discovery" => STATE_CLAIM_STARTING_DISCOVERY_TILES, "pay_salary" => STATE_PAY_SALARY, "choose_row" => STATE_PLAYER_TURN_NOBLES_BUILD, "alchemy" => STATE_PLAYER_TURN_ALCHEMY, "buy" => STATE_PLAYER_TURN_UPGRADE_WORKERS_BUY, "trade" => STATE_PLAYER_TURN_WORSHIP_TRADE, "board_action" => STATE_PLAYER_TURN_BOARD_ACTION, "choose_resources" => STATE_PLAYER_TURN_CHOOSE_TEMPLE_RESOURCES, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "avenue_of_dead" => STATE_PLAYER_TURN_AVENUE_OF_DEAD, "showBoardActions" => STATE_PLAYER_TURN_SHOW_BOARD_ACTIONS, "choose_worship" => STATE_PLAYER_TURN_CHOOSE_WORSHIP_ACTIONS, "action" => STATE_PLAYER_TURN_WORSHIP_ACTIONS, "choose_bonus" => STATE_PLAYER_TURN_CHOOSE_TEMPLE_BONUS, "check_pass" => STATE_PLAYER_TURN_PASS, "zombiePass" => STATE_PLAYER_TURN_CHECK_END_TURN)
     ),
 
     //////////////////////////////////////// CHECK END TURN /////////////////////////////////////////

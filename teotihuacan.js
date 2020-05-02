@@ -1052,7 +1052,6 @@ define([
                             this.setAllWorkersClickable(args.args.clickableWorkers);
                             break;
                         case 'playerTurn_show_board_actions':
-                            this.gamedatas_local.map = args.args.map;
                             dojo.addClass('actionBoard_' + args.args.selected_board_id_to, 'selected');
                             dojo.addClass(player_id + '_worker_' + args.args.selected_worker_id, 'selected');
 
@@ -1284,6 +1283,7 @@ define([
                             break;
                         case 'playerTurn_show_board_actions':
                             this.isPalaceTechAquired = args.isPalaceTechAquired;
+                            this.gamedatas_local.map = args.map;
 
                             var board_id = dojo.attr($('actionBoard_' + args.selected_board_id_to), "data-id");
 
@@ -3796,7 +3796,6 @@ define([
                 dojo.subscribe('unlockAllWorkers', this, "notif_unlockAllWorkers");
                 dojo.subscribe('unlockSingleWorker', this, "notif_unlockSingleWorker");
                 dojo.subscribe('stepTemple', this, "notif_stepTemple");
-                dojo.subscribe('animate_temple_resouce', this, "notif_animate_temple_resouce");
                 dojo.subscribe('choosed_resources', this, "notif_choosed_resources");
                 dojo.subscribe('payCocoa', this, "notif_payCocoa");
                 dojo.subscribe('claimDiscovery', this, "notif_claimDiscovery");
@@ -3967,29 +3966,6 @@ define([
                         this.global_temple_bonus_cocoa = parseInt(bonus[0]);
                     }
                     this.setTempleDiscoveryTilesClickable();
-                } else {
-                    this.animate_temple_resouce(player_id, temple, step, bonus);
-                }
-            },
-
-            notif_animate_temple_resouce: function (notif) {
-                var player_id = notif.args.player_id;
-                var temple = notif.args.temple;
-                var step = notif.args.step;
-                var bonus = notif.args.bonus;
-                this.animate_temple_resouce(player_id, temple, step, bonus);
-            },
-
-            animate_temple_resouce: function (player_id, temple, step, bonus) {
-                var amount = parseInt(bonus[0]);
-                var source = 'temple_' + temple + '_step_' + step;
-
-                if (bonus[1] == 'vp') {
-                    var target = 'icon_point_' + player_id;
-                    this.animateVP(player_id, amount, 'vp', source, target, 500);
-                } else if (bonus[1] == 'c') {
-                    var target = 'cocoa_' + player_id + '_side';
-                    this.animateResource(player_id, amount, 'cocoa', source, target, 500);
                 }
             },
 
@@ -4189,7 +4165,6 @@ define([
                     }), constructionWrapper);
 
                     _this.queryAndAddEvent('.pyramidTile', 'onclick', 'onPyramidTileChanged');
-                    dojo.query('.actionBoard .pyramidTile').addClass('clickable');
                     _this.resizeGame();
                 }, 2000);
             },
