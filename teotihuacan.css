@@ -432,7 +432,7 @@
     margin-right: 5px;
     position: relative;
     background-size: 600%;
-    z-index: 1;
+    z-index: 8;
 }
 
 .actionBoard .dice-wrapper {
@@ -1167,6 +1167,9 @@
     position: absolute;
     bottom: 0;
     zoom: 90%;
+}
+.techTile-wrapper:hover {
+    z-index: 9;
 }
 .techTile-wrapper .marker-group .marker {
     display: inline-block;

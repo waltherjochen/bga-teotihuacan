@@ -1846,6 +1846,19 @@ class teotihuacan extends Table
             }
         }
 
+        $avenue0 = $this->startingTiles[$startingTile0]['bonus']['avenue'];
+        $avenue1 = $this->startingTiles[$startingTile1]['bonus']['avenue'];
+
+        $avenueMax = $avenue0 + $avenue1;
+        if ($avenueMax > 0) {
+            if ($avenueMax == 1) {
+                $this->startingTileStepAvenue($player_id);
+            } else {
+                $this->startingTileStepAvenue($player_id, false);
+                $this->startingTileStepAvenue($player_id);
+            }
+        }
+
         $temple_green0 = $this->startingTiles[$startingTile0]['bonus']['temple_green'];
         $temple_green1 = $this->startingTiles[$startingTile1]['bonus']['temple_green'];
 
@@ -2085,7 +2098,6 @@ class teotihuacan extends Table
         $wood = $statingTile_details['wood'];
         $stone = $statingTile_details['stone'];
         $gold = $statingTile_details['gold'];
-        $avenue = $statingTile_details['avenue'];
 
         $source = 'startingTile_' . $id;
 
@@ -2101,24 +2113,33 @@ class teotihuacan extends Table
         if ($gold > 0) {
             $this->collectResource($player_id, $gold, 'gold', $source);
         }
-        if ($avenue > 0) {
-            $sql = "UPDATE `player` SET `avenue_of_dead`  = `avenue_of_dead` + 1 WHERE player_id = $player_id";
-            self::DbQuery($sql);
 
-            $sql = "SELECT `avenue_of_dead` FROM `player` WHERE `player_id` = $player_id";
-            $step = (int)self::getUniqueValueFromDB($sql);
+    }
 
+    function startingTileStepAvenue($player_id, $notification = true)
+    {
+        $sql = "UPDATE `player` SET `avenue_of_dead`  = `avenue_of_dead` + 1 WHERE player_id = $player_id";
+        self::DbQuery($sql);
+
+        $sql = "SELECT `avenue_of_dead` FROM `player` WHERE `player_id` = $player_id";
+        $step = (int)self::getUniqueValueFromDB($sql);
+
+        if($notification){
             self::notifyAllPlayers("stepAvenue", clienttranslate('${player_name} advanced one space on Avenue of Dead'), array(
-                'i18n' => array('temple'),
                 'player_id' => $player_id,
                 'player_name' => self::getActivePlayerName(),
                 'step' => $step,
             ));
-            self::incStat(1, "avenue", $player_id);
-            $eclipse = (int)self::getGameStateValue('eclipse');
-            self::incStat(1, "avenue_eclipse$eclipse", $player_id);
+        } else {
+            self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} advanced one space on Avenue of Dead'), array(
+                'player_id' => $player_id,
+                'player_name' => self::getActivePlayerName(),
+            ));
         }
 
+        self::incStat(1, "avenue", $player_id);
+        $eclipse = (int)self::getGameStateValue('eclipse');
+        self::incStat(1, "avenue_eclipse$eclipse", $player_id);
     }
 
     function startingTileStepTemple($player_id, $temple, $notification = true)
@@ -3856,6 +3877,19 @@ class teotihuacan extends Table
             $this->gamestate->nextState("action");
         } else if ((int)self::getGameStateValue('startingTileBonus') > 0) {
             $this->gamestate->nextState("calculate_next_bonus");
+        } else if (self::getGameStateValue('isNobles')) {
+            self::setGameStateValue('isNobles', 0);
+            $extraWorker = (int)self::getGameStateValue('extraWorker');
+            $countWorkers += $extraWorker;
+            $this->boardgetUpgrades($countWorkers);
+        } else if (self::getGameStateValue('ascension')) {
+            $this->gamestate->nextState("ascension");
+        } else if (self::getGameStateValue('ascensionBonusChoosed')) {
+            $this->ascensionCleanUp();
+        } else if (self::getGameStateValue('upgradeWorkers')) {
+            $this->gamestate->nextState("upgrade_workers");
+        } else if (self::getGameStateValue('useDiscovery')) {
+            $this->goToPreviousState();
         } else if (self::getGameStateValue('isConstruction')) {
             if ($canBuildPyramidTiles > 0) {
                 $this->gamestate->nextState("construction");
@@ -3891,19 +3925,6 @@ class teotihuacan extends Table
                     $this->boardgetUpgrades($countWorkers);
                 }
             }
-        } else if (self::getGameStateValue('isNobles')) {
-            self::setGameStateValue('isNobles', 0);
-            $extraWorker = (int)self::getGameStateValue('extraWorker');
-            $countWorkers += $extraWorker;
-            $this->boardgetUpgrades($countWorkers);
-        } else if (self::getGameStateValue('ascension')) {
-            $this->gamestate->nextState("ascension");
-        } else if (self::getGameStateValue('ascensionBonusChoosed')) {
-            $this->ascensionCleanUp();
-        } else if (self::getGameStateValue('upgradeWorkers')) {
-            $this->gamestate->nextState("upgrade_workers");
-        } else if (self::getGameStateValue('useDiscovery')) {
-            $this->goToPreviousState();
         } else {
             $this->gamestate->nextState("check_end_turn");
         }
@@ -4872,19 +4893,24 @@ class teotihuacan extends Table
         if ($step < 9) {
             $sql = "UPDATE `player` SET `pyramid_track`  = `pyramid_track` + 1 WHERE player_id = $player_id";
             self::DbQuery($sql);
+
+            $sql = "SELECT `pyramid_track` FROM `player` WHERE `player_id` = $player_id";
+            $step = (int)self::getUniqueValueFromDB($sql);
+
+            self::notifyAllPlayers("stepPyramidTrack", clienttranslate('${player_name} advanced one space on Pyramid track'), array(
+                'player_id' => $player_id,
+                'player_name' => self::getActivePlayerName(),
+                'step' => $step,
+            ));
+
+            $eclipse = (int)self::getGameStateValue('eclipse');
+            self::incStat(1, "steps_on_pyramid_track_round$eclipse", $player_id);
+        } else {
+            self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} stays on top of pyramid track'), array(
+                'player_id' => $player_id,
+                'player_name' => self::getActivePlayerName(),
+            ));
         }
-
-        $sql = "SELECT `pyramid_track` FROM `player` WHERE `player_id` = $player_id";
-        $step = (int)self::getUniqueValueFromDB($sql);
-
-        self::notifyAllPlayers("stepPyramidTrack", clienttranslate('${player_name} advanced one space on Pyramid track'), array(
-            'player_id' => $player_id,
-            'player_name' => self::getActivePlayerName(),
-            'step' => $step,
-        ));
-
-        $eclipse = (int)self::getGameStateValue('eclipse');
-        self::incStat(1, "steps_on_pyramid_track_round$eclipse", $player_id);
 
         if ($level == 3) {
             self::setGameStateValue('canBuildPyramidTiles', 0);
