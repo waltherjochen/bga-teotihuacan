@@ -1629,6 +1629,28 @@ class teotihuacan extends Table
         $useDiscoveryMoveTwoWorkers = self::getGameStateValue('useDiscoveryMoveTwoWorkers');
         $map = $this->getAllDatas()['map'];
 
+        $canBuyDiscoveryTile = false;
+        $canBuyDiscoveryTileBoth = false;
+        $card_id_actionBoards = (int)self::getUniqueValueFromDB("SELECT `card_id` FROM `card` WHERE `card_type` = 'actionBoards' AND `card_location_arg` = $selected_board_id_to");
+        $discoveryTile_id = (int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_b$card_id_actionBoards'");
+
+        if($discoveryTile_id){
+            $priceCocoa = $this->discoveryTiles[$discoveryTile_id]['price']['cocoa'];
+            $priceWood = $this->discoveryTiles[$discoveryTile_id]['price']['wood'];
+            $priceGold = $this->discoveryTiles[$discoveryTile_id]['price']['gold'];
+
+            $cocoa = (int)self::getUniqueValueFromDB("SELECT `cocoa` FROM `player` WHERE `player_id` = $player_id");
+            $wood = (int)self::getUniqueValueFromDB("SELECT `wood` FROM `player` WHERE `player_id` = $player_id");
+            $gold = (int)self::getUniqueValueFromDB("SELECT `gold` FROM `player` WHERE `player_id` = $player_id");
+
+            if($cocoa >= $priceCocoa && $wood >= $priceWood && $gold >= $priceGold){
+                $canBuyDiscoveryTile = true;
+            }
+            if(($cocoa - 1) >= $priceCocoa && $wood >= $priceWood && $gold >= $priceGold){
+                $canBuyDiscoveryTileBoth = true;
+            }
+        }
+
         return array(
             'isPalaceTechAquired' => $this->isTechAquired(0),
             'selected_board_id_to' => $selected_board_id_to,
@@ -1636,6 +1658,8 @@ class teotihuacan extends Table
             'selected_worker_id' => $selected_worker_id,
             'selected_worker2_id' => $selected_worker2_id,
             'useDiscoveryMoveTwoWorkers' => $useDiscoveryMoveTwoWorkers,
+            'canBuyDiscoveryTile' => $canBuyDiscoveryTile,
+            'canBuyDiscoveryTileBoth' => $canBuyDiscoveryTileBoth,
             'map' => $map
         );
     }
@@ -4076,59 +4100,66 @@ class teotihuacan extends Table
         if ($step < 9) {
             $sql = "UPDATE `player` SET `avenue_of_dead`  = `avenue_of_dead` + 1 WHERE player_id = $player_id";
             self::DbQuery($sql);
-        }
-        self::incStat(1, "avenue", $player_id);
 
-        $sql = "SELECT `avenue_of_dead` FROM `player` WHERE `player_id` = $player_id";
-        $step = (int)self::getUniqueValueFromDB($sql);
+            self::incStat(1, "avenue", $player_id);
 
-        $eclipse = (int)self::getGameStateValue('eclipse');
-        self::incStat(1, "avenue_eclipse$eclipse", $player_id);
+            $sql = "SELECT `avenue_of_dead` FROM `player` WHERE `player_id` = $player_id";
+            $step = (int)self::getUniqueValueFromDB($sql);
 
-        if ($step == 3 || $step == 6 || $step == 8) {
+            $eclipse = (int)self::getGameStateValue('eclipse');
+            self::incStat(1, "avenue_eclipse$eclipse", $player_id);
 
-            self::notifyAllPlayers("stepAvenue", clienttranslate('${player_name} advanced one space on Avenue of Dead'), array(
-                'i18n' => array('temple'),
-                'player_id' => $player_id,
-                'player_name' => self::getActivePlayerName(),
-                'step' => $step,
-            ));
+            if ($step == 3 || $step == 6 || $step == 8) {
 
-            $this->gamestate->nextState("choose_bonus");
-        } else {
+                self::notifyAllPlayers("stepAvenue", clienttranslate('${player_name} advanced one space on Avenue of Dead'), array(
+                    'i18n' => array('temple'),
+                    'player_id' => $player_id,
+                    'player_name' => self::getActivePlayerName(),
+                    'step' => $step,
+                ));
 
-            self::notifyAllPlayers("stepAvenue", clienttranslate('${player_name} advanced one space on Avenue of Dead'), array(
-                'i18n' => array('temple'),
-                'player_id' => $player_id,
-                'player_name' => self::getActivePlayerName(),
-                'step' => $step,
-            ));
-
-            if (self::getGameStateValue('ascension')) {
-                $this->gamestate->nextState("ascension");
-            } else if (self::getGameStateValue('isNobles')) {
-                self::setGameStateValue('isNobles', 0);
-                $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
-                $countWorkers = (int)self::getUniqueValueFromDB($sql);
-
-                $extraWorker = (int)self::getGameStateValue('extraWorker');
-                $countWorkers += $extraWorker;
-
-                if ($countWorkers == 1) {
-                    self::incGameStateValue('upgradeWorkers', 1);
-                    $this->gamestate->nextState("upgrade_workers");
-                } else if ($countWorkers == 2) {
-                    self::incGameStateValue('upgradeWorkers', 1);
-                    $this->gamestate->nextState("upgrade_workers");
-                } else if ($countWorkers >= 3) {
-                    self::incGameStateValue('upgradeWorkers', 2);
-                    $this->gamestate->nextState("upgrade_workers");
-                }
-            } else if (!self::getGameStateValue('useDiscovery')) {
-                $this->gamestate->nextState("check_end_turn");
+                $this->gamestate->nextState("choose_bonus");
             } else {
-                $this->goToPreviousState();
+
+                self::notifyAllPlayers("stepAvenue", clienttranslate('${player_name} advanced one space on Avenue of Dead'), array(
+                    'i18n' => array('temple'),
+                    'player_id' => $player_id,
+                    'player_name' => self::getActivePlayerName(),
+                    'step' => $step,
+                ));
+
+                if (self::getGameStateValue('ascension')) {
+                    $this->gamestate->nextState("ascension");
+                } else if (self::getGameStateValue('isNobles')) {
+                    self::setGameStateValue('isNobles', 0);
+                    $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
+                    $countWorkers = (int)self::getUniqueValueFromDB($sql);
+
+                    $extraWorker = (int)self::getGameStateValue('extraWorker');
+                    $countWorkers += $extraWorker;
+
+                    if ($countWorkers == 1) {
+                        self::incGameStateValue('upgradeWorkers', 1);
+                        $this->gamestate->nextState("upgrade_workers");
+                    } else if ($countWorkers == 2) {
+                        self::incGameStateValue('upgradeWorkers', 1);
+                        $this->gamestate->nextState("upgrade_workers");
+                    } else if ($countWorkers >= 3) {
+                        self::incGameStateValue('upgradeWorkers', 2);
+                        $this->gamestate->nextState("upgrade_workers");
+                    }
+                } else if (!self::getGameStateValue('useDiscovery')) {
+                    $this->gamestate->nextState("check_end_turn");
+                } else {
+                    $this->goToPreviousState();
+                }
             }
+        } else {
+            self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} stays on top of avenue of dead'), array(
+                'player_id' => $player_id,
+                'player_name' => self::getActivePlayerName(),
+            ));
+            $this->goToPreviousState();
         }
     }
 

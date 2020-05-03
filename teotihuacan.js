@@ -1318,6 +1318,8 @@ define([
                             this.addActionButton('button_2_id', _('Cancel'), 'onPassClick', null, false, "red");
                             break;
                         case 'playerTurn_choose_worship_actions':
+                            this.canBuyDiscoveryTile = args.canBuyDiscoveryTile;
+                            this.canBuyDiscoveryTileBoth = args.canBuyDiscoveryTileBoth;
                             if (this.isFreeCocoa()) {
                                 this.addActionButton('button_0_id', _('do both') + " ( " + this.getTokenSymbol('cocoa_free', true) + " )", 'doWorshipBothClickFree', null, false, 'gray');
                             }
@@ -2402,7 +2404,14 @@ define([
                         var translated = _("Perform Main Action?") + " " + this.moneyPreview("cocoa");
                         this.setClientStateAction(actionConfirm, translated);
                     } else {
-                        this.ajaxAction(action);
+                        if(this.global_moveTwoWorkers && !this.selected_worker2_id){
+                            this.confirmationDialog(_('You can move two workers, but you selected only one.'), dojo.hitch(this, function () {
+                                this.ajaxAction(action);
+                            }));
+                            return;
+                        } else {
+                            this.ajaxAction(action);
+                        }
                     }
                 }
             },
@@ -2414,7 +2423,14 @@ define([
                     return;
                 }
 
-                this.ajaxAction(action);
+                if(this.global_moveTwoWorkers && !this.selected_worker2_id){
+                    this.confirmationDialog(_('You can move two workers, but you selected only one.'), dojo.hitch(this, function () {
+                        this.ajaxAction(action);
+                    }));
+                    return;
+                } else {
+                    this.ajaxAction(action);
+                }
             },
             doBoardMainActionClickConfirmedFree: function (event) {
                 var action = 'doMainActionOnBoard';
@@ -2564,7 +2580,14 @@ define([
 
             doBoardCollectCocoaClickConfirmed: function (event) {
                 var action = 'collectCocoaOnBoard';
-                this.ajaxAction(action);
+                if(this.global_moveTwoWorkers && !this.selected_worker2_id){
+                    this.confirmationDialog(_('You can move two workers, but you selected only one.'), dojo.hitch(this, function () {
+                        this.ajaxAction(action);
+                    }));
+                    return;
+                } else {
+                    this.ajaxAction(action);
+                }
             },
 
             doBoardWorshipClick: function (event) {
@@ -2618,28 +2641,59 @@ define([
                     this.setClientStateAction(actionConfirm, translated);
                 } else {
                     this.selected_board_worship_pos = worship_pos;
-                    this.ajaxAction(action, {
-                        worship_pos: this.selected_board_worship_pos,
-                        pay: false
-                    });
+                    if(this.global_moveTwoWorkers && !this.selected_worker2_id){
+                        this.confirmationDialog(_('You can move two workers, but you selected only one.'), dojo.hitch(this, function () {
+                            this.ajaxAction(action, {
+                                worship_pos: this.selected_board_worship_pos,
+                                pay: false
+                            });
+                        }));
+                        return;
+                    } else {
+                        this.ajaxAction(action, {
+                            worship_pos: this.selected_board_worship_pos,
+                            pay: false
+                        });
+                    }
                 }
             },
 
             doBoardWorshipClickConfirmed: function (event) {
                 var action = 'doWorshipOnBoard';
-                this.ajaxAction(action, {
-                    worship_pos: this.selected_board_worship_pos,
-                    pay: true
-                });
+                if(this.global_moveTwoWorkers && !this.selected_worker2_id){
+                    this.confirmationDialog(_('You can move two workers, but you selected only one.'), dojo.hitch(this, function () {
+                        this.ajaxAction(action, {
+                            worship_pos: this.selected_board_worship_pos,
+                            pay: true
+                        });
+                    }));
+                    return;
+                } else {
+                    this.ajaxAction(action, {
+                        worship_pos: this.selected_board_worship_pos,
+                        pay: true
+                    });
+                }
             },
 
             doBoardWorshipClickConfirmedFree: function (event) {
                 var action = 'doWorshipOnBoard';
-                this.ajaxAction(action, {
-                    worship_pos: this.selected_board_worship_pos,
-                    pay: false,
-                    freeCocoa: true,
-                });
+                if(this.global_moveTwoWorkers && !this.selected_worker2_id){
+                    this.confirmationDialog(_('You can move two workers, but you selected only one.'), dojo.hitch(this, function () {
+                        this.ajaxAction(action, {
+                            worship_pos: this.selected_board_worship_pos,
+                            pay: false,
+                            freeCocoa: true,
+                        });
+                    }));
+                    return;
+                } else {
+                    this.ajaxAction(action, {
+                        worship_pos: this.selected_board_worship_pos,
+                        pay: false,
+                        freeCocoa: true,
+                    });
+                }
             },
 
 
@@ -2672,20 +2726,41 @@ define([
                 this.gamedatas_local.global.worship_actions_worship = false;
                 this.gamedatas_local.global.worship_actions_discovery = true;
                 var action = 'worshipAction';
-                this.ajaxAction(action, {
-                    worship: this.gamedatas_local.global.worship_actions_worship,
-                    discovery: this.gamedatas_local.global.worship_actions_discovery
-                });
+
+                if(this.canBuyDiscoveryTile){
+                    this.ajaxAction(action, {
+                        worship: this.gamedatas_local.global.worship_actions_worship,
+                        discovery: this.gamedatas_local.global.worship_actions_discovery
+                    });
+                } else {
+                    this.confirmationDialog(_('You have not enough resources to buy the discovery tile. Do you want to continue?'), dojo.hitch(this, function () {
+                        this.ajaxAction(action, {
+                            worship: this.gamedatas_local.global.worship_actions_worship,
+                            discovery: this.gamedatas_local.global.worship_actions_discovery
+                        });
+                    }));
+                    return;
+                }
             },
 
             doWorshipBothClick: function (event) {
                 this.gamedatas_local.global.worship_actions_worship = true;
                 this.gamedatas_local.global.worship_actions_discovery = true;
                 var action = 'worshipAction';
-                this.ajaxAction(action, {
-                    worship: this.gamedatas_local.global.worship_actions_worship,
-                    discovery: this.gamedatas_local.global.worship_actions_discovery
-                });
+                if(this.canBuyDiscoveryTileBoth){
+                    this.ajaxAction(action, {
+                        worship: this.gamedatas_local.global.worship_actions_worship,
+                        discovery: this.gamedatas_local.global.worship_actions_discovery
+                    });
+                } else {
+                    this.confirmationDialog(_('You have not enough resources to buy the discovery tile. Do you want to continue?'), dojo.hitch(this, function () {
+                        this.ajaxAction(action, {
+                            worship: this.gamedatas_local.global.worship_actions_worship,
+                            discovery: this.gamedatas_local.global.worship_actions_discovery
+                        });
+                    }));
+                    return;
+                }
             },
 
             doWorshipBothClickFree: function (event) {
