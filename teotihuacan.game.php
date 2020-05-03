@@ -1504,16 +1504,37 @@ class teotihuacan extends Table
 
         $max = $worker_power;
 
+        $cocoa = (int)self::getUniqueValueFromDB("SELECT `cocoa` FROM `player` WHERE `player_id` = $player_id");
+        $wood = (int)self::getUniqueValueFromDB("SELECT `wood` FROM `player` WHERE `player_id` = $player_id");
+        $stone = (int)self::getUniqueValueFromDB("SELECT `stone` FROM `player` WHERE `player_id` = $player_id");
+        $gold = (int)self::getUniqueValueFromDB("SELECT `gold` FROM `player` WHERE `player_id` = $player_id");
+
         $tradeInfo = $this->royalTilesTrade[$id];
+        $r = $wood + $stone + $gold;
 
         if ($tradeInfo['id'] == 'trade_c_t') {
             $max--;
+            $max = min($max, $cocoa);
+        }
+
+        if ($tradeInfo['id'] == 'trade_c_ws' || $tradeInfo['id'] == 'trade_c_sg') {
+            $max = min($max, $cocoa);
+        }
+
+        if ($tradeInfo['id'] == 'trade_r_2c') {
+            $max = min($max, $r);
+        }
+        if ($tradeInfo['id'] == 'trade_cr_r') {
+            $max = min($max, $cocoa, $r);
         }
 
         return array(
             'pay' => $tradeInfo['pay'],
             'get' => $tradeInfo['get'],
-            'max' => $max
+            'max' => $max,
+            'maxWood' => $wood,
+            'maxStone' => $stone,
+            'maxGold' => $gold,
         );
     }
 
@@ -3991,6 +4012,8 @@ class teotihuacan extends Table
                 'token' => 'cocoa',
                 'source' => $source
             ));
+            $this->setPreviousState();
+            $this->goToPreviousState();
         } else if ($r > 0) {
             $messageParts[] = ' ${r}${token_r}';// NOI18N
             self::setGameStateValue('choose_resources_max', $r);

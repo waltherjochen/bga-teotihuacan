@@ -1121,6 +1121,9 @@ define([
                         case 'playerTurn_worship_actions_trade':
                             this.clientStateArgs = {};
                             this.clientStateArgs.max = args.args.max;
+                            this.clientStateArgs.maxWood = args.args.maxWood;
+                            this.clientStateArgs.maxStone = args.args.maxStone;
+                            this.clientStateArgs.maxGold = args.args.maxGold;
                             this.clientStateArgs.multiplier = 0;
                             this.clientStateArgs.isPayCocoa = args.args.pay.cocoa;
                             this.clientStateArgs.isPayResource = args.args.pay.resource;
@@ -1445,9 +1448,7 @@ define([
                                 this.addActionButton('incrementCocoa', "+1" + this.getTokenSymbol('cocoa', true), 'incrementTradeCocoa', null, false, 'gray');
                                 this.addTooltipHtml('incrementCocoa', _("Increment number of cocoa"));
 
-                                var max = Math.min(parseInt(this.gamedatas_local.players[this.getActivePlayerId()].cocoa), this.clientStateArgs.max);
-
-                                var isMax = this.clientStateArgs.multiplier == max;
+                                var isMax = this.clientStateArgs.multiplier == this.clientStateArgs.max;
                                 if (this.clientStateArgs.pay.cocoa == 0) {
                                     dojo.query('#decrementCocoa').addClass('disabled');
                                 } else {
@@ -1704,13 +1705,19 @@ define([
                 } else {
                     dojo.query('#decrementGold').removeClass('disabled');
                 }
-                if (isMax) {
+                if (isMax || (this.clientStateArgs && wood == this.clientStateArgs.maxWood)) {
                     dojo.query('#incrementWood').addClass('disabled');
-                    dojo.query('#incrementStone').addClass('disabled');
-                    dojo.query('#incrementGold').addClass('disabled');
                 } else {
                     dojo.query('#incrementWood').removeClass('disabled');
+                }
+                if (isMax || (this.clientStateArgs && stone == this.clientStateArgs.maxStone)) {
+                    dojo.query('#incrementStone').addClass('disabled');
+                } else {
                     dojo.query('#incrementStone').removeClass('disabled');
+                }
+                if (isMax || (this.clientStateArgs && gold == this.clientStateArgs.maxGold)) {
+                    dojo.query('#incrementGold').addClass('disabled');
+                } else {
                     dojo.query('#incrementGold').removeClass('disabled');
                 }
             },
