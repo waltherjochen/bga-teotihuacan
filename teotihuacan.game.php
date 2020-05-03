@@ -1905,8 +1905,9 @@ class teotihuacan extends Table
             if ($temple_blueMax > 0) {
                 self::setGameStateValue('startingTileBonus', 3);
 
-                $sql = "INSERT INTO `temple_queue`(`queue`, `referrer`) VALUES ('temple_blue',$temple_blueMax)";
-                self::DbQuery($sql);
+                for ($i = 0; $i < $temple_blueMax; $i++) {
+                    self::DbQuery("INSERT INTO `temple_queue`(`queue`, `referrer`) VALUES ('temple_blue',1)");
+                }
                 $this->gamestate->nextState("action");
                 return false;
             }
@@ -3345,72 +3346,80 @@ class teotihuacan extends Table
             self::DbQuery($sql);
         }
 
-        if ($temple == 'blue') {
-            self::setGameStateValue('last_temple_id', 1);
-        } else if ($temple == 'red') {
-            self::setGameStateValue('last_temple_id', 2);
-        } else {
-            self::setGameStateValue('last_temple_id', 3);
-        }
-
         if (!($step >= 11 || $step == 10 && $used)) {
+            if ($temple == 'blue') {
+                self::setGameStateValue('last_temple_id', 1);
+            } else if ($temple == 'red') {
+                self::setGameStateValue('last_temple_id', 2);
+            } else {
+                self::setGameStateValue('last_temple_id', 3);
+            }
+
             $sql = "UPDATE `player` SET `temple_$temple`  = `temple_$temple` + 1 WHERE player_id = $player_id";
             self::DbQuery($sql);
-        }
-        self::incStat(1, "temple_$temple", $player_id);
 
-        $sql = "SELECT `temple_$temple` FROM `player` WHERE `player_id` = $player_id";
-        $step = (int)self::getUniqueValueFromDB($sql);
+            self::incStat(1, "temple_$temple", $player_id);
 
-        $bonus = explode(":", $this->temples[$temple][$step]);
+            $sql = "SELECT `temple_$temple` FROM `player` WHERE `player_id` = $player_id";
+            $step = (int)self::getUniqueValueFromDB($sql);
 
-        if ($temple == 'blue' && $step == 4 ||
-            $temple == 'red' && $step == 5 ||
-            $temple == 'green' && $step == 3 ||
-            $temple == 'green' && $step == 6) {
+            $bonus = explode(":", $this->temples[$temple][$step]);
 
-            self::notifyAllPlayers("stepTemple", clienttranslate('${player_name} advanced one space on temple ${temple}'), array(
-                'i18n' => array('temple'),
-                'player_id' => $player_id,
-                'player_name' => self::getActivePlayerName(),
-                'temple' => $temple,
-                'step' => $step,
-                'bonus' => $bonus,
-                'last_temple_id' => self::getGameStateValue('last_temple_id'),
-            ));
+            if ($temple == 'blue' && $step == 4 ||
+                $temple == 'red' && $step == 5 ||
+                $temple == 'green' && $step == 3 ||
+                $temple == 'green' && $step == 6) {
 
-            if ($temple == 'blue') {
-                self::setGameStateValue('temple_bonus_resource', (int)$bonus[0]);
-            } else if ($temple == 'red') {
-                self::setGameStateValue('temple_bonus_vp', (int)$bonus[0]);
+                self::notifyAllPlayers("stepTemple", clienttranslate('${player_name} advanced one space on temple ${temple}'), array(
+                    'i18n' => array('temple'),
+                    'player_id' => $player_id,
+                    'player_name' => self::getActivePlayerName(),
+                    'temple' => $temple,
+                    'step' => $step,
+                    'bonus' => $bonus,
+                    'last_temple_id' => self::getGameStateValue('last_temple_id'),
+                ));
+
+                if ($temple == 'blue') {
+                    self::setGameStateValue('temple_bonus_resource', (int)$bonus[0]);
+                } else if ($temple == 'red') {
+                    self::setGameStateValue('temple_bonus_vp', (int)$bonus[0]);
+                } else {
+                    self::setGameStateValue('temple_bonus_cocoa', (int)$bonus[0]);
+                }
+
+                $this->gamestate->nextState("choose_bonus");
             } else {
-                self::setGameStateValue('temple_bonus_cocoa', (int)$bonus[0]);
-            }
+                $source = "temple_" . $temple . "_step_" . $step;
+                if ($bonus[1] == 'vp') {
+                    $this->collectResource($player_id, $bonus[0], 'vp', $source);
+                } else if ($bonus[1] == 'c') {
+                    $this->collectResource($player_id, $bonus[0], 'cocoa', $source);
+                }
 
-            $this->gamestate->nextState("choose_bonus");
+                self::notifyAllPlayers("stepTemple", clienttranslate('${player_name} advanced one space on temple ${temple}'), array(
+                    'i18n' => array('temple'),
+                    'player_id' => $player_id,
+                    'player_name' => self::getActivePlayerName(),
+                    'temple' => $temple,
+                    'step' => $step,
+                    'bonus' => $bonus,
+                ));
+
+                if ($bonus[1] == 'r') {
+                    self::setGameStateValue('choose_resources_max', (int)$bonus[0]);
+                    $this->gamestate->nextState("choose_resources");
+                } else {
+                    $this->goToNextState();
+                }
+            }
         } else {
-            $source = "temple_" . $temple . "_step_" . $step;
-            if ($bonus[1] == 'vp') {
-                $this->collectResource($player_id, $bonus[0], 'vp', $source);
-            } else if ($bonus[1] == 'c') {
-                $this->collectResource($player_id, $bonus[0], 'cocoa', $source);
-            }
-
-            self::notifyAllPlayers("stepTemple", clienttranslate('${player_name} advanced one space on temple ${temple}'), array(
-                'i18n' => array('temple'),
+            self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} stays on top of temple ${temple} and gain no further benefit'), array(
                 'player_id' => $player_id,
                 'player_name' => self::getActivePlayerName(),
                 'temple' => $temple,
-                'step' => $step,
-                'bonus' => $bonus,
             ));
-
-            if ($bonus[1] == 'r') {
-                self::setGameStateValue('choose_resources_max', (int)$bonus[0]);
-                $this->gamestate->nextState("choose_resources");
-            } else {
-                $this->goToNextState();
-            }
+            $this->goToNextState();
         }
     }
 
@@ -3423,6 +3432,11 @@ class teotihuacan extends Table
 
         $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
         $countWorkers = (int)self::getUniqueValueFromDB($sql);
+
+        self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} passed'), array(
+            'player_id' => $player_id,
+            'player_name' => self::getActivePlayerName(),
+        ));
 
         if ($this->gamestate->state()['name'] == 'claim_starting_discovery_tiles') {
             $startingDiscovery0 = (int)self::getUniqueValueFromDB("SELECT `startingDiscovery0` FROM `player` WHERE `player_id` = $player_id");
@@ -3451,6 +3465,7 @@ class teotihuacan extends Table
             $this->boardgetUpgrades($countWorkers);
         } else if ($this->gamestate->state()['name'] == 'playerTurn_construction') {
             self::setGameStateValue('isConstruction', 0);
+            self::setGameStateValue('canBuildPyramidTiles', 0);
 
             if ($this->isTechAquired(7)) {
                 $countWorkers++;
@@ -3486,6 +3501,8 @@ class teotihuacan extends Table
             $this->gamestate->nextState("check_end_turn");
         } else if (self::getGameStateValue('ascension')) {
             $this->gamestate->nextState("ascension");
+        } else if (self::getGameStateValue('upgradeWorkers')) {
+            $this->gamestate->nextState("upgrade_workers");
         } else if (self::getGameStateValue('useDiscovery')) {
             $this->goToPreviousState();
         } else {
@@ -3535,6 +3552,7 @@ class teotihuacan extends Table
         } else if (self::getGameStateValue('temple_bonus_resource') > 0) {
             $bonus = self::getGameStateValue('temple_bonus_resource');
             self::setGameStateValue('choose_resources_max', $bonus);
+            $temple = 'blue';
             $this->gamestate->nextState("choose_resources");
         } else {
             throw new BgaUserException(self::_("This move is not possible."));
@@ -3810,10 +3828,10 @@ class teotihuacan extends Table
 
         self::setGameStateValue('last_temple_id', 0);
 
-        if ((int)self::getGameStateValue('startingTileBonus') > 0) {
-            $this->gamestate->nextState("calculate_next_bonus");
-        } else if ($queueCount > 0 || $worship_actions_discovery > 0 || $royalTileAction > 0) {
+        if ($queueCount > 0 || $worship_actions_discovery > 0 || $royalTileAction > 0) {
             $this->gamestate->nextState("action");
+        } else if ((int)self::getGameStateValue('startingTileBonus') > 0) {
+            $this->gamestate->nextState("calculate_next_bonus");
         } else if (self::getGameStateValue('isConstruction')) {
             if ($canBuildPyramidTiles > 0) {
                 $this->gamestate->nextState("construction");
