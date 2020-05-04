@@ -1771,10 +1771,13 @@ class teotihuacan extends Table
             $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `worker_power` < 6 AND `actionboard_id` = $selected_board_id_to",true);
         }
 
+        $upgradeWorkers = (int)self::getGameStateValue('upgradeWorkers');
+
         return array(
             'lockedWorkers' => $lockedWorkers,
             'selected_board_id_to' => $selected_board_id_to,
             'clickableWorkers' => $clickableWorkers,
+            'amount' => $upgradeWorkers,
         );
     }
 

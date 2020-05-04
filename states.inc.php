@@ -366,8 +366,8 @@ $machinestates = array(
     ),
     STATE_PLAYER_TURN_UPGRADE_WORKERS => array(
         "name" => "playerTurn_upgrade_workers",
-        "description" => clienttranslate('${actplayer} must power up workers'),
-        "descriptionmyturn" => clienttranslate('${you} must power up your workers'),
+        "description" => clienttranslate('${actplayer} must power up workers (${amount}x)'),
+        "descriptionmyturn" => clienttranslate('${you} must power up your workers (${amount}x)'),
         "type" => "activeplayer",
         "args" => "upgradeOnBoardOnly",
         "possibleactions" => array(
