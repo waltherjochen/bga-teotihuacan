@@ -1524,9 +1524,6 @@ class teotihuacan extends Table
         if ($tradeInfo['id'] == 'trade_r_2c') {
             $max = min($max, $r);
         }
-        if ($tradeInfo['id'] == 'trade_cr_r') {
-            $max = min($max, $cocoa, $r);
-        }
 
         return array(
             'pay' => $tradeInfo['pay'],
@@ -4625,7 +4622,6 @@ class teotihuacan extends Table
             }
         }
 
-
         if ($tradeInfo['id'] == 'trade_c_ws') {
             if ($get_wood > $worker_power || $get_stone > $worker_power || ($get_cocoa + $get_gold) > 0) {
                 throw new BgaUserException(self::_("This move is not possible."));
@@ -4651,7 +4647,7 @@ class teotihuacan extends Table
             if (($get_wood + $get_stone + $get_gold) > $worker_power || $get_cocoa > 0) {
                 throw new BgaUserException(self::_("This move is not possible."));
             }
-            if (($get_wood + $get_stone + $get_gold) != $pay_cocoa || ($pay_wood + $pay_stone + $pay_gold) != $pay_cocoa) {
+            if (($pay_wood + $pay_stone + $pay_gold) != $pay_cocoa || $pay_cocoa != 1) {
                 throw new BgaUserException(self::_("This move is not possible."));
             }
         } else if ($tradeInfo['id'] == 'trade_c_t') {
@@ -4664,6 +4660,7 @@ class teotihuacan extends Table
                 self::setGameStateValue('ascensionTempleSteps', $get_temple);
             }
         }
+
         $worker_id = self::getGameStateValue('selected_worker_id');
         $source = $player_id . '_worker_' . $worker_id;
         $target = $player_id . '_worker_' . $worker_id;

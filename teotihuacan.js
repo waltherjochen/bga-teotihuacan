@@ -1475,7 +1475,12 @@ define([
                                 this.addActionButton('incrementGold', "+1" + this.getTokenSymbol('gold', true), 'incrementTradeGold', null, false, 'gray');
                                 this.addTooltipHtml('incrementGold', _("Increment number of gold"));
 
-                                var isMax = this.clientStateArgs.multiplier == this.clientStateArgs.max;
+                                var isMax = false;
+                                if (!((this.clientStateArgs.isPayCocoa > 0 && this.clientStateArgs.isPayResource > 0 && this.clientStateArgs.multiplier < 1) ||
+                                    (this.clientStateArgs.isPayCocoa == 0 && this.clientStateArgs.isPayResource > 0 && this.clientStateArgs.multiplier < this.clientStateArgs.max))) {
+                                     isMax = true;
+                                }
+
                                 this.checkIfButtonsAreEnabled(this.clientStateArgs.pay.wood, this.clientStateArgs.pay.stone, this.clientStateArgs.pay.gold, isMax);
                             }
                             if (this.clientStateArgs.isPayCocoa > 0 && this.clientStateArgs.isPayResource > 0) {
@@ -1492,7 +1497,7 @@ define([
                                 this.addActionButton('incrementGetGold', "+1" + this.getTokenSymbol('gold', true), 'incrementTradeGetGold', null, false, 'gray');
                                 this.addTooltipHtml('incrementGetGold', _("Increment number of gold"));
 
-                                var isMax = (this.clientStateArgs.get.wood + this.clientStateArgs.get.stone + this.clientStateArgs.get.gold) == this.clientStateArgs.multiplier;
+                                var isMax = (this.clientStateArgs.get.wood + this.clientStateArgs.get.stone + this.clientStateArgs.get.gold) == this.clientStateArgs.max;
                                 if (this.clientStateArgs.get.wood == 0) {
                                     dojo.query('#decrementGetWood').addClass('disabled');
                                 } else {
@@ -1508,7 +1513,7 @@ define([
                                 } else {
                                     dojo.query('#decrementGetGold').removeClass('disabled');
                                 }
-                                if (isMax) {
+                                if (isMax || this.clientStateArgs.pay.cocoa == 0) {
                                     dojo.query('#incrementGetWood').addClass('disabled');
                                     dojo.query('#incrementGetStone').addClass('disabled');
                                     dojo.query('#incrementGetGold').addClass('disabled');
@@ -2910,7 +2915,8 @@ define([
             },
 
             incrementTradeWood: function () {
-                if (this.clientStateArgs.multiplier < this.clientStateArgs.max) {
+                if ((this.clientStateArgs.isPayCocoa > 0 && this.clientStateArgs.isPayResource > 0 && this.clientStateArgs.multiplier < 1) ||
+                    (this.clientStateArgs.isPayCocoa == 0 && this.clientStateArgs.isPayResource > 0 && this.clientStateArgs.multiplier < this.clientStateArgs.max)) {
                     this.clientStateArgs.pay.wood++;
                     this.clientStateArgs.multiplier++;
                     this.tradeConfirm();
@@ -2926,7 +2932,8 @@ define([
             },
 
             incrementTradeStone: function () {
-                if (this.clientStateArgs.multiplier < this.clientStateArgs.max) {
+                if ((this.clientStateArgs.isPayCocoa > 0 && this.clientStateArgs.isPayResource > 0 && this.clientStateArgs.multiplier < 1) ||
+                    (this.clientStateArgs.isPayCocoa == 0 && this.clientStateArgs.isPayResource > 0 && this.clientStateArgs.multiplier < this.clientStateArgs.max)) {
                     this.clientStateArgs.pay.stone++;
                     this.clientStateArgs.multiplier++;
                     this.tradeConfirm();
@@ -2942,7 +2949,8 @@ define([
             },
 
             incrementTradeGold: function () {
-                if (this.clientStateArgs.multiplier < this.clientStateArgs.max) {
+                if ((this.clientStateArgs.isPayCocoa > 0 && this.clientStateArgs.isPayResource > 0 && this.clientStateArgs.multiplier < 1) ||
+                    (this.clientStateArgs.isPayCocoa == 0 && this.clientStateArgs.isPayResource > 0 && this.clientStateArgs.multiplier < this.clientStateArgs.max)) {
                     this.clientStateArgs.pay.gold++;
                     this.clientStateArgs.multiplier++;
                     this.tradeConfirm();
@@ -2957,7 +2965,7 @@ define([
             },
 
             incrementTradeGetWood: function () {
-                if ((this.clientStateArgs.get.wood + this.clientStateArgs.get.stone + this.clientStateArgs.get.gold) < this.clientStateArgs.multiplier) {
+                if ((this.clientStateArgs.get.wood + this.clientStateArgs.get.stone + this.clientStateArgs.get.gold) < this.clientStateArgs.max) {
                     this.clientStateArgs.get.wood++;
                     this.tradeConfirm();
                 }
@@ -2971,7 +2979,7 @@ define([
             },
 
             incrementTradeGetStone: function () {
-                if ((this.clientStateArgs.get.wood + this.clientStateArgs.get.stone + this.clientStateArgs.get.gold) < this.clientStateArgs.multiplier) {
+                if ((this.clientStateArgs.get.wood + this.clientStateArgs.get.stone + this.clientStateArgs.get.gold) < this.clientStateArgs.max) {
                     this.clientStateArgs.get.stone++;
                     this.tradeConfirm();
                 }
@@ -2985,7 +2993,7 @@ define([
             },
 
             incrementTradeGetGold: function () {
-                if ((this.clientStateArgs.get.wood + this.clientStateArgs.get.stone + this.clientStateArgs.get.gold) < this.clientStateArgs.multiplier) {
+                if ((this.clientStateArgs.get.wood + this.clientStateArgs.get.stone + this.clientStateArgs.get.gold) < this.clientStateArgs.max) {
                     this.clientStateArgs.get.gold++;
                     this.tradeConfirm();
                 }
