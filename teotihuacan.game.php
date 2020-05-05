@@ -4668,6 +4668,9 @@ class teotihuacan extends Table
         if (!$freeCocoa) {
             $this->payResource($player_id, -$pay_cocoa, 'cocoa', $target);
         } else {
+            if ($pay_cocoa == 0) {
+                throw new BgaUserException(self::_("This move is not possible."));
+            }
             $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (45,46,47) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
             $id = (int)self::getUniqueValueFromDB($sql);
             if (!$id) {
