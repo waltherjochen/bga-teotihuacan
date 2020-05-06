@@ -2545,21 +2545,14 @@ define([
                         return;
                     }
 
-                    if (this.gamedatas_local.players[this.getActivePlayerId()].cocoa >= 3) {
-                        this.clientStateArgs = {};
+                    this.clientStateArgs = {};
 
-                        this.clientStateArgs.action = action;
-                        this.clientStateArgs.price = 3;
-                        var translated = dojo.string.substitute(_("Pay 3 ${moneySymbol} to do a normal turn?"), {
-                            moneySymbol: this.getMoneySymbol('cocoa')
-                        });
-                        this.setClientStateAction(actionConfirm, translated);
-                    } else {
-                        this.ajaxAction(action, {
-                            pay: false,
-                        });
-                    }
-
+                    this.clientStateArgs.action = action;
+                    this.clientStateArgs.price = 3;
+                    var translated = dojo.string.substitute(_("Pay 3 ${moneySymbol} to do a normal turn?"), {
+                        moneySymbol: this.getMoneySymbol('cocoa')
+                    });
+                    this.setClientStateAction(actionConfirm, translated);
                 }
             },
 

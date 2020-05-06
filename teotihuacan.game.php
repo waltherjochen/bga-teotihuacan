@@ -3909,15 +3909,15 @@ class teotihuacan extends Table
             $extraWorker = (int)self::getGameStateValue('extraWorker');
             $countWorkers += $extraWorker;
             $this->boardgetUpgrades($countWorkers);
-        } else if (self::getGameStateValue('useDiscovery')) {
-            $this->goToPreviousState();
         } else if (self::getGameStateValue('ascensionBonusChoosed')) {
             $this->ascensionCleanUp();
         } else if (self::getGameStateValue('ascension')) {
             $this->gamestate->nextState("ascension");
         } else if (self::getGameStateValue('upgradeWorkers')) {
             $this->gamestate->nextState("upgrade_workers");
-        } else if (self::getGameStateValue('isConstruction')) {
+        } else if (self::getGameStateValue('useDiscovery')) {
+            $this->goToPreviousState();
+        }  else if (self::getGameStateValue('isConstruction')) {
             if ($canBuildPyramidTiles > 0) {
                 $this->gamestate->nextState("construction");
             } else {
@@ -4249,7 +4249,7 @@ class teotihuacan extends Table
         $worker_power = (int)self::getUniqueValueFromDB($sql);
 
         if ($worker_power >= 5) {
-            self::setGameStateValue('ascension', 1);
+            self::incGameStateValue('ascension', 1);
             self::incGameStateValue('ascensionCount', 1);
             $selected_board_id_to = self::getGameStateValue('selected_board_id_to');
             $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
@@ -4304,7 +4304,8 @@ class teotihuacan extends Table
             ));
         }
 
-        if (self::getGameStateValue('ascension')) {
+        $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
+        if (self::getGameStateValue('ascension') && $worker && count($worker) > 0) {
             $this->gamestate->nextState("avenue_of_dead");
         } else if ($upgradeWorkers > 0) {
             $this->gamestate->nextState("upgrade_workers");
@@ -4346,7 +4347,7 @@ class teotihuacan extends Table
 
         self::incStat(1, "ascension", $player_id);
 
-        self::setGameStateValue('ascension', 0);
+        self::incGameStateValue('ascension', -1);
 
         $target = 'ascension_' . $id;
         $source = 'ascension_' . $id;
@@ -4425,12 +4426,10 @@ class teotihuacan extends Table
     {
         $player_id = self::getActivePlayerId();
         
-        if((int)self::getGameStateValue('ascensionCount') == 1){
-            self::incGameStateValue('ascensionCount', 1);
-            $this->advanceCalenderTrack();
-        }
         $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
         if($worker && count($worker) > 0){
+            $this->advanceCalenderTrack();
+
             $worker_id = $worker[0]['worker_id'];
             $board_id_from = $worker[0]['actionboard_id'];
 
@@ -4461,11 +4460,11 @@ class teotihuacan extends Table
 
         if ($upgradeWorkers > 0) {
             $this->gamestate->nextState("upgrade_workers");
+        } else if (self::getGameStateValue('ascension')) {
+            $this->gamestate->nextState("ascension");
         } else if ($this->isTechAquired(6) && !self::getGameStateValue('paidPowerUp') && $countWorkers > 0) {
             self::setGameStateValue('paidPowerUp', 1);
             $this->gamestate->nextState("buy");
-        } else if (self::getGameStateValue('useDiscovery')) {
-            $this->goToPreviousState();
         } else {
             $this->gamestate->nextState("check_end_turn");
         }

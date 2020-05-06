@@ -397,7 +397,7 @@ $machinestates = array(
             "useDiscoveryTile",
             "ascension",
         ),
-        "transitions" => array("useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "buy" => STATE_PLAYER_TURN_UPGRADE_WORKERS_BUY, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "action" => STATE_PLAYER_TURN_WORSHIP_ACTIONS, "check_end_turn" => STATE_PLAYER_TURN_CHECK_END_TURN, "zombiePass" => STATE_PLAYER_TURN_CHECK_END_TURN)
+        "transitions" => array("useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "ascension" => STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS, "buy" => STATE_PLAYER_TURN_UPGRADE_WORKERS_BUY, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "action" => STATE_PLAYER_TURN_WORSHIP_ACTIONS, "check_end_turn" => STATE_PLAYER_TURN_CHECK_END_TURN, "zombiePass" => STATE_PLAYER_TURN_CHECK_END_TURN)
     ),
 
     //////////////////////////////////////// DISCOVERY TILE /////////////////////////////////////////
