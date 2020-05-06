@@ -4062,6 +4062,9 @@ class teotihuacan extends Table
             if ($this->gamestate->state()['name'] == 'playerTurn_show_board_actions' || $countWorkers == 0) {
                 throw new BgaUserException(self::_("You cannot use this Discovery Tile right now"));
             }
+            if ($this->gamestate->state()['name'] == 'playerTurn_alchemy' || $this->gamestate->state()['name'] == 'playerTurn_construction' || $this->gamestate->state()['name'] == 'playerTurn_decoration' || $this->gamestate->state()['name'] == 'playerTurn_nobles') {
+                throw new BgaUserException(self::_("You cannot power up your workers during main action"));
+            }
             $messageParts[] = ' ${upgrade}${token_upgrade}';// NOI18N
             self::setGameStateValue('useDiscovery', 1);
             self::incGameStateValue('upgradeWorkers', $upgrade);
