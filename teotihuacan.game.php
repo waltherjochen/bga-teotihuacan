@@ -1558,20 +1558,26 @@ class teotihuacan extends Table
 
     function areDiscoveryTilesLeft()
     {
-        $current_player_id = self::getCurrentPlayerId();
-        $possibleDiscoveryTiles = [17, 18, 19, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41];
-        $isInArray = false;
-        $playerHand = $this->getAllDatas()['playersHand'][$current_player_id]['other'];
+        $upgradeWorkers = (int)self::getGameStateValue('upgradeWorkers');
 
-        for ($i = 0; $i < count($playerHand); $i++) {
-            $type_arg = (int)$playerHand[$i]['type_arg'];
-            if (in_array($type_arg, $possibleDiscoveryTiles)) {
-                $isInArray = true;
-                break;
+        if ($upgradeWorkers > 0) {
+            $this->gamestate->nextState("upgrade_workers");
+        } else {
+            $current_player_id = self::getCurrentPlayerId();
+            $possibleDiscoveryTiles = [17, 18, 19, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41];
+            $isInArray = false;
+            $playerHand = $this->getAllDatas()['playersHand'][$current_player_id]['other'];
+
+            for ($i = 0; $i < count($playerHand); $i++) {
+                $type_arg = (int)$playerHand[$i]['type_arg'];
+                if (in_array($type_arg, $possibleDiscoveryTiles)) {
+                    $isInArray = true;
+                    break;
+                }
             }
-        }
-        if (!$isInArray) {
-            $this->gamestate->nextState("pass");
+            if (!$isInArray) {
+                $this->gamestate->nextState("pass");
+            }
         }
     }
 

@@ -433,7 +433,7 @@ $machinestates = array(
             "useDiscoveryTile",
             "pass",
         ),
-        "transitions" => array("pass" => STATE_PLAYER_END_TURN, "useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "zombiePass" => STATE_PLAYER_END_TURN)
+        "transitions" => array("pass" => STATE_PLAYER_END_TURN, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "zombiePass" => STATE_PLAYER_END_TURN)
     ),
     STATE_PLAYER_END_TURN => array(
         "name" => "playerTurn_end_turn",
