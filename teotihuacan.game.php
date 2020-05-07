@@ -112,7 +112,7 @@ class teotihuacan extends Table
             "doMainAction" => 28,
             "useDiscoveryPowerUp" => 29,
             "ascensionBonusChoosed" => 30,
-            "temple_referrer" => 31,
+            "buildOnePyramidTile" => 31,
             "royalTileTradeId" => 32,
             "royalTileAction" => 33,
             "useDiscoveryId" => 34,
@@ -210,7 +210,7 @@ class teotihuacan extends Table
         self::setGameStateInitialValue('doMainAction', 0);
         self::setGameStateInitialValue('useDiscoveryPowerUp', 0);
         self::setGameStateInitialValue('ascensionBonusChoosed', 0);
-        self::setGameStateInitialValue('temple_referrer', 0);
+        self::setGameStateInitialValue('buildOnePyramidTile', 0);
         self::setGameStateInitialValue('royalTileTradeId', 0);
         self::setGameStateInitialValue('royalTileAction', 0);
         self::setGameStateInitialValue('useDiscoveryId', 0);
@@ -902,7 +902,7 @@ class teotihuacan extends Table
         self::setGameStateValue('doMainAction', 0);
         self::setGameStateValue('useDiscoveryPowerUp', 0);
         self::setGameStateValue('ascensionBonusChoosed', 0);
-        self::setGameStateValue('temple_referrer', 0);
+        self::setGameStateValue('buildOnePyramidTile', 0);
         self::setGameStateValue('royalTileTradeId', 0);
         self::setGameStateValue('royalTileAction', 0);
         self::setGameStateValue('useDiscoveryId', 0);
@@ -1570,6 +1570,7 @@ class teotihuacan extends Table
     function areDiscoveryTilesLeft()
     {
         $upgradeWorkers = (int)self::getGameStateValue('upgradeWorkers');
+        self::setGameStateValue('doMainAction', 0);
 
         if ($upgradeWorkers > 0) {
             $this->gamestate->nextState("upgrade_workers");
@@ -1715,10 +1716,11 @@ class teotihuacan extends Table
         }
 
         $canBuildPyramidTiles = (int)self::getGameStateValue('canBuildPyramidTiles');
+        $buildOnePyramidTile = (int)self::getGameStateValue('buildOnePyramidTile');
 
         return array(
             'isConstructionWorkerTechAquired' => $this->isTechAquired(7) && self::getGameStateValue('getTechnologyDiscount'),
-            'canPass' => $canBuildPyramidTiles != $countWorkers
+            'canPass' => $buildOnePyramidTile > 0
         );
     }
 
@@ -3455,7 +3457,6 @@ class teotihuacan extends Table
         // all checks done
         $sql = "SELECT `referrer` FROM `temple_queue` ORDER BY id DESC LIMIT 1";
         $referrer = self::getUniqueValueFromDB($sql);
-        self::setGameStateValue('temple_referrer', $referrer);
 
         $sql = "SELECT * FROM `temple_queue` ORDER BY id DESC LIMIT 1";
         $temple_queue = self::getObjectFromDB($sql);
@@ -4123,9 +4124,6 @@ class teotihuacan extends Table
             if ($this->gamestate->state()['name'] == 'playerTurn_show_board_actions' || $countWorkers == 0) {
                 throw new BgaUserException(self::_("You cannot use this Discovery Tile right now"));
             }
-            if (((int) self::getGameStateValue('doMainAction') > 0) || $this->gamestate->state()['name'] == 'playerTurn_alchemy' || $this->gamestate->state()['name'] == 'playerTurn_construction' || $this->gamestate->state()['name'] == 'playerTurn_decoration' || $this->gamestate->state()['name'] == 'playerTurn_nobles') {
-                throw new BgaUserException(self::_("You cannot power up your workers during main action"));
-            }
             $messageParts[] = ' ${upgrade}${token_upgrade}';// NOI18N
             self::setGameStateValue('useDiscovery', 2);
             self::setGameStateValue('useDiscoveryPowerUp', 2);
@@ -4285,6 +4283,8 @@ class teotihuacan extends Table
         $player_id = self::getActivePlayerId();
 
         $upgradeWorkers = (int)self::getGameStateValue('upgradeWorkers');
+        $selected_worker_id = (int)self::getGameStateValue('selected_worker_id');
+        $selected_worker2_id = (int)self::getGameStateValue('selected_worker2_id');
         $selected_board_id_to = (int)self::getGameStateValue('selected_board_id_to');
 
         $worker_power = (int)self::getUniqueValueFromDB("SELECT `worker_power` FROM `map` WHERE `player_id` = $player_id AND `worker_id` = $worker_id");
@@ -4304,6 +4304,10 @@ class teotihuacan extends Table
             if ($board_id_from != $selected_board_id_to) {
                 throw new BgaUserException(self::_("You cannot power up this worker"));
             }
+        }
+
+        if(((int) self::getGameStateValue('doMainAction') > 0) && ($selected_worker_id == $worker_id || $selected_worker2_id == $worker_id)){
+            throw new BgaUserException(self::_("You must finish the main action before power up the worker you just moved"));
         }
 
         //done all checks
@@ -4908,6 +4912,8 @@ class teotihuacan extends Table
         $this->updateWood(-$woodPrice, false);
 
         //all checks done
+
+        self::setGameStateValue('buildOnePyramidTile', 1);
 
         $this->payResource($player_id, -$stonePrice, 'stone', $target);
         $this->payResource($player_id, -$woodPrice, 'wood', $target);
