@@ -83,6 +83,13 @@ CREATE TABLE IF NOT EXISTS `temple_queue` (
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;
 
+CREATE TABLE IF NOT EXISTS `discovery_queue` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `queue` varchar(16) NOT NULL,
+    `referrer` INT NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+
 CREATE TABLE IF NOT EXISTS `nobles` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `row0` INT NOT NULL DEFAULT '0',

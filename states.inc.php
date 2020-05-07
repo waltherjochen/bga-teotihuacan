@@ -366,10 +366,11 @@ $machinestates = array(
     ),
     STATE_PLAYER_TURN_UPGRADE_WORKERS => array(
         "name" => "playerTurn_upgrade_workers",
-        "description" => clienttranslate('${actplayer} must power up workers (${amount}x)'),
-        "descriptionmyturn" => clienttranslate('${you} must power up your workers (${amount}x)'),
+        "description" => clienttranslate('${actplayer} must power up workers (${amount}x)${amountPowerUpsDiscovery}'),
+        "descriptionmyturn" => clienttranslate('${you} must power up your workers (${amount}x)${amountPowerUpsDiscovery}'),
         "type" => "activeplayer",
         "args" => "upgradeOnBoardOnly",
+        "action" => "prePowerUp",
         "possibleactions" => array(
             "unlockAllWorkers",
             "upgradeWorker",
@@ -389,10 +390,11 @@ $machinestates = array(
     ),
     STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS => array(
         "name" => "playerTurn_ascension_choose_bonus",
-        "description" => clienttranslate('${actplayer} chooses a ascension bonus'),
-        "descriptionmyturn" => clienttranslate('${you} must choose a ascension bonus'),
+        "description" => clienttranslate('${actplayer} chooses a ascension bonus (${amount}x)'),
+        "descriptionmyturn" => clienttranslate('${you} must choose a ascension bonus (${amount}x)'),
         "type" => "activeplayer",
         "action" => "preAscension",
+        "args" => "getAscensionBonusAmount",
         "possibleactions" => array(
             "useDiscoveryTile",
             "ascension",
