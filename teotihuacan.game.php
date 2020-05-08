@@ -1668,9 +1668,10 @@ class teotihuacan extends Table
         $canBuyDiscoveryTile = false;
         $canBuyDiscoveryTileBoth = false;
         $card_id_actionBoards = (int)self::getUniqueValueFromDB("SELECT `card_id` FROM `card` WHERE `card_type` = 'actionBoards' AND `card_location_arg` = $selected_board_id_to");
-        $discoveryTile_id = (int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_b$card_id_actionBoards'");
+        $discoveryTile_id = self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_b$card_id_actionBoards'");
 
-        if($discoveryTile_id){
+        if($discoveryTile_id != null){
+            $discoveryTile_id = (int) $discoveryTile_id;
             $priceCocoa = $this->discoveryTiles[$discoveryTile_id]['price']['cocoa'];
             $priceWood = $this->discoveryTiles[$discoveryTile_id]['price']['wood'];
             $priceGold = $this->discoveryTiles[$discoveryTile_id]['price']['gold'];
@@ -1788,8 +1789,8 @@ class teotihuacan extends Table
 
             self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} has no more workers on ${board_name_to} to power up (${amount}x)'), array(
                 'player_id' => $player_id,
-                'board_name_to' => $board_name_to,
                 'player_name' => self::getActivePlayerName(),
+                'board_name_to' => $board_name_to,
                 'amount' => $upgradeWorkers,
             ));
             $this->cleanUpPowerUp();
@@ -3592,6 +3593,8 @@ class teotihuacan extends Table
             }
         } else if (self::getGameStateValue('isNobles')) {
             self::setGameStateValue('isNobles', 0);
+            $extraWorker = (int)self::getGameStateValue('extraWorker');
+            $countWorkers += $extraWorker;
             $this->boardgetUpgrades($countWorkers);
         } else if ($this->gamestate->state()['name'] == 'playerTurn_construction') {
             self::setGameStateValue('isConstruction', 0);
@@ -3768,6 +3771,8 @@ class teotihuacan extends Table
             self::setGameStateValue('previous_game_state', STATE_CALCULATE_NEXT_TILES_BONUS);
         } else if ($this->gamestate->state()['name'] == 'playerTurn_ascension_choose_bonus') {
             self::setGameStateValue('previous_game_state', STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS);
+        } else if ($this->gamestate->state()['name'] == 'playerTurn_avenue_of_dead_choose_bonus') {
+            self::setGameStateValue('previous_game_state', STATE_PLAYER_TURN_CHOOSE_AVENUE_BONUS);
         }
     }
 
@@ -3804,6 +3809,8 @@ class teotihuacan extends Table
             $this->gamestate->nextState("calculate_next_bonus");
         } else if (self::getGameStateValue('previous_game_state') == STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS) {
             $this->gamestate->nextState("ascension");
+        } else if (self::getGameStateValue('previous_game_state') == STATE_PLAYER_TURN_CHOOSE_AVENUE_BONUS) {
+            $this->gamestate->nextState("choose_avenue_bonus");
         }
         self::setGameStateValue('previous_game_state', 0);
     }
@@ -3962,17 +3969,17 @@ class teotihuacan extends Table
             $this->gamestate->nextState("action");
         } else if ((int)self::getGameStateValue('startingTileBonus') > 0) {
             $this->gamestate->nextState("calculate_next_bonus");
-        } else if (self::getGameStateValue('isNobles')) {
-            self::setGameStateValue('isNobles', 0);
-            $extraWorker = (int)self::getGameStateValue('extraWorker');
-            $countWorkers += $extraWorker;
-            $this->boardgetUpgrades($countWorkers);
         } else if (self::getGameStateValue('useDiscovery')) {
             if(self::getGameStateValue('useDiscoveryPowerUp')){
                 $this->gamestate->nextState("upgrade_workers");
             } else {
                 $this->goToPreviousState();
             }
+        } else if (self::getGameStateValue('isNobles')) {
+            self::setGameStateValue('isNobles', 0);
+            $extraWorker = (int)self::getGameStateValue('extraWorker');
+            $countWorkers += $extraWorker;
+            $this->boardgetUpgrades($countWorkers);
         } else if (self::getGameStateValue('ascensionBonusChoosed')) {
             $this->ascensionCleanUp();
         } else if (self::getGameStateValue('ascension')) {
