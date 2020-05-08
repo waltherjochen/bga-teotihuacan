@@ -1778,7 +1778,10 @@ class teotihuacan extends Table
         $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
         $countWorkers = (int)self::getUniqueValueFromDB($sql);
 
-        if ($countWorkers == 0 && !self::getGameStateValue('useDiscovery')) {
+        $useDiscovery = (int)self::getGameStateValue('useDiscovery') > 0;
+        $useStartingTile = (int)self::getGameStateValue('startingTileBonus') > 0;
+
+        if ($countWorkers == 0 && !$useDiscovery && !$useStartingTile) {
             $upgradeWorkers = (int)self::getGameStateValue('upgradeWorkers');
             self::setGameStateValue('upgradeWorkers', 0);
 
@@ -2001,6 +2004,8 @@ class teotihuacan extends Table
     function calculateNextBonus()
     {
         $player_id = self::getActivePlayerId();
+
+        self::setGameStateValue('useDiscovery', 0);
 
         $startingTile0 = (int)self::getUniqueValueFromDB("SELECT `startingTile0` FROM `player` WHERE `player_id` = $player_id");
         $startingTile1 = (int)self::getUniqueValueFromDB("SELECT `startingTile1` FROM `player` WHERE `player_id` = $player_id");
