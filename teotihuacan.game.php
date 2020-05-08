@@ -1465,6 +1465,15 @@ class teotihuacan extends Table
         );
     }
 
+    function getTempleBonusValue()
+    {
+        return array(
+            'temple_bonus_resource' => self::getGameStateValue('temple_bonus_resource'),
+            'temple_bonus_vp' => self::getGameStateValue('temple_bonus_vp'),
+            'temple_bonus_cocoa' => self::getGameStateValue('temple_bonus_cocoa')
+        );
+    }
+
     function getWorshipInfo()
     {
         $sql = "SELECT `queue` FROM `temple_queue` ORDER BY id DESC LIMIT 1";
@@ -3500,6 +3509,10 @@ class teotihuacan extends Table
             $step = (int)self::getUniqueValueFromDB($sql);
 
             $bonus = explode(":", $this->temples[$temple][$step]);
+
+            self::setGameStateValue('temple_bonus_resource', 0);
+            self::setGameStateValue('temple_bonus_vp', 0);
+            self::setGameStateValue('temple_bonus_cocoa', 0);
 
             if ($temple == 'blue' && $step == 4 ||
                 $temple == 'red' && $step == 5 ||

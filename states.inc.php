@@ -322,6 +322,7 @@ $machinestates = array(
         "description" => clienttranslate('${actplayer} must choose the temple bonus or'),
         "descriptionmyturn" => clienttranslate('${you} must choose the temple bonus or'),
         "type" => "activeplayer",
+        "args" => "getTempleBonusValue",
         "possibleactions" => array(
             "useDiscoveryTile",
             "temple_bonus",

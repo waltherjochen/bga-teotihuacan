@@ -1347,15 +1347,15 @@ define([
                         case 'playerTurn_choose_temple_bonus':
                             var amount = 0;
                             var symbol = '';
-                            if (this.global_temple_bonus_cocoa > 0) {
-                                amount = this.global_temple_bonus_cocoa;
-                                symbol = 'cocoa';
-                            } else if (this.global_temple_bonus_vp > 0) {
-                                amount = this.global_temple_bonus_vp;
-                                symbol = 'vp';
-                            } else if (this.global_temple_bonus_resource > 0) {
-                                amount = this.global_temple_bonus_resource;
+                            if (args.temple_bonus_resource > 0) {
+                                amount = args.temple_bonus_resource;
                                 symbol = 'resource';
+                            } else if (args.temple_bonus_vp > 0) {
+                                amount = args.temple_bonus_vp;
+                                symbol = 'vp';
+                            } else if (args.temple_bonus_cocoa > 0) {
+                                amount = args.temple_bonus_cocoa;
+                                symbol = 'cocoa';
                             }
                             this.addActionButton('button_1_id', amount + this.getTokenSymbol(symbol, true), 'takeNormalBonus', null, false, "gray");
                             break;
@@ -4087,13 +4087,6 @@ define([
                     temple == 'red' && step == 5 ||
                     temple == 'green' && step == 3 ||
                     temple == 'green' && step == 6) {
-                    if (temple == 'blue') {
-                        this.global_temple_bonus_resource = parseInt(bonus[0]);
-                    } else if (temple == 'red') {
-                        this.global_temple_bonus_vp = parseInt(bonus[0]);
-                    } else if (temple == 'green') {
-                        this.global_temple_bonus_cocoa = parseInt(bonus[0]);
-                    }
                     this.setTempleDiscoveryTilesClickable();
                 }
             },
