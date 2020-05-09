@@ -3588,8 +3588,8 @@ class teotihuacan extends Table
         ));
 
         if ($this->gamestate->state()['name'] == 'claim_starting_discovery_tiles') {
-            $startingDiscovery0 = (int)self::getUniqueValueFromDB("SELECT `startingDiscovery0` FROM `player` WHERE `player_id` = $player_id");
-            $startingDiscovery1 = (int)self::getUniqueValueFromDB("SELECT `startingDiscovery1` FROM `player` WHERE `player_id` = $player_id");
+            $startingDiscovery0 = self::getUniqueValueFromDB("SELECT `startingDiscovery0` FROM `player` WHERE `player_id` = $player_id");
+            $startingDiscovery1 = self::getUniqueValueFromDB("SELECT `startingDiscovery1` FROM `player` WHERE `player_id` = $player_id");
             self::DbQuery("UPDATE `player` SET startingDiscovery0 = NULL WHERE player_id = $player_id");
             self::DbQuery("UPDATE `player` SET startingDiscovery1 = NULL WHERE player_id = $player_id");
 
@@ -3983,9 +3983,7 @@ class teotihuacan extends Table
 
         self::setGameStateValue('last_temple_id', 0);
 
-        if ($queueCount > 0 || $worship_actions_discovery > 0 || $royalTileAction > 0) {
-            $this->gamestate->nextState("action");
-        } else if ((int)self::getGameStateValue('startingTileBonus') > 0) {
+        if ((int)self::getGameStateValue('startingTileBonus') > 0) {
             $this->gamestate->nextState("calculate_next_bonus");
         } else if (self::getGameStateValue('useDiscovery')) {
             if(self::getGameStateValue('useDiscoveryPowerUp')){
@@ -3993,6 +3991,8 @@ class teotihuacan extends Table
             } else {
                 $this->goToPreviousState();
             }
+        } else if ($queueCount > 0 || $worship_actions_discovery > 0 || $royalTileAction > 0) {
+            $this->gamestate->nextState("action");
         } else if (self::getGameStateValue('isNobles')) {
             self::setGameStateValue('isNobles', 0);
             $extraWorker = (int)self::getGameStateValue('extraWorker');
@@ -4185,7 +4185,7 @@ class teotihuacan extends Table
 
         self::notifyAllPlayers("useDiscoveryTile", $message . implode(",", $messageParts), array(
             'player_id' => $player_id,
-            'player_name' => self::getActivePlayerName(),
+            'player_name' => self::getCurrentPlayerName(),
             'id' => $id,
             'vp' => $vp,
             'r' => $r,

@@ -1323,9 +1323,7 @@ define([
                         case 'playerTurn_choose_worship_actions':
                             this.canBuyDiscoveryTile = args.canBuyDiscoveryTile;
                             this.canBuyDiscoveryTileBoth = args.canBuyDiscoveryTileBoth;
-                            if (this.isFreeCocoa()) {
-                                this.addActionButton('button_0_id', _('do both') + " ( " + this.getTokenSymbol('cocoa_free', true) + " )", 'doWorshipBothClickFree', null, false, 'gray');
-                            }
+                            this.addActionButton('button_3_id', _('do both') + " ( -1" + this.getTokenSymbol('cocoa', true) + " )", 'doWorshipBothClick', null, false, 'gray');
                             this.addActionButton('button_1_id', _('Worship only'), 'doWorshipClick', null, false, 'gray');
 
                             board_id = dojo.attr($('actionBoard_' + args.selected_board_id_to), "data-id");
@@ -1333,7 +1331,10 @@ define([
                             if (board_id != 1) {
                                 this.addActionButton('button_2_id', _('Discovery only'), 'doWorshipDiscoveryClick', null, false, 'gray');
                             }
-                            this.addActionButton('button_3_id', _('do both') + " ( -1" + this.getTokenSymbol('cocoa', true) + " )", 'doWorshipBothClick', null, false, 'gray');
+                            if (this.isFreeCocoa()) {
+                                this.addActionButton('cocoa_free', _('do both') + " ( " + this.getTokenSymbol('cocoa_free', true) + " )", 'doWorshipBothClickFree', null, false, 'gray');
+                                this.addTooltipHtml('cocoa_free', _("Ignore paying cocoa"));
+                            }
                             break;
                         case 'playerTurn_check_pass':
                             this.addActionButton('button_1_id', _('end turn'), 'onPassClick', null, false, "red");
@@ -1385,11 +1386,11 @@ define([
 
                             break;
                         case 'client_playerTurn_mainAction_confirm':
+                            this.addActionButton('button_1_id', _('Pay'), 'doBoardMainActionClickConfirmed', null, false, 'gray');
                             if (this.isFreeCocoa()) {
                                 this.addActionButton('cocoa_free', this.getTokenSymbol('cocoa_free', true), 'doBoardMainActionClickConfirmedFree', null, false, 'gray');
                                 this.addTooltipHtml('cocoa_free', _("Ignore paying cocoa"));
                             }
-                            this.addActionButton('button_1_id', _('Pay'), 'doBoardMainActionClickConfirmed', null, false, 'gray');
                             cancelConfirm = true;
                             break;
                         case 'client_playerTurn_collectCocoa_confirm':
@@ -1406,11 +1407,11 @@ define([
                             cancelConfirm = true;
                             break;
                         case 'client_playerTurn_doWorshipOnBoard_confirm':
+                            this.addActionButton('button_2_id', _('Unlock'), 'doBoardWorshipClickConfirmed', null, false, 'gray');
                             if (this.isFreeCocoa()) {
                                 this.addActionButton('cocoa_free', this.getTokenSymbol('cocoa_free', true), 'doBoardWorshipClickConfirmedFree', null, false, 'gray');
                                 this.addTooltipHtml('cocoa_free', _("Ignore paying cocoa"));
                             }
-                            this.addActionButton('button_2_id', _('Unlock'), 'doBoardWorshipClickConfirmed', null, false, 'gray');
                             cancelConfirm = true;
                             break;
                         case 'client_playerTurn_doWorshipOnBoard_choose':
@@ -2774,11 +2775,14 @@ define([
                 this.gamedatas_local.global.worship_actions_worship = true;
                 this.gamedatas_local.global.worship_actions_discovery = true;
                 var action = 'worshipAction';
-                this.ajaxAction(action, {
-                    worship: this.gamedatas_local.global.worship_actions_worship,
-                    discovery: this.gamedatas_local.global.worship_actions_discovery,
-                    freeCocoa: true
-                });
+
+                this.confirmationDialog(_('You are about to use your discovery tile to save 1 cocoa for both actions'), dojo.hitch(this, function () {
+                    this.ajaxAction(action, {
+                        worship: this.gamedatas_local.global.worship_actions_worship,
+                        discovery: this.gamedatas_local.global.worship_actions_discovery,
+                        freeCocoa: true
+                    });
+                }));
             },
 
             checkWorshipActions: function (queue) {
@@ -3069,18 +3073,42 @@ define([
 
             doTradeConfirmed: function () {
                 var action = 'trade';
-                this.ajaxAction(action, {
-                    get_cocoa: this.clientStateArgs.get.cocoa,
-                    get_wood: this.clientStateArgs.get.wood,
-                    get_stone: this.clientStateArgs.get.stone,
-                    get_gold: this.clientStateArgs.get.gold,
-                    get_temple: this.clientStateArgs.get.temple,
-                    pay_cocoa: this.clientStateArgs.pay.cocoa,
-                    pay_wood: this.clientStateArgs.pay.wood,
-                    pay_stone: this.clientStateArgs.pay.stone,
-                    pay_gold: this.clientStateArgs.pay.gold,
-                    freeCocoa: false
-                });
+
+                var resources = (this.clientStateArgs.get.wood + this.clientStateArgs.get.stone + this.clientStateArgs.get.gold);
+                var isMax = resources == this.clientStateArgs.max;
+                if (this.clientStateArgs.isPayCocoa > 0 && this.clientStateArgs.isPayResource > 0 && !isMax) {
+                    var message = dojo.string.substitute(_("You selected ${resources} resources out of ${max}"), {
+                        resources: resources,
+                        max: this.clientStateArgs.max,
+                    });
+                    this.confirmationDialog(message, dojo.hitch(this, function () {
+                        this.ajaxAction(action, {
+                            get_cocoa: this.clientStateArgs.get.cocoa,
+                            get_wood: this.clientStateArgs.get.wood,
+                            get_stone: this.clientStateArgs.get.stone,
+                            get_gold: this.clientStateArgs.get.gold,
+                            get_temple: this.clientStateArgs.get.temple,
+                            pay_cocoa: this.clientStateArgs.pay.cocoa,
+                            pay_wood: this.clientStateArgs.pay.wood,
+                            pay_stone: this.clientStateArgs.pay.stone,
+                            pay_gold: this.clientStateArgs.pay.gold,
+                            freeCocoa: false
+                        });
+                    }));
+                } else {
+                    this.ajaxAction(action, {
+                        get_cocoa: this.clientStateArgs.get.cocoa,
+                        get_wood: this.clientStateArgs.get.wood,
+                        get_stone: this.clientStateArgs.get.stone,
+                        get_gold: this.clientStateArgs.get.gold,
+                        get_temple: this.clientStateArgs.get.temple,
+                        pay_cocoa: this.clientStateArgs.pay.cocoa,
+                        pay_wood: this.clientStateArgs.pay.wood,
+                        pay_stone: this.clientStateArgs.pay.stone,
+                        pay_gold: this.clientStateArgs.pay.gold,
+                        freeCocoa: false
+                    });
+                }
             },
 
             doTradeConfirmedFree: function () {
@@ -4442,10 +4470,10 @@ define([
             notif_removeLeftDiscoveryTiles: function (notif) {
                 var startingDiscovery0 = notif.args.startingDiscovery0;
                 var startingDiscovery1 = notif.args.startingDiscovery1;
-                if ($("discoveryTile_" + startingDiscovery0)) {
+                if (startingDiscovery0 != null && $("discoveryTile_" + startingDiscovery0)) {
                     $("discoveryTile_" + startingDiscovery0).remove();
                 }
-                if ($("discoveryTile_" + startingDiscovery1)) {
+                if (startingDiscovery1 != null && $("discoveryTile_" + startingDiscovery1)) {
                     $("discoveryTile_" + startingDiscovery1).remove();
                 }
             },
