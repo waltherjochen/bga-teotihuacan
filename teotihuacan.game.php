@@ -2425,6 +2425,9 @@ class teotihuacan extends Table
             $this->updateWood(-2, false, null, clienttranslate("You have not enough wood for the main action."));
         } else if ($card_id == 7) {
             $gold = 4 - ($countWorkers + 1);
+            if(self::getGameStateValue('useDiscoveryMoveTwoWorkers') && self::getGameStateValue('selected_worker2_id')){
+                $gold = $gold - 1;
+            }
             if ($gold < 1) {
                 $gold = 1;
             }
