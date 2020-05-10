@@ -4278,9 +4278,11 @@ define([
                 if(this.global_eclipseDiscWhite >= this.global_eclipseDiscBlack){
                     $('eclipse-title').innerHTML = _('Eclipse is triggert');
                     dojo.query('#eclipse-zone').addClass('show');
-                    if(this.global_lastRound == 2){
+                    if(this.global_lastRound == 3){
+                        $('eclipse-subtitle').innerHTML = _('Scoring happens immediately after the turn of the current player');
+                    } else if(this.global_lastRound == 2){
                         $('eclipse-subtitle').innerHTML = _('Finish current round and then play another full round, before proceeding to scoring');
-                    } else if(this.global_lastRound == 1){
+                    }  else if(this.global_lastRound == 1){
                         $('eclipse-subtitle').innerHTML = _('Finish current round, before proceeding to scoring');
                     }  else {
                         $('eclipse-title').innerHTML = _('Eclipse salary and scoring');

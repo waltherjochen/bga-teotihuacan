@@ -935,6 +935,9 @@ class teotihuacan extends Table
 
         if ($white == $black && $this->isDarkEclipse()) {
             self::setGameStateValue('lastRound', 0);
+            self::notifyAllPlayers("showEclipseBanner", '', array(
+                'lastRound' => (int)self::getGameStateValue('lastRound'),
+            ));
             $this->eclipse();
         } else if ($player_no == $count_player) {
             $this->advanceCalenderTrack();
@@ -4621,10 +4624,17 @@ class teotihuacan extends Table
             self::setGameStateValue('progression', $progression);
 
             if($white >= $black){
-                self::setGameStateValue('lastRound', 2);
-                self::notifyAllPlayers("showEclipseBanner", clienttranslate('*** Eclipse is triggered ***'), array(
-                    'lastRound' => (int)self::getGameStateValue('lastRound'),
-                ));
+                if($this->isDarkEclipse()){
+                    self::setGameStateValue('lastRound', 3);
+                    self::notifyAllPlayers("showEclipseBanner", clienttranslate('*** Eclipse is triggered ***'), array(
+                        'lastRound' => (int)self::getGameStateValue('lastRound'),
+                    ));
+                } else {
+                    self::setGameStateValue('lastRound', 2);
+                    self::notifyAllPlayers("showEclipseBanner", clienttranslate('*** Eclipse is triggered ***'), array(
+                        'lastRound' => (int)self::getGameStateValue('lastRound'),
+                    ));
+                }
             }
         }
     }
