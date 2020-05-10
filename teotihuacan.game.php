@@ -945,13 +945,17 @@ class teotihuacan extends Table
             $lastRound = (int)self::getGameStateValue('lastRound');
 
             if ($white >= $black) {
-                if ($lastRound || $this->isDarkEclipse()) {
+                if ($lastRound == 1 || $this->isDarkEclipse()) {
                     self::setGameStateValue('lastRound', 0);
+                    self::notifyAllPlayers("showEclipseBanner", '', array(
+                        'lastRound' => (int)self::getGameStateValue('lastRound'),
+                    ));
                     $this->eclipse();
                 } else {
-                    self::notifyAllPlayers("scoreBuildings", clienttranslate('*** Eclipse is triggered ***'), array());
-                    self::notifyAllPlayers("scoreBuildings", clienttranslate('*** One round left ***'), array());
                     self::setGameStateValue('lastRound', 1);
+                    self::notifyAllPlayers("showEclipseBanner", clienttranslate('*** One round left ***'), array(
+                        'lastRound' => (int)self::getGameStateValue('lastRound'),
+                    ));
                     $this->gamestate->nextState("next_player");
                 }
             } else {
@@ -1433,6 +1437,7 @@ class teotihuacan extends Table
             "useDiscoveryMoveTwoWorkers" => self::getGameStateValue('useDiscoveryMoveTwoWorkers'),
             "eclipseDiscWhite" => self::getGameStateValue('eclipseDiscWhite'),
             "eclipseDiscBlack" => self::getGameStateValue('eclipseDiscBlack'),
+            "lastRound" => self::getGameStateValue('lastRound'),
             "row1" => $row1,
             "row2" => $row2,
             "row3" => $row3,
@@ -4614,6 +4619,13 @@ class teotihuacan extends Table
 
             $progression = 10 + 85 * $currentStep / $maxSteps;
             self::setGameStateValue('progression', $progression);
+
+            if($white >= $black){
+                self::setGameStateValue('lastRound', 2);
+                self::notifyAllPlayers("showEclipseBanner", clienttranslate('*** Eclipse is triggered ***'), array(
+                    'lastRound' => (int)self::getGameStateValue('lastRound'),
+                ));
+            }
         }
     }
 

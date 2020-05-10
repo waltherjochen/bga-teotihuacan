@@ -30,6 +30,7 @@
     </div>
     <div id="startingTiles-zone" class="whiteblock"></div>
     <div id="claimDiscovery-zone" class="whiteblock"></div>
+    <div id="eclipse-zone" class="whiteblock"><h3 id="eclipse-title"></h3><p id="eclipse-subtitle"></p></div>
     <div id="bg">
         <div class="game-area">
 

@@ -164,6 +164,7 @@ define([
                 this.global_moveTwoWorkers = parseInt(this.gamedatas_local.global.useDiscoveryMoveTwoWorkers);
                 this.global_eclipseDiscWhite = parseInt(this.gamedatas_local.global.eclipseDiscWhite);
                 this.global_eclipseDiscBlack = parseInt(this.gamedatas_local.global.eclipseDiscBlack);
+                this.global_lastRound = parseInt(this.gamedatas_local.global.lastRound);
                 this.global_isDraftMode = this.gamedatas_local.global.isDraftMode;
             },
             resizeGame: function () {
@@ -999,6 +1000,7 @@ define([
                 for (var i = 0; i < 5; i++) {
                     this.addTooltipHtml("ascension_" + i, this.gamedatas_local.ascensionInfo_data[i].tooltip);
                 }
+                this.showEclipseBanner();
             },
 
             setupClickEvents: function () {
@@ -1848,7 +1850,7 @@ define([
                         money++;
                     }
                 }
-                return dojo.string.substitute(_("${money}${price} = ${result}${moneySymbol}"), {
+                return dojo.string.substitute(_("${price}${moneySymbol}"), {
                     money: money,
                     price: this.formatNumberWithSign(-this.clientStateArgs.price),
                     result: money - this.clientStateArgs.price,
@@ -3825,6 +3827,7 @@ define([
                 dojo.subscribe('stepPyramidTrack', this, "notif_stepPyramidTrack");
                 dojo.subscribe('buildDecoration', this, "notif_buildDecoration");
                 dojo.subscribe('updateCalenderTrack', this, "notif_updateCalenderTrack");
+                dojo.subscribe('showEclipseBanner', this, "notif_showEclipseBanner");
                 dojo.subscribe('calculateEndGameScoring', this, "notif_calculateEndGameScoring");
                 dojo.subscribe('choosedStartingTiles', this, "notif_choosedStartingTiles");
                 dojo.subscribe('choosedStartingTilesDraft', this, "notif_choosedStartingTilesDraft");
@@ -4248,6 +4251,13 @@ define([
 
                 this.slideTemporaryObject($(id), 'workers', source, target);
 
+                if(color == 'white'){
+                    this.global_eclipseDiscWhite = parseInt(step);
+                } else {
+                    this.global_eclipseDiscBlack = parseInt(step);
+                }
+                this.showEclipseBanner();
+
                 var _this = this;
 
                 setTimeout(function () {
@@ -4257,6 +4267,28 @@ define([
 
                     _this.resizeGame();
                 }, 500);
+            },
+
+            notif_showEclipseBanner: function (notif) {
+                this.global_lastRound = notif.args.lastRound;
+                this.showEclipseBanner();
+            },
+
+            showEclipseBanner: function () {
+                if(this.global_eclipseDiscWhite >= this.global_eclipseDiscBlack){
+                    $('eclipse-title').innerHTML = _('Eclipse is triggert');
+                    dojo.query('#eclipse-zone').addClass('show');
+                    if(this.global_lastRound == 2){
+                        $('eclipse-subtitle').innerHTML = _('Finish current round and then play another full round, before proceeding to scoring');
+                    } else if(this.global_lastRound == 1){
+                        $('eclipse-subtitle').innerHTML = _('Finish current round, before proceeding to scoring');
+                    }  else {
+                        $('eclipse-title').innerHTML = _('Eclipse salary and scoring');
+                        $('eclipse-subtitle').innerHTML = '';
+                    }
+                } else {
+                    dojo.query('#eclipse-zone.show').removeClass('show');
+                }
             },
 
             notif_calculateEndGameScoring: function (notif) {

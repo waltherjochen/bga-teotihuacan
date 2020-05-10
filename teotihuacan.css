@@ -2195,3 +2195,9 @@
 #claimDiscovery-zone.show .discoveryTile {
     margin: auto;
 }
+#eclipse-zone {
+    display: none;
+}
+#eclipse-zone.show {
+    display: block;
+}
