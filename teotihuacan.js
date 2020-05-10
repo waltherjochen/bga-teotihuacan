@@ -1272,6 +1272,7 @@ define([
 
                 if (this.isCurrentPlayerActive()) {
                     var cancelConfirm = false;
+                    var cancelMessage = _('Cancel');
 
                     switch (stateName) {
                         case 'playerTurn':
@@ -1369,12 +1370,6 @@ define([
                                 this.addActionButton('done', _('Done'), 'doChooseTempleResourceConfirmed', null, false, "gray");
                                 dojo.query('#done').addClass('disabled');
                             }
-                            this.addActionButton('decrementWood', "-1" + this.getTokenSymbol('wood', true), 'decrementTempleWood', null, false, 'gray');
-                            this.addTooltipHtml('decrementWood', _("Decrement number of wood"));
-                            this.addActionButton('decrementStone', "-1" + this.getTokenSymbol('stone', true), 'decrementTempleStone', null, false, 'gray');
-                            this.addTooltipHtml('decrementStone', _("Decrement number of stone"));
-                            this.addActionButton('decrementGold', "-1" + this.getTokenSymbol('gold', true), 'decrementTempleGold', null, false, 'gray');
-                            this.addTooltipHtml('decrementGold', _("Decrement number of gold"));
                             this.addActionButton('incrementWood', "+1" + this.getTokenSymbol('wood', true), 'incrementTempleWood', null, false, 'gray');
                             this.addTooltipHtml('incrementWood', _("Increment number of wood"));
                             this.addActionButton('incrementStone', "+1" + this.getTokenSymbol('stone', true), 'incrementTempleStone', null, false, 'gray');
@@ -1383,7 +1378,8 @@ define([
                             this.addTooltipHtml('incrementGold', _("Increment number of gold"));
 
                             this.checkIfButtonsAreEnabled(this.clientStateArgs.wood, this.clientStateArgs.stone, this.clientStateArgs.gold, isMax);
-
+                            cancelConfirm = true;
+                            cancelMessage = _('reset');
                             break;
                         case 'client_playerTurn_mainAction_confirm':
                             this.addActionButton('button_1_id', _('Pay'), 'doBoardMainActionClickConfirmed', null, false, 'gray');
@@ -1446,10 +1442,8 @@ define([
                             this.addActionButton('button_0_id', _('Done'), 'doTradeConfirmed', null, false, 'gray');
 
                             if (this.clientStateArgs.isPayCocoa > 0 && this.clientStateArgs.isPayResource == 0) {
-                                this.addActionButton('decrementCocoa', "-1" + this.getTokenSymbol('cocoa', true), 'decrementTradeCocoa', null, false, 'gray');
-                                this.addTooltipHtml('decrementCocoa', _("Decrement number of cocoa"));
-                                this.addActionButton('incrementCocoa', "+1" + this.getTokenSymbol('cocoa', true), 'incrementTradeCocoa', null, false, 'gray');
-                                this.addTooltipHtml('incrementCocoa', _("Increment number of cocoa"));
+                                this.addActionButton('incrementCocoa', "-1" + this.getTokenSymbol('cocoa', true), 'incrementTradeCocoa', null, false, 'gray');
+                                this.addTooltipHtml('incrementCocoa', _("Decrement number of cocoa"));
 
                                 var isMax = this.clientStateArgs.multiplier == this.clientStateArgs.max;
                                 if (this.clientStateArgs.pay.cocoa == 0) {
@@ -1465,18 +1459,12 @@ define([
                             }
 
                             if (this.clientStateArgs.isPayResource > 0) {
-                                this.addActionButton('decrementWood', "-1" + this.getTokenSymbol('wood', true), 'decrementTradeWood', null, false, 'gray');
-                                this.addTooltipHtml('decrementWood', _("Decrement number of wood"));
-                                this.addActionButton('decrementStone', "-1" + this.getTokenSymbol('stone', true), 'decrementTradeStone', null, false, 'gray');
-                                this.addTooltipHtml('decrementStone', _("Decrement number of stone"));
-                                this.addActionButton('decrementGold', "-1" + this.getTokenSymbol('gold', true), 'decrementTradeGold', null, false, 'gray');
-                                this.addTooltipHtml('decrementGold', _("Decrement number of gold"));
-                                this.addActionButton('incrementWood', "+1" + this.getTokenSymbol('wood', true), 'incrementTradeWood', null, false, 'gray');
-                                this.addTooltipHtml('incrementWood', _("Increment number of wood"));
-                                this.addActionButton('incrementStone', "+1" + this.getTokenSymbol('stone', true), 'incrementTradeStone', null, false, 'gray');
-                                this.addTooltipHtml('incrementStone', _("Increment number of stone"));
-                                this.addActionButton('incrementGold', "+1" + this.getTokenSymbol('gold', true), 'incrementTradeGold', null, false, 'gray');
-                                this.addTooltipHtml('incrementGold', _("Increment number of gold"));
+                                this.addActionButton('incrementWood', "-1" + this.getTokenSymbol('wood', true), 'incrementTradeWood', null, false, 'gray');
+                                this.addTooltipHtml('incrementWood', _("Decrement number of wood"));
+                                this.addActionButton('incrementStone', "-1" + this.getTokenSymbol('stone', true), 'incrementTradeStone', null, false, 'gray');
+                                this.addTooltipHtml('incrementStone', _("Decrement number of stone"));
+                                this.addActionButton('incrementGold', "-1" + this.getTokenSymbol('gold', true), 'incrementTradeGold', null, false, 'gray');
+                                this.addTooltipHtml('incrementGold', _("Decrement number of gold"));
 
                                 var isMax = false;
                                 if (!((this.clientStateArgs.isPayCocoa > 0 && this.clientStateArgs.isPayResource > 0 && this.clientStateArgs.multiplier < 1) ||
@@ -1487,12 +1475,6 @@ define([
                                 this.checkIfButtonsAreEnabled(this.clientStateArgs.pay.wood, this.clientStateArgs.pay.stone, this.clientStateArgs.pay.gold, isMax);
                             }
                             if (this.clientStateArgs.isPayCocoa > 0 && this.clientStateArgs.isPayResource > 0) {
-                                this.addActionButton('decrementGetWood', "-1" + this.getTokenSymbol('wood', true), 'decrementTradeGetWood', null, false, 'gray');
-                                this.addTooltipHtml('decrementGetWood', _("Decrement number of wood"));
-                                this.addActionButton('decrementGetStone', "-1" + this.getTokenSymbol('stone', true), 'decrementTradeGetStone', null, false, 'gray');
-                                this.addTooltipHtml('decrementGetStone', _("Decrement number of stone"));
-                                this.addActionButton('decrementGetGold', "-1" + this.getTokenSymbol('gold', true), 'decrementTradeGetGold', null, false, 'gray');
-                                this.addTooltipHtml('decrementGetGold', _("Decrement number of gold"));
                                 this.addActionButton('incrementGetWood', "+1" + this.getTokenSymbol('wood', true), 'incrementTradeGetWood', null, false, 'gray');
                                 this.addTooltipHtml('incrementGetWood', _("Increment number of wood"));
                                 this.addActionButton('incrementGetStone', "+1" + this.getTokenSymbol('stone', true), 'incrementTradeGetStone', null, false, 'gray');
@@ -1501,21 +1483,6 @@ define([
                                 this.addTooltipHtml('incrementGetGold', _("Increment number of gold"));
 
                                 var isMax = (this.clientStateArgs.get.wood + this.clientStateArgs.get.stone + this.clientStateArgs.get.gold) == this.clientStateArgs.max;
-                                if (this.clientStateArgs.get.wood == 0) {
-                                    dojo.query('#decrementGetWood').addClass('disabled');
-                                } else {
-                                    dojo.query('#decrementGetWood').removeClass('disabled');
-                                }
-                                if (this.clientStateArgs.get.stone == 0) {
-                                    dojo.query('#decrementGetStone').addClass('disabled');
-                                } else {
-                                    dojo.query('#decrementGetStone').removeClass('disabled');
-                                }
-                                if (this.clientStateArgs.get.gold == 0) {
-                                    dojo.query('#decrementGetGold').addClass('disabled');
-                                } else {
-                                    dojo.query('#decrementGetGold').removeClass('disabled');
-                                }
                                 if (isMax || this.clientStateArgs.pay.cocoa == 0) {
                                     dojo.query('#incrementGetWood').addClass('disabled');
                                     dojo.query('#incrementGetStone').addClass('disabled');
@@ -1530,6 +1497,8 @@ define([
                                 this.addActionButton('cocoa_free', this.getTokenSymbol('cocoa_free', true), 'doTradeConfirmedFree', null, false, 'gray');
                                 this.addTooltipHtml('cocoa_free', _("Ignore paying cocoa"));
                             }
+                            cancelConfirm = true;
+                            cancelMessage = _('reset');
                             break;
                         case 'playerTurn_upgrade_workers':
                             if (args.lockedWorkers > 0) {
@@ -1555,12 +1524,8 @@ define([
                             if (this.isConstructionWorkerTechAquired) {
                                 this.addActionButton('decrementGetWood', "-1" + this.getTokenSymbol('wood', true), 'decrementConstuctionGetWood', null, false, 'gray');
                                 this.addTooltipHtml('decrementGetWood', _("Decrement number of wood"));
-                                this.addActionButton('incrementGetWood', "+1" + this.getTokenSymbol('wood', true), 'incrementConstuctionGetWood', null, false, 'gray');
-                                this.addTooltipHtml('incrementGetWood', _("Increment number of wood"));
                                 this.addActionButton('decrementStone', "-1" + this.getTokenSymbol('stone', true), 'decrementConstuctionGetStone', null, false, 'gray');
                                 this.addTooltipHtml('decrementStone', _("Decrement number of stone"));
-                                this.addActionButton('incrementStone', "+1" + this.getTokenSymbol('stone', true), 'incrementConstuctionGetStone', null, false, 'gray');
-                                this.addTooltipHtml('incrementStone', _("Increment number of stone"));
 
                                 var level = parseInt(dojo.attr(this.constructionWrapper, "data-level"));
 
@@ -1587,6 +1552,7 @@ define([
                             }
                             this.addActionButton('button_build', _('Build'), 'doBuildPyramidConfirmed', null, false, 'gray');
                             cancelConfirm = true;
+                            cancelMessage = _('reset');
                             break;
                         case 'client_playerTurn_buildDecoration_confirm':
                             this.addActionButton('button_build', _('Build'), 'doBuildDecorationConfirmed', null, false, 'gray');
@@ -1632,12 +1598,6 @@ define([
                                 this.addActionButton('done', _('Done'), 'doChooseStartResourceConfirmed', null, false, "gray");
                                 dojo.query('#done').addClass('disabled');
                             }
-                            this.addActionButton('decrementWood', "-1" + this.getTokenSymbol('wood', true), 'decrementStartWood', null, false, 'gray');
-                            this.addTooltipHtml('decrementWood', _("Decrement number of wood"));
-                            this.addActionButton('decrementStone', "-1" + this.getTokenSymbol('stone', true), 'decrementStartStone', null, false, 'gray');
-                            this.addTooltipHtml('decrementStone', _("Decrement number of stone"));
-                            this.addActionButton('decrementGold', "-1" + this.getTokenSymbol('gold', true), 'decrementStartGold', null, false, 'gray');
-                            this.addTooltipHtml('decrementGold', _("Decrement number of gold"));
                             this.addActionButton('incrementWood', "+1" + this.getTokenSymbol('wood', true), 'incrementStartWood', null, false, 'gray');
                             this.addTooltipHtml('incrementWood', _("Increment number of wood"));
                             this.addActionButton('incrementStone', "+1" + this.getTokenSymbol('stone', true), 'incrementStartStone', null, false, 'gray');
@@ -1646,6 +1606,8 @@ define([
                             this.addTooltipHtml('incrementGold', _("Increment number of gold"));
 
                             this.checkIfButtonsAreEnabled(this.clientStateArgs.wood, this.clientStateArgs.stone, this.clientStateArgs.gold, isMax);
+                            cancelConfirm = true;
+                            cancelMessage = _('reset');
                             break;
                         case 'claim_starting_discovery_tiles':
                             this.addActionButton('button_1_id', _('Done'), 'onPassClick', null, false, 'gray');
@@ -1657,7 +1619,7 @@ define([
                     }
 
                     if (cancelConfirm) {
-                        this.addActionButton('button_cancel', _('Cancel'), dojo.hitch(this, function () {
+                        this.addActionButton('button_cancel', cancelMessage, dojo.hitch(this, function () {
                             this.restoreServerGameState();
                         }), null, false, "red");
                     }
@@ -1698,21 +1660,6 @@ define([
             },
 
             checkIfButtonsAreEnabled: function (wood, stone, gold, isMax) {
-                if (wood == 0) {
-                    dojo.query('#decrementWood').addClass('disabled');
-                } else {
-                    dojo.query('#decrementWood').removeClass('disabled');
-                }
-                if (stone == 0) {
-                    dojo.query('#decrementStone').addClass('disabled');
-                } else {
-                    dojo.query('#decrementStone').removeClass('disabled');
-                }
-                if (gold == 0) {
-                    dojo.query('#decrementGold').addClass('disabled');
-                } else {
-                    dojo.query('#decrementGold').removeClass('disabled');
-                }
                 if (isMax || (this.clientStateArgs && wood == this.clientStateArgs.maxWood)) {
                     dojo.query('#incrementWood').addClass('disabled');
                 } else {
@@ -2820,13 +2767,6 @@ define([
                 }
             },
 
-            decrementTempleWood: function () {
-                if (this.clientStateArgs.wood > 0) {
-                    this.clientStateArgs.wood--;
-                    this.templeResouceConfirm();
-                }
-            },
-
             incrementTempleWood: function () {
                 if ((this.clientStateArgs.wood + this.clientStateArgs.stone + this.clientStateArgs.gold) < this.clientStateArgs.max) {
                     this.clientStateArgs.wood++;
@@ -2834,23 +2774,9 @@ define([
                 }
             },
 
-            decrementTempleStone: function () {
-                if (this.clientStateArgs.stone > 0) {
-                    this.clientStateArgs.stone--;
-                    this.templeResouceConfirm();
-                }
-            },
-
             incrementTempleStone: function () {
                 if ((this.clientStateArgs.wood + this.clientStateArgs.stone + this.clientStateArgs.gold) < this.clientStateArgs.max) {
                     this.clientStateArgs.stone++;
-                    this.templeResouceConfirm();
-                }
-            },
-
-            decrementTempleGold: function () {
-                if (this.clientStateArgs.gold > 0) {
-                    this.clientStateArgs.gold--;
                     this.templeResouceConfirm();
                 }
             },
@@ -2889,26 +2815,10 @@ define([
                 this.setClientStateAction(actionConfirm, translated);
             },
 
-            decrementTradeCocoa: function () {
-                if (this.clientStateArgs.pay.cocoa > 0) {
-                    this.clientStateArgs.pay.cocoa--;
-                    this.clientStateArgs.multiplier--;
-                    this.tradeConfirm();
-                }
-            },
-
             incrementTradeCocoa: function () {
                 if (this.clientStateArgs.multiplier < this.clientStateArgs.max) {
                     this.clientStateArgs.pay.cocoa++;
                     this.clientStateArgs.multiplier++;
-                    this.tradeConfirm();
-                }
-            },
-
-            decrementTradeWood: function () {
-                if (this.clientStateArgs.pay.wood > 0) {
-                    this.clientStateArgs.pay.wood--;
-                    this.clientStateArgs.multiplier--;
                     this.tradeConfirm();
                 }
             },
@@ -2922,27 +2832,11 @@ define([
                 }
             },
 
-            decrementTradeStone: function () {
-                if (this.clientStateArgs.pay.stone > 0) {
-                    this.clientStateArgs.pay.stone--;
-                    this.clientStateArgs.multiplier--;
-                    this.tradeConfirm();
-                }
-            },
-
             incrementTradeStone: function () {
                 if ((this.clientStateArgs.isPayCocoa > 0 && this.clientStateArgs.isPayResource > 0 && this.clientStateArgs.multiplier < 1) ||
                     (this.clientStateArgs.isPayCocoa == 0 && this.clientStateArgs.isPayResource > 0 && this.clientStateArgs.multiplier < this.clientStateArgs.max)) {
                     this.clientStateArgs.pay.stone++;
                     this.clientStateArgs.multiplier++;
-                    this.tradeConfirm();
-                }
-            },
-
-            decrementTradeGold: function () {
-                if (this.clientStateArgs.pay.gold > 0) {
-                    this.clientStateArgs.pay.gold--;
-                    this.clientStateArgs.multiplier--;
                     this.tradeConfirm();
                 }
             },
@@ -2956,13 +2850,6 @@ define([
                 }
             },
 
-            decrementTradeGetWood: function () {
-                if (this.clientStateArgs.get.wood > 0) {
-                    this.clientStateArgs.get.wood--;
-                    this.tradeConfirm();
-                }
-            },
-
             incrementTradeGetWood: function () {
                 if ((this.clientStateArgs.get.wood + this.clientStateArgs.get.stone + this.clientStateArgs.get.gold) < this.clientStateArgs.max) {
                     this.clientStateArgs.get.wood++;
@@ -2970,23 +2857,9 @@ define([
                 }
             },
 
-            decrementTradeGetStone: function () {
-                if (this.clientStateArgs.get.stone > 0) {
-                    this.clientStateArgs.get.stone--;
-                    this.tradeConfirm();
-                }
-            },
-
             incrementTradeGetStone: function () {
                 if ((this.clientStateArgs.get.wood + this.clientStateArgs.get.stone + this.clientStateArgs.get.gold) < this.clientStateArgs.max) {
                     this.clientStateArgs.get.stone++;
-                    this.tradeConfirm();
-                }
-            },
-
-            decrementTradeGetGold: function () {
-                if (this.clientStateArgs.get.gold > 0) {
-                    this.clientStateArgs.get.gold--;
                     this.tradeConfirm();
                 }
             },
@@ -3560,26 +3433,10 @@ define([
                 }
             },
 
-            incrementConstuctionGetWood: function () {
-                var level = parseInt(dojo.attr(this.constructionWrapper, "data-level"));
-                if (this.clientStateArgs.wood < level && this.clientStateArgs.stone == 2) {
-                    this.clientStateArgs.wood++;
-                    this.buildPyramid();
-                }
-            },
-
             decrementConstuctionGetStone: function () {
                 var level = parseInt(dojo.attr(this.constructionWrapper, "data-level"));
                 if (this.clientStateArgs.wood == level && this.clientStateArgs.stone == 2) {
                     this.clientStateArgs.stone--;
-                    this.buildPyramid();
-                }
-            },
-
-            incrementConstuctionGetStone: function () {
-                var level = parseInt(dojo.attr(this.constructionWrapper, "data-level"));
-                if (this.clientStateArgs.wood == level && this.clientStateArgs.stone == 1) {
-                    this.clientStateArgs.stone++;
                     this.buildPyramid();
                 }
             },
