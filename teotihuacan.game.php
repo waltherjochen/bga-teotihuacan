@@ -1578,10 +1578,14 @@ class teotihuacan extends Table
 
     function areDiscoveryTilesLeft()
     {
+        $player_id = self::getCurrentPlayerId();
         $upgradeWorkers = (int)self::getGameStateValue('upgradeWorkers');
         self::setGameStateValue('doMainAction', 0);
 
-        if ($upgradeWorkers > 0) {
+        $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
+        if($worker && count($worker) > 0){
+            $this->gamestate->nextState("ascension");
+        } else if ($upgradeWorkers > 0) {
             $this->gamestate->nextState("upgrade_workers");
         } else {
             $current_player_id = self::getCurrentPlayerId();
@@ -3989,7 +3993,10 @@ class teotihuacan extends Table
         if ((int)self::getGameStateValue('startingTileBonus') > 0) {
             $this->gamestate->nextState("calculate_next_bonus");
         } else if (self::getGameStateValue('useDiscovery')) {
-            if(self::getGameStateValue('useDiscoveryPowerUp')){
+            $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
+            if($worker && count($worker) > 0){
+                $this->gamestate->nextState("ascension");
+            } else if(self::getGameStateValue('useDiscoveryPowerUp')){
                 $this->gamestate->nextState("upgrade_workers");
             } else {
                 $this->goToPreviousState();

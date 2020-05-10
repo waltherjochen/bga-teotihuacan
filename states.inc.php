@@ -319,7 +319,7 @@ $machinestates = array(
 
     STATE_PLAYER_TURN_CHOOSE_TEMPLE_BONUS => array(
         "name" => "playerTurn_choose_temple_bonus",
-        "description" => clienttranslate('${actplayer} must choose the temple bonus or'),
+        "description" => clienttranslate('${actplayer} must choose the temple bonus'),
         "descriptionmyturn" => clienttranslate('${you} must choose the temple bonus or'),
         "type" => "activeplayer",
         "args" => "getTempleBonusValue",
@@ -436,7 +436,7 @@ $machinestates = array(
             "useDiscoveryTile",
             "pass",
         ),
-        "transitions" => array("pass" => STATE_PLAYER_END_TURN, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "zombiePass" => STATE_PLAYER_END_TURN)
+        "transitions" => array("pass" => STATE_PLAYER_END_TURN, "ascension" => STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "zombiePass" => STATE_PLAYER_END_TURN)
     ),
     STATE_PLAYER_END_TURN => array(
         "name" => "playerTurn_end_turn",
