@@ -3491,6 +3491,10 @@ class teotihuacan extends Table
         $sql = "SELECT * FROM `temple_queue` ORDER BY id DESC LIMIT 1";
         $temple_queue = self::getObjectFromDB($sql);
 
+        if (self::getGameStateValue('ascensionTempleSteps')) {
+            self::incGameStateValue('ascensionTempleSteps', -1);
+        }
+
         if (substr($temple_queue['queue'], 0, 4) === "deco") {
             $temple1 = explode("_", $temple_queue['queue'])[1];
             $temple2 = explode("_", $temple_queue['queue'])[2];
@@ -3995,7 +3999,6 @@ class teotihuacan extends Table
         $canBuildPyramidTiles = (int)self::getGameStateValue('canBuildPyramidTiles');
         $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
         $countWorkers = (int)self::getUniqueValueFromDB($sql);
-
         self::setGameStateValue('last_temple_id', 0);
 
         if ((int)self::getGameStateValue('startingTileBonus') > 0) {
@@ -4004,6 +4007,8 @@ class teotihuacan extends Table
             $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
             if($worker && count($worker) > 0){
                 $this->gamestate->nextState("ascension");
+            } else if(self::getGameStateValue('ascensionTempleSteps')){
+                $this->gamestate->nextState("action");
             } else if(self::getGameStateValue('useDiscoveryPowerUp')){
                 $this->gamestate->nextState("upgrade_workers");
             } else {

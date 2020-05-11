@@ -4276,7 +4276,7 @@ define([
 
             showEclipseBanner: function () {
                 if(this.global_eclipseDiscWhite >= this.global_eclipseDiscBlack){
-                    $('eclipse-title').innerHTML = _('Eclipse is triggert');
+                    $('eclipse-title').innerHTML = _('Eclipse is triggered');
                     dojo.query('#eclipse-zone').addClass('show');
                     if(this.global_lastRound == 3){
                         $('eclipse-subtitle').innerHTML = _('Scoring happens immediately after the turn of the current player');
