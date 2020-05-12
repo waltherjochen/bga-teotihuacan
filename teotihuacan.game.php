@@ -2422,19 +2422,22 @@ class teotihuacan extends Table
             if ($techTiles_r1_c1 && $techTiles_r1_c2 && $techTiles_r1_c3 && $techTiles_r2_c1 && $techTiles_r2_c2 && $techTiles_r2_c3) {
                 throw new BgaUserException(self::_("You already aquired all technologies."));
             } else if ($techTiles_r1_c1 && $techTiles_r1_c2 && $techTiles_r1_c3) {
-                $this->updateGold(-2, false, null, clienttranslate("You have not enough gold for the main action."));
+                $this->updateGold(-2, false, null, clienttranslate("You do not have enough gold for the main action."));
 
                 $worker_power = (int)self::getUniqueValueFromDB("SELECT `worker_power` FROM `map` WHERE `player_id` = $player_id AND `worker_id`=$selected_worker_id");
 
-                if (!($countWorkers > 0 || $worker_power >= 4)) {
+                $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (51,52,53) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
+                $id = (int)self::getUniqueValueFromDB($sql);
+
+                if (!($countWorkers > 0 || $worker_power >= 4 || $id)) {
                     throw new BgaUserException(self::_("This move is not possible."));
                 }
             } else {
-                $this->updateGold(-1, false, null, clienttranslate("You have not enough gold for the main action."));
+                $this->updateGold(-1, false, null, clienttranslate("You do not have enough gold for the main action."));
             }
 
         } else if ($card_id == 6) {
-            $this->updateWood(-2, false, null, clienttranslate("You have not enough wood for the main action."));
+            $this->updateWood(-2, false, null, clienttranslate("You do not have enough wood for the main action."));
         } else if ($card_id == 7) {
             $gold = 4 - ($countWorkers + 1);
             if(self::getGameStateValue('useDiscoveryMoveTwoWorkers') && self::getGameStateValue('selected_worker2_id')){
@@ -2443,7 +2446,7 @@ class teotihuacan extends Table
             if ($gold < 1) {
                 $gold = 1;
             }
-            $this->updateGold(-$gold, false, null, clienttranslate("You have not enough gold for the main action."));
+            $this->updateGold(-$gold, false, null, clienttranslate("You do not have enough gold for the main action."));
         } else if ($card_id == 8) {
             $pyramid = self::getObjectListFromDB("SELECT `card_location_arg` FROM `card` WHERE `card_type` = 'pyramidTiles' and `card_location` like 'pyra_rotate_%'", true);
             $bottom = array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
@@ -2495,12 +2498,12 @@ class teotihuacan extends Table
                 $stonePlayer = (int)self::getUniqueValueFromDB("SELECT `stone` FROM `player` WHERE `player_id` = $player_id");
                 $woodPlayer = (int)self::getUniqueValueFromDB("SELECT `wood` FROM `player` WHERE `player_id` = $player_id");
                 if (!($stonePlayer >= $stone && ($woodPlayer + 1) >= $wood || ($stonePlayer + 1) >= $stone && $woodPlayer >= $wood)) {
-                    throw new BgaUserException(self::_("You have not enough resources for the main action."));
+                    throw new BgaUserException(self::_("You do not have enough resources for the main action."));
                 }
             } else {
 
-                $this->updateStone(-2, false, null, clienttranslate("You have not enough stone for the main action."));
-                $this->updateWood(-$wood, false, null, clienttranslate("You have not enough wood for the main action."));
+                $this->updateStone(-2, false, null, clienttranslate("You do not have enough stone for the main action."));
+                $this->updateWood(-$wood, false, null, clienttranslate("You do not have enough wood for the main action."));
             }
         }
 
@@ -2919,7 +2922,7 @@ class teotihuacan extends Table
             $cocoa = (int)$player['cocoa'];
 
             if ($cocoa < $amount) {
-                throw new BgaUserException(self::_("You have not enough cocoa."));
+                throw new BgaUserException(self::_("You do not have enough cocoa."));
             }
             $sql = "UPDATE `player` SET cocoa  = cocoa - $amount WHERE player_id = $player_id";
         } else {
@@ -2944,7 +2947,7 @@ class teotihuacan extends Table
 
             if ($wood < $amount) {
                 if ($message == '') {
-                    throw new BgaUserException(self::_("You have not enough wood."));
+                    throw new BgaUserException(self::_("You do not have enough wood."));
                 } else {
                     throw new BgaUserException($message);
                 }
@@ -2972,7 +2975,7 @@ class teotihuacan extends Table
 
             if ($stone < $amount) {
                 if ($message == '') {
-                    throw new BgaUserException(self::_("You have not enough stone."));
+                    throw new BgaUserException(self::_("You do not have enough stone."));
                 } else {
                     throw new BgaUserException($message);
                 }
@@ -3000,7 +3003,7 @@ class teotihuacan extends Table
 
             if ($gold < $amount) {
                 if ($message == '') {
-                    throw new BgaUserException(self::_("You have not enough gold."));
+                    throw new BgaUserException(self::_("You do not have enough gold."));
                 } else {
                     throw new BgaUserException($message);
                 }
@@ -3249,6 +3252,26 @@ class teotihuacan extends Table
         }
 
         $selected_board_id_to = self::getGameStateValue('selected_board_id_to');
+        $board_id = (int)self::getUniqueValueFromDB("SELECT `card_id` FROM `card` WHERE `card_type` = 'actionBoards' AND `card_location_arg` = $selected_board_id_to");
+
+        if($board_id == 2){
+            $temple = 'red';
+        } else if($board_id == 3){
+            $temple = 'green';
+        } else if($board_id == 4){
+            $temple = 'blue';
+        }
+        if(isset($temple)){
+            $sql = "SELECT `temple_$temple` FROM `player` WHERE `player_id` = $player_id";
+            $step = (int)self::getUniqueValueFromDB($sql);
+
+            $sql = "SELECT count(*) FROM `player` WHERE `temple_$temple` >= 11";
+            $used = (int)self::getUniqueValueFromDB($sql);
+
+            if (($step >= 11 || $step == 10 && $used)) {
+                throw new BgaUserException(self::_("You are already on top of the temple"));
+            }
+        }
 
         $sql = "SELECT `card_id` FROM `card` WHERE `card_type` = 'actionBoards' AND `card_location_arg` = $selected_board_id_to";
         $board_id = (int)self::getUniqueValueFromDB($sql);
@@ -4162,7 +4185,8 @@ class teotihuacan extends Table
             $messageParts[] = clienttranslate(' ability to move worker anywhere.');
             self::setGameStateValue('useDiscoveryMoveWorkerAnywhere', 1);
         } else if ($move_double > 0) {
-            if ($this->gamestate->state()['name'] != 'playerTurn') {
+            $AreTwoWorkersAvailable = self::getUniqueValueFromDB("SELECT `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false group by actionboard_id having count(*) > 1");
+            if ($this->gamestate->state()['name'] != 'playerTurn' || !$AreTwoWorkersAvailable) {
                 throw new BgaUserException(self::_("You cannot use this Discovery Tile right now"));
             }
             $messageParts[] = clienttranslate(' ability to move two workers');
