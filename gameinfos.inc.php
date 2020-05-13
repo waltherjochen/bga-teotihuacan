@@ -132,7 +132,9 @@ $gameinfos = array(
 // circuit : A plays and choose the next player C, C plays and choose the next player D, ...
 // complex : A+B+C plays and says that the next player is A+B
 'is_sandbox' => false,
-'turnControl' => 'simple'
+'turnControl' => 'simple',
 
 ////////
+
+'db_undo_support' => true
 );

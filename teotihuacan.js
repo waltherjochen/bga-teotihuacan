@@ -1511,6 +1511,9 @@ define([
                                     this.addTooltipHtml('cocoa_free', _("Ignore paying cocoa"));
                                 }
                             }
+                            if (args.undo > 0) {
+                                this.addActionButton('button_2_id', _('Undo Main action'), 'undo', null, false, 'red');
+                            }
                             break;
                         case 'playerTurn_upgrade_workers_buy':
                             this.addActionButton('button_1_id', _('Buy') + "(-1" + this.getTokenSymbol('cocoa', true) + ")", 'buyPowerUpsConfirmed', null, false, 'gray');
@@ -2447,6 +2450,11 @@ define([
                 this.ajaxAction(action, {
                     pay: false,
                 });
+            },
+
+            undo: function (event) {
+                var action = 'undo';
+                this.ajaxAction(action);
             },
 
             onPassClick: function (event) {
@@ -3824,6 +3832,7 @@ define([
                 dojo.subscribe('acquireTechnology', this, "notif_acquireTechnology");
                 dojo.subscribe('buildPyramid', this, "notif_buildPyramid");
                 dojo.subscribe('refillPyramidTileOffer', this, "notif_refillPyramidTileOffer");
+                dojo.subscribe('refillDecorationTileOffer', this, "notif_refillDecorationTileOffer");
                 dojo.subscribe('stepPyramidTrack', this, "notif_stepPyramidTrack");
                 dojo.subscribe('buildDecoration', this, "notif_buildDecoration");
                 dojo.subscribe('updateCalenderTrack', this, "notif_updateCalenderTrack");
@@ -4201,16 +4210,33 @@ define([
                 this.resizeGame();
             },
 
-            notif_buildDecoration: function (notif) {
-                var player_id = notif.args.player_id;
-                var decorationTile = notif.args.decorationTile;
-                var decorationWrapper = notif.args.decorationWrapper;
-                var newTile = notif.args.newTile;
+            notif_refillDecorationTileOffer: function (notif) {
+                var newTiles = notif.args.newTiles;
                 var decorationTiles = notif.args.decorationTiles;
 
-                var source = $("decorationTile_" + decorationTile).parentElement;
-
                 this.gamedatas_local.decorationTiles = decorationTiles;
+
+                for (var id in newTiles) {
+                    var newTile = newTiles[id];
+                    if (newTile && newTile.location) {
+                        console.log("newTile",newTile);
+                        var target = 'decoration_wrapper_' + newTile.location.split('_')[1];
+                        dojo.place(this.format_block('jstpl_decorationTiles', {
+                            type_arg: newTile.type_arg,
+                            location: newTile.location
+                        }), target);
+                    }
+                }
+
+                this.queryAndAddEvent('.pyramidTile', 'onclick', 'onPyramidTileChanged');
+                this.resizeGame();
+            },
+
+            notif_buildDecoration: function (notif) {
+                var decorationTile = notif.args.decorationTile;
+                var decorationWrapper = notif.args.decorationWrapper;
+
+                var source = $("decorationTile_" + decorationTile).parentElement;
 
                 this.setupDecoration(false);
 
@@ -4226,14 +4252,6 @@ define([
                         type_arg: decorationTile,
                         location: ""
                     }), decorationWrapper);
-
-                    if (newTile && newTile.location) {
-                        var target = 'decoration_wrapper_' + newTile.location.split('_')[1];
-                        dojo.place(_this.format_block('jstpl_decorationTiles', {
-                            type_arg: newTile.type_arg,
-                            location: newTile.location
-                        }), target);
-                    }
 
                     _this.queryAndAddEvent('.decorationTile', 'onclick', 'onDecorationTileChanged');
                     _this.resizeGame();

@@ -872,6 +872,8 @@ class teotihuacan extends Table
         $player_id = self::activeNextPlayer();
         self::giveExtraTime($player_id);
 
+        $this->undoSavepoint();
+
         $this->gamestate->nextState();
     }
 
@@ -911,6 +913,7 @@ class teotihuacan extends Table
         self::setGameStateValue('startingTileBonus', 0);
         self::setGameStateValue('getTechnologyDiscount', 0);
         self::setGameStateValue('aquiredTechnologyTile', -1);
+        self::setGameStateValue('draftReverse', 0);
 
         $sql = "TRUNCATE temple_queue";
         self::DbQuery($sql);
@@ -1567,6 +1570,8 @@ class teotihuacan extends Table
         $isInArray = false;
         $playerHand = $this->getAllDatas()['playersHand'][$current_player_id]['other'];
 
+        $this->refillTiles();
+
         for ($i = 0; $i < count($playerHand); $i++) {
             $type_arg = (int)$playerHand[$i]['type_arg'];
             if (in_array($type_arg, $possibleDiscoveryTiles)) {
@@ -1578,6 +1583,70 @@ class teotihuacan extends Table
             $this->gamestate->nextState("check_pass");
         } else {
             $this->gamestate->nextState("next_player");
+        }
+    }
+
+    function refillTiles()
+    {
+        $newTiles = array();
+
+        $pyramidTiles_0 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'pyramidTiles' AND `card_location` = 'pyramidTiles_0'");
+        $pyramidTiles_1 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'pyramidTiles' AND `card_location` = 'pyramidTiles_1'");
+        $pyramidTiles_2 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'pyramidTiles' AND `card_location` = 'pyramidTiles_2'");
+
+        if ($pyramidTiles_0 <= 0) {
+            $this->cards->pickCardsForLocation(1, 'pyraTiles_deck', 'pyramidTiles_0');
+            array_push($newTiles, current($this->cards->getCardsInLocation('pyramidTiles_0')));
+        }
+        if ($pyramidTiles_1 <= 0) {
+            $this->cards->pickCardsForLocation(1, 'pyraTiles_deck', 'pyramidTiles_1');
+            array_push($newTiles, current($this->cards->getCardsInLocation('pyramidTiles_1')));
+        }
+        if ($pyramidTiles_2 <= 0) {
+            $this->cards->pickCardsForLocation(1, 'pyraTiles_deck', 'pyramidTiles_2');
+            array_push($newTiles, current($this->cards->getCardsInLocation('pyramidTiles_2')));
+        }
+
+        if (count($newTiles) > 0) {
+            $pyramidTiles = $this->getAllDatas()['pyramidTiles'];
+
+            self::notifyAllPlayers("refillPyramidTileOffer", '', array(
+                'newTiles' => $newTiles,
+                'pyramidTiles' => $pyramidTiles,
+            ));
+        }
+
+        $newTiles = array();
+
+        $decorationTiles_0 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'decorationTiles' AND `card_location` = 'decoTiles_0'");
+        $decorationTiles_1 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'decorationTiles' AND `card_location` = 'decoTiles_1'");
+        $decorationTiles_2 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'decorationTiles' AND `card_location` = 'decoTiles_2'");
+        $decorationTiles_3 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'decorationTiles' AND `card_location` = 'decoTiles_3'");
+
+        if ($decorationTiles_0 <= 0) {
+            $this->cards->pickCardsForLocation(1, 'decoTiles_deck', 'decoTiles_0');
+            array_push($newTiles, current($this->cards->getCardsInLocation('decoTiles_0')));
+        }
+        if ($decorationTiles_1 <= 0) {
+            $this->cards->pickCardsForLocation(1, 'decoTiles_deck', 'decoTiles_1');
+            array_push($newTiles, current($this->cards->getCardsInLocation('decoTiles_1')));
+        }
+        if ($decorationTiles_2 <= 0) {
+            $this->cards->pickCardsForLocation(1, 'decoTiles_deck', 'decoTiles_2');
+            array_push($newTiles, current($this->cards->getCardsInLocation('decoTiles_2')));
+        }
+        if ($decorationTiles_3 <= 0) {
+            $this->cards->pickCardsForLocation(1, 'decoTiles_deck', 'decoTiles_3');
+            array_push($newTiles, current($this->cards->getCardsInLocation('decoTiles_3')));
+        }
+
+        if (count($newTiles) > 0) {
+            $decorationTiles = $this->getAllDatas()['decorationTiles'];
+
+            self::notifyAllPlayers("refillDecorationTileOffer", '', array(
+                'newTiles' => $newTiles,
+                'decorationTiles' => $decorationTiles,
+            ));
         }
     }
 
@@ -1831,11 +1900,17 @@ class teotihuacan extends Table
 
         $lockedWorkers = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = true AND `worship_pos` > 0");
 
+        $undo = false;
+
         if($useDiscovery || $useStartingTile){
             $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `worker_power` < 6",true);
         } else {
             $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `worker_power` < 6 AND `actionboard_id` = $selected_board_id_to",true);
             self::setGameStateValue('doMainAction', 0);
+            $usedOnePowerUp = (int)self::getGameStateValue('draftReverse');
+            if(!$usedOnePowerUp){
+                $undo = true;
+            }
         }
 
         $upgradeWorkers = (int)self::getGameStateValue('upgradeWorkers');
@@ -1854,6 +1929,7 @@ class teotihuacan extends Table
             'clickableWorkers' => $clickableWorkers,
             'amount' => $amountPowerUps,
             'amountPowerUpsDiscovery' => $amountPowerUpsDiscovery,
+            'undo' => $undo,
         );
     }
 
@@ -4397,6 +4473,14 @@ class teotihuacan extends Table
         $upgradeWorkers = $upgradeWorkers - 1;
         self::incGameStateValue('upgradeWorkers', -1);
 
+        $useDiscovery = (int)self::getGameStateValue('useDiscovery') > 0;
+        $useStartingTile = (int)self::getGameStateValue('startingTileBonus') > 0;
+
+        if(!($useDiscovery || $useStartingTile)){
+            self::setGameStateValue('draftReverse', 1); // used at least one power up
+        }
+
+
         $sql = "SELECT `worker_power` FROM `map` WHERE `player_id` = $player_id AND `worker_id` = $worker_id";
         $worker_power = (int)self::getUniqueValueFromDB($sql);
 
@@ -4417,34 +4501,6 @@ class teotihuacan extends Table
             'worker_power' => $worker_power_after,
             'worker_power_previous' => $worker_power,
         ));
-
-        $newTiles = array();
-
-        $pyramidTiles_0 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'pyramidTiles' AND `card_location` = 'pyramidTiles_0'");
-        $pyramidTiles_1 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'pyramidTiles' AND `card_location` = 'pyramidTiles_1'");
-        $pyramidTiles_2 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'pyramidTiles' AND `card_location` = 'pyramidTiles_2'");
-
-        if ($pyramidTiles_0 <= 0) {
-            $this->cards->pickCardsForLocation(1, 'pyraTiles_deck', 'pyramidTiles_0');
-            array_push($newTiles, current($this->cards->getCardsInLocation('pyramidTiles_0')));
-        }
-        if ($pyramidTiles_1 <= 0) {
-            $this->cards->pickCardsForLocation(1, 'pyraTiles_deck', 'pyramidTiles_1');
-            array_push($newTiles, current($this->cards->getCardsInLocation('pyramidTiles_1')));
-        }
-        if ($pyramidTiles_2 <= 0) {
-            $this->cards->pickCardsForLocation(1, 'pyraTiles_deck', 'pyramidTiles_2');
-            array_push($newTiles, current($this->cards->getCardsInLocation('pyramidTiles_2')));
-        }
-
-        if (count($newTiles) > 0) {
-            $pyramidTiles = $this->getAllDatas()['pyramidTiles'];
-
-            self::notifyAllPlayers("refillPyramidTileOffer", '', array(
-                'newTiles' => $newTiles,
-                'pyramidTiles' => $pyramidTiles,
-            ));
-        }
 
         if (self::getGameStateValue('useDiscoveryPowerUp')) {
             self::incGameStateValue('useDiscoveryPowerUp', -1);
@@ -5323,18 +5379,12 @@ class teotihuacan extends Table
         $decorationTileCard = $this->cards->getCard($card_id_decorationTiles);
 
         $this->cards->pickCardsForLocation(1, $decorationTileCard['location'], "deco_p_$direction", $level);
-        $this->cards->pickCardsForLocation(1, 'decoTiles_deck', $decorationTileCard['location']);
-        $newTile = current($this->cards->getCardsInLocation($decorationTileCard['location']));
-
-        $decorationTiles = $this->getAllDatas()['decorationTiles'];
 
         self::notifyAllPlayers("buildDecoration", clienttranslate('${player_name} adds a decoration tile to the pyramid'), array(
             'player_id' => $player_id,
             'player_name' => self::getActivePlayerName(),
             'decorationTile' => $decorationTile,
             'decorationWrapper' => $decorationWrapper,
-            'newTile' => $newTile,
-            'decorationTiles' => $decorationTiles,
         ));
 
         self::incStat(1, "build_decoration", $player_id);
@@ -5605,6 +5655,15 @@ class teotihuacan extends Table
             $this->gamestate->setPlayerNonMultiactive($player_id, 'next');
             self::giveExtraTime($player_id);
         }
+    }
+
+    function undo()
+    {
+        $usedOnePowerUp = (int)self::getGameStateValue('draftReverse');
+        if($usedOnePowerUp){
+            throw new BgaUserException(self::_("This move is not possible."));
+        }
+        $this->undoRestorePoint();
     }
 
     function placeWorker($board_id, $board_pos)
