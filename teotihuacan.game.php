@@ -124,7 +124,7 @@ class teotihuacan extends Table
             "eclipseDiscBlack" => 40,
             "isDecoration" => 41,
             "extraWorker" => 42,
-            "turn" => 43,
+            "aquiredTechnologyTile" => 43,
             "eclipse" => 44,
             "lastRound" => 45,
             "startingTileBonus" => 46,
@@ -221,7 +221,7 @@ class teotihuacan extends Table
         self::setGameStateInitialValue('eclipseDiscWhite', 0);
         self::setGameStateInitialValue('isDecoration', 0);
         self::setGameStateInitialValue('extraWorker', 0);
-        self::setGameStateInitialValue('turn', 0);
+        self::setGameStateInitialValue('aquiredTechnologyTile', -1);
         self::setGameStateInitialValue('eclipse', 1);
         self::setGameStateInitialValue('lastRound', 0);
         self::setGameStateInitialValue('startingTileBonus', 0);
@@ -867,16 +867,12 @@ class teotihuacan extends Table
 
     function stStartTurn()
     {
-
         self::trace("stStartTurn");
-
-        self::incGameStateValue('turn', 1);
 
         $player_id = self::activeNextPlayer();
         self::giveExtraTime($player_id);
 
         $this->gamestate->nextState();
-
     }
 
     function resetGameStateValues()
@@ -914,6 +910,7 @@ class teotihuacan extends Table
         self::setGameStateValue('extraWorker', 0);
         self::setGameStateValue('startingTileBonus', 0);
         self::setGameStateValue('getTechnologyDiscount', 0);
+        self::setGameStateValue('aquiredTechnologyTile', -1);
 
         $sql = "TRUNCATE temple_queue";
         self::DbQuery($sql);
@@ -1767,7 +1764,9 @@ class teotihuacan extends Table
         $techTile = $this->cards->getCard((int)self::getUniqueValueFromDB($sql));
         $location = $techTile['location'];
 
-        if ($location == 'techTiles_deck' || $location == 'techTiles_row2') {
+        $aquiredTechnologyTile = self::getGameStateValue('aquiredTechnologyTile');
+
+        if ($location == 'techTiles_deck' || $location == 'techTiles_row2' || $type_arg == $aquiredTechnologyTile) {
             return false;
         }
         $sql = "SELECT `$location` FROM `player` WHERE `player_id` = $player_id";
@@ -2726,6 +2725,13 @@ class teotihuacan extends Table
         $row2 = (int)self::getUniqueValueFromDB("SELECT `row1` FROM `nobles`");
         $row3 = (int)self::getUniqueValueFromDB("SELECT `row2` FROM `nobles`");
 
+        $player_id = self::getActivePlayerId();
+
+        $id = (int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (51,52,53) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1");
+        if($id){
+            $countWorkers++;
+        }
+
         if ($countWorkers == 1 && $row1 >= 5) {
             throw new BgaUserException(self::_("There is no space left"));
         } else if ($countWorkers == 2 && $row1 >= 5 && $row2 >= 4) {
@@ -3261,7 +3267,7 @@ class teotihuacan extends Table
         } else if($board_id == 4){
             $temple = 'blue';
         }
-        if(isset($temple)){
+        if($worship && isset($temple)){
             $sql = "SELECT `temple_$temple` FROM `player` WHERE `player_id` = $player_id";
             $step = (int)self::getUniqueValueFromDB($sql);
 
@@ -4886,6 +4892,9 @@ class teotihuacan extends Table
         if ((int)self::getUniqueValueFromDB($sql) > 0) {
             throw new BgaUserException(self::_("You already acquired this technology."));
         }
+
+        //all checks done
+        self::setGameStateValue('aquiredTechnologyTile', $id);
 
         if ($location == 'techTiles_r2_c1' || $location == 'techTiles_r2_c2' || $location == 'techTiles_r2_c3') {
             $this->payResource($player_id, -2, 'gold', $target);
