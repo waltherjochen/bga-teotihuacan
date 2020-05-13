@@ -2727,8 +2727,13 @@ class teotihuacan extends Table
 
         $player_id = self::getActivePlayerId();
 
-        $id = (int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (51,52,53) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1");
-        if($id){
+        if((int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (51) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1")){
+            $countWorkers++;
+        }
+        if((int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (52) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1")){
+            $countWorkers++;
+        }
+        if((int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (53) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1")){
             $countWorkers++;
         }
 
