@@ -146,6 +146,7 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} can claim your discovery tile from starting tile'),
         "type" => "activeplayer",
         "args" => "getWorshipInfo",
+        'action' => 'checkStartingDiscoveryTiles',
         "possibleactions" => array(
             "useDiscoveryTile",
             "claimDiscovery",

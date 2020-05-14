@@ -1321,7 +1321,6 @@ define([
                             break;
                         case 'client_playerTurn_nobles_confirm':
                             this.addActionButton('button_1_id', _('Build'), 'doNoblesClick', null, false, 'gray');
-                            this.addActionButton('button_2_id', _('Skip action and pass'), 'onPassClick', null, false, "red");
                             break;
                         case 'playerTurn_choose_worship_actions':
                             this.canBuyDiscoveryTile = args.canBuyDiscoveryTile;
@@ -1342,10 +1341,13 @@ define([
                         case 'playerTurn_check_pass':
                             this.addActionButton('button_1_id', _('end turn'), 'onPassClick', null, false, "red");
                             break;
+                        case 'playerTurn_worship_actions':
+                            if(!args.queue && !args.royalTileAction && args.worship_actions_discovery){
+                                this.addActionButton('button_1_id', _('Skip action and pass'), 'onPassClick', null, false, "red");
+                            }
+                            break;
                         case 'playerTurn_avenue_of_dead_choose_bonus':
                         case 'playerTurn_avenue_of_dead':
-                        case 'playerTurn_worship_actions':
-                        case 'playerTurn_alchemy':
                             this.addActionButton('button_1_id', _('Skip action and pass'), 'onPassClick', null, false, "red");
                             break;
                         case 'playerTurn_choose_temple_bonus':

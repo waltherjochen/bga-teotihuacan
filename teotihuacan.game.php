@@ -1565,12 +1565,36 @@ class teotihuacan extends Table
 
     function checkEndTurn()
     {
+        $this->refillTiles();
+
+        if ($this->canUseDiscoveryTiles()) {
+            $this->gamestate->nextState("check_pass");
+        } else {
+            $this->gamestate->nextState("next_player");
+        }
+    }
+
+    function checkStartingDiscoveryTiles()
+    {
+        $player_id = self::getCurrentPlayerId();
+        if ($this->isDraftMode()) {
+            $location = 'sChoose_all';
+        } else {
+            $location = 'sChoose_' . $player_id;
+        }
+        $discTilesLeft = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = '$location'");
+
+        if ($discTilesLeft == 0 && !$this->canUseDiscoveryTiles()) {
+            $this->pass();
+        }
+    }
+
+    function canUseDiscoveryTiles()
+    {
         $current_player_id = self::getCurrentPlayerId();
         $possibleDiscoveryTiles = [17, 18, 19, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41];
         $isInArray = false;
         $playerHand = $this->getAllDatas()['playersHand'][$current_player_id]['other'];
-
-        $this->refillTiles();
 
         for ($i = 0; $i < count($playerHand); $i++) {
             $type_arg = (int)$playerHand[$i]['type_arg'];
@@ -1579,11 +1603,8 @@ class teotihuacan extends Table
                 break;
             }
         }
-        if ($isInArray) {
-            $this->gamestate->nextState("check_pass");
-        } else {
-            $this->gamestate->nextState("next_player");
-        }
+
+        return $isInArray;
     }
 
     function refillTiles()
@@ -2821,6 +2842,7 @@ class teotihuacan extends Table
             throw new BgaUserException(self::_("There is no space left"));
         }
         $this->gamestate->nextState("nobles");
+        $this->nobles();
     }
 
     function collectResource($player_id, $amount, $token, $source, $customMessage = '')
