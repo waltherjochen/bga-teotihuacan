@@ -2477,8 +2477,8 @@ class teotihuacan extends Table
         $selected_board_id_to = self::getGameStateValue('selected_board_id_to');
         $selected_board_id_from = self::getGameStateValue('selected_board_id_from');
         $selected_worker_id = self::getGameStateValue('selected_worker_id');
-        $target = 'actionBoard_' . $selected_board_id_to;
-        $source = 'actionBoard_' . $selected_board_id_to;
+        $target = $player_id . '_worker_' . $selected_worker_id;
+        $source = $player_id . '_worker_' . $selected_worker_id;
 
         $sql = "SELECT `card_id` FROM `card` WHERE `card_type` = 'actionBoards' AND `card_location_arg` = $selected_board_id_to";
         $card_id = (int)self::getUniqueValueFromDB($sql);
