@@ -1370,6 +1370,15 @@
     z-index: 1;
     border: 1px solid #000000;
 }
+.decorationTile.zoom {
+    width: 57px;
+    height: 100px;
+}
+.decorationTile.zoom span {
+    top: 34%;
+    left: 57%;
+    font-size: 25px;
+}
 .decorationTile span {
     position: absolute;
     top: 32%;
@@ -1473,6 +1482,10 @@
     background-size: 1100%;
     z-index: 1;
     border: 1px solid #000000;
+}
+.pyramidTile.zoom {
+    width: 100px;
+    height: 100px;
 }
 
 .pyramidTile .token24.rotate {

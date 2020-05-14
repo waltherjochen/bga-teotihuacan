@@ -509,8 +509,6 @@ define([
                             }), 'pyramid_wrapper_2');
                         }
 
-
-                        this.addTooltipToClass(".pyramidTile", _("1 Click to select. Additional click to rotate."), "");
                     }
 
                 }
@@ -1001,6 +999,8 @@ define([
                     this.addTooltipHtml("ascension_" + i, this.gamedatas_local.ascensionInfo_data[i].tooltip);
                 }
                 this.showEclipseBanner();
+                this.setPyramidZoom();
+                this.setDecorationZoom();
             },
 
             setupClickEvents: function () {
@@ -3156,6 +3156,23 @@ define([
                 }
             },
 
+            setPyramidZoom: function (id) {
+                for(var i = 0; i < 32; i++){
+                    if($('pyramidTile_' + i)){
+                        var rotate = parseInt(dojo.attr('pyramidTile_' + i, "data-rotate"));
+                        this.addTooltipHtml("pyramidTile_" + i, '<div class="pyramidTile zoom rotate_'+rotate+'" id="pyramidTile_'+i+'"></div>');
+                    }
+                }
+            },
+
+            setDecorationZoom: function (id) {
+                for(var i = 0; i < 15; i++){
+                    if($('decorationTile_' + i)){
+                        this.addTooltipHtml("decorationTile_" + i, '<div class="decorationTile zoom" id="decorationTile_'+i+'"><span>></span></div>');
+                    }
+                }
+            },
+
             getDiscoveryTileTooltip: function (id) {
                 var tooltip = this.gamedatas_local.discoveryTiles_data[id].tooltip;
 
@@ -3389,7 +3406,8 @@ define([
                             rotate = 0;
                         }
                         dojo.addClass(event.target, "rotate_" + rotate);
-                        dojo.attr(event.target, "data-rotate", rotate)
+                        dojo.attr(event.target, "data-rotate", rotate);
+                        this.setPyramidZoom();
                     } else {
                         this.setupPyramid(false);
                         dojo.query('.actionBoard .pyramidTile.selected').removeClass('selected');
@@ -4210,6 +4228,7 @@ define([
 
                 this.queryAndAddEvent('.pyramidTile', 'onclick', 'onPyramidTileChanged');
                 this.resizeGame();
+                this.setPyramidZoom();
             },
 
             notif_refillDecorationTileOffer: function (notif) {
@@ -4232,6 +4251,7 @@ define([
 
                 this.queryAndAddEvent('.pyramidTile', 'onclick', 'onPyramidTileChanged');
                 this.resizeGame();
+                this.setDecorationZoom();
             },
 
             notif_buildDecoration: function (notif) {
