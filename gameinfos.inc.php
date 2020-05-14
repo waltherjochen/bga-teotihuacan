@@ -10,7 +10,19 @@
 
 */
 
-$gameinfos = array( 
+$gameinfos = array(
+
+// Game presentation
+// Short game presentation text that will appear on the game description page, structured as an array of paragraphs.
+// Each paragraph must be wrapped with totranslate() for translation and should not contain html (plain text without formatting).
+// A good length for this text is between 100 and 150 words (about 6 to 9 lines on a standard display)
+// Example:
+'presentation' => array(
+    totranslate("Travel back in time to the greatest city in Mesoamerica. Witness the glory and the twilight of the powerful pre-Columbian civilization. Strategize, accrue wealth, gain the favour of the gods, and become the builder of the magnificent Pyramid of the Sun."),
+    totranslate("In Teotihuacan: City of Gods, each player commands a force of worker dice, which grow in strength with every move. On your turn, you move a worker around a modular board, always choosing one of two areas of the location tile you land on: one offering you an action (and a worker upgrade), the other providing you with a powerful bonus (but without an upgrade)."),
+    totranslate("While managing their workforce and resources, players develop new technologies, climb the steps of the three great temples, build houses for the inhabitants of the city, and raise the legendary and breath-taking Pyramid of the Sun in the centre of the city."),
+    totranslate("Each game is played in three eras. As the dawn of the Aztecs comes closer, player efforts (and their ability to feed their workforce) are evaluated a total of three times. The player with the most fame is the winner."),
+),
 
 // Name of the game in English (will serve as the basis for translation) 
 'game_name' => "Teotihuacan: City of Gods", // NOI18N

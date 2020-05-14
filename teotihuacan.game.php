@@ -3667,6 +3667,21 @@ class teotihuacan extends Table
                 }
 
                 $this->gamestate->nextState("choose_bonus");
+
+                $discTiles_tb0 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_tb0'");
+                $discTiles_tr0 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_tr0'");
+                $discTiles_tg0 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_tg0'");
+                $discTiles_tg1 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_tg1'");
+
+                if($temple == 'blue' && $step == 4 && $discTiles_tb0 == 0){
+                    $this->temple_bonus();
+                } else if($temple == 'red' && $step == 5 && $discTiles_tr0 == 0){
+                    $this->temple_bonus();
+                } else if($temple == 'green' && $step == 3 && $discTiles_tg0 == 0){
+                    $this->temple_bonus();
+                } else if($temple == 'green' && $step == 6 && $discTiles_tg1 == 0){
+                    $this->temple_bonus();
+                }
             } else {
                 $source = "temple_" . $temple . "_step_" . $step;
                 if ($bonus[1] == 'vp') {
@@ -3701,7 +3716,7 @@ class teotihuacan extends Table
         }
     }
 
-    function pass()
+    function pass($notification = true)
     {
         self::checkAction('pass');
 
@@ -3711,10 +3726,12 @@ class teotihuacan extends Table
         $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
         $countWorkers = (int)self::getUniqueValueFromDB($sql);
 
-        self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} passed'), array(
-            'player_id' => $player_id,
-            'player_name' => self::getActivePlayerName(),
-        ));
+        if($notification){
+            self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} passed'), array(
+                'player_id' => $player_id,
+                'player_name' => self::getActivePlayerName(),
+            ));
+        }
 
         if ($this->gamestate->state()['name'] == 'claim_starting_discovery_tiles') {
             $startingDiscovery0 = self::getUniqueValueFromDB("SELECT `startingDiscovery0` FROM `player` WHERE `player_id` = $player_id");
@@ -4391,6 +4408,18 @@ class teotihuacan extends Table
                 ));
 
                 $this->gamestate->nextState("choose_bonus");
+
+                $discTiles_a0 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_a0'");
+                $discTiles_a1 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_a1'");
+                $discTiles_a2 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_a2'");
+
+                if($step == 3 && $discTiles_a0 == 0){
+                    $this->pass(false);
+                } else if($step == 6 && $discTiles_a1 == 0){
+                    $this->pass(false);
+                } else if($step == 8 && $discTiles_a2 == 0){
+                    $this->pass(false);
+                }
             } else {
 
                 self::notifyAllPlayers("stepAvenue", clienttranslate('${player_name} advanced one space on Avenue of Dead'), array(
