@@ -923,6 +923,8 @@ class teotihuacan extends Table
     {
         $this->resetGameStateValues();
 
+        $eclipse = (int)self::getGameStateValue('eclipse');
+
         $player_id = self::getActivePlayerId();
         $sql = "SELECT `player_no` FROM `player` WHERE `player_id` = $player_id";
         $player_no = (int)self::getUniqueValueFromDB($sql);
@@ -937,6 +939,7 @@ class teotihuacan extends Table
             self::setGameStateValue('lastRound', 0);
             self::notifyAllPlayers("showEclipseBanner", '', array(
                 'lastRound' => (int)self::getGameStateValue('lastRound'),
+                'eclipseNumber' => $eclipse
             ));
             $this->eclipse();
         } else if ($player_no == $count_player) {
@@ -952,12 +955,14 @@ class teotihuacan extends Table
                     self::setGameStateValue('lastRound', 0);
                     self::notifyAllPlayers("showEclipseBanner", '', array(
                         'lastRound' => (int)self::getGameStateValue('lastRound'),
+                        'eclipseNumber' => $eclipse
                     ));
                     $this->eclipse();
                 } else {
                     self::setGameStateValue('lastRound', 1);
                     self::notifyAllPlayers("showEclipseBanner", clienttranslate('*** One round left ***'), array(
                         'lastRound' => (int)self::getGameStateValue('lastRound'),
+                        'eclipseNumber' => $eclipse
                     ));
                     $this->gamestate->nextState("next_player");
                 }
@@ -1326,7 +1331,7 @@ class teotihuacan extends Table
 
             $this->notifyAllPlayers('tableWindow', '', Array(
                 'id' => 'eclipseScoring',
-                'title' => clienttranslate('Eclipse scoring summary'),
+                'title' => clienttranslate('Temple scoring summary'),
                 'table' => $table,
                 'closing' => clienttranslate('Close summary')
             ));
@@ -1440,6 +1445,7 @@ class teotihuacan extends Table
             "useDiscoveryMoveTwoWorkers" => self::getGameStateValue('useDiscoveryMoveTwoWorkers'),
             "eclipseDiscWhite" => self::getGameStateValue('eclipseDiscWhite'),
             "eclipseDiscBlack" => self::getGameStateValue('eclipseDiscBlack'),
+            "eclipse" => self::getGameStateValue('eclipse'),
             "lastRound" => self::getGameStateValue('lastRound'),
             "row1" => $row1,
             "row2" => $row2,
@@ -4435,6 +4441,7 @@ class teotihuacan extends Table
                 $discTiles_a1 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_a1'");
                 $discTiles_a2 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_a2'");
 
+
                 if($step == 3 && $discTiles_a0 == 0){
                     $this->pass(false);
                 } else if($step == 6 && $discTiles_a1 == 0){
@@ -4451,14 +4458,19 @@ class teotihuacan extends Table
                     'step' => $step,
                 ));
 
+                $this->stepAvenueCleanup();
             }
         } else {
             self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} stays on top of avenue of dead'), array(
                 'player_id' => $player_id,
                 'player_name' => self::getActivePlayerName(),
             ));
+            $this->stepAvenueCleanup();
         }
+    }
 
+    function stepAvenueCleanup()
+    {
         if (self::getGameStateValue('useDiscovery')) {
             $this->goToPreviousState();
         } else if (self::getGameStateValue('ascension')) {
@@ -4779,11 +4791,13 @@ class teotihuacan extends Table
                     self::setGameStateValue('lastRound', 3);
                     self::notifyAllPlayers("showEclipseBanner", clienttranslate('*** Eclipse is triggered ***'), array(
                         'lastRound' => (int)self::getGameStateValue('lastRound'),
+                        'eclipseNumber' => $eclipse
                     ));
                 } else {
                     self::setGameStateValue('lastRound', 2);
                     self::notifyAllPlayers("showEclipseBanner", clienttranslate('*** Eclipse is triggered ***'), array(
                         'lastRound' => (int)self::getGameStateValue('lastRound'),
+                        'eclipseNumber' => $eclipse
                     ));
                 }
             }

@@ -505,7 +505,11 @@
 }
 .actionBoard .dice.firstWorker.selected,
 .actionBoard .dice.clickable.firstWorker:hover {
-    border: 1px solid #0000ff;
+    border: 3px solid #1af2ff;
+}
+.actionBoard .dice.secondWorker.selected,
+.actionBoard .dice.clickable.secondWorker:hover {
+    border: 3px solid #0000ff;
 }
 
 .dice.color_000000 {
@@ -2210,6 +2214,7 @@
 }
 #eclipse-zone {
     display: none;
+    padding: 1px !important;
 }
 #eclipse-zone.show {
     display: block;

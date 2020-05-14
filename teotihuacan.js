@@ -163,6 +163,7 @@ define([
                 this.global_moveAnywhere = parseInt(this.gamedatas_local.global.useDiscoveryMoveWorkerAnywhere);
                 this.global_moveTwoWorkers = parseInt(this.gamedatas_local.global.useDiscoveryMoveTwoWorkers);
                 this.global_eclipseDiscWhite = parseInt(this.gamedatas_local.global.eclipseDiscWhite);
+                this.global_eclipseNumber = parseInt(this.gamedatas_local.global.eclipse);
                 this.global_eclipseDiscBlack = parseInt(this.gamedatas_local.global.eclipseDiscBlack);
                 this.global_lastRound = parseInt(this.gamedatas_local.global.lastRound);
                 this.global_isDraftMode = this.gamedatas_local.global.isDraftMode;
@@ -1055,7 +1056,7 @@ define([
                             if (args.args.global_moveTwoWorkers == true) {
                                 if ($(player_id + '_worker_' + args.args.selected_worker_id) && $(player_id + '_worker_' + args.args.selected_worker2_id)) {
                                     dojo.addClass(player_id + '_worker_' + args.args.selected_worker_id, 'firstWorker');
-                                    dojo.addClass(player_id + '_worker_' + args.args.selected_worker2_id, 'selected');
+                                    dojo.addClass(player_id + '_worker_' + args.args.selected_worker2_id, 'secondWorker');
                                 }
                             }
                             break;
@@ -2254,6 +2255,7 @@ define([
                 if (dojo.hasClass(event.target, 'clickable')) {
                     if (this.checkPossibleActions("selectDice")) {
                         dojo.query('.dice.firstWorker').removeClass('firstWorker');
+                        dojo.query('.dice.secondWorker').removeClass('secondWorker');
                         var board_id = parseInt(dojo.attr(event.target, "data-board-id"));
                         var worker_id = dojo.attr(event.target, "data-worker-id");
                         this.selected_worker2_id = 0;
@@ -2284,6 +2286,9 @@ define([
 
                         if (this.global_moveTwoWorkers == true) {
                             dojo.addClass(this.getActivePlayerId() + '_worker_' + this.selected_worker_id, 'firstWorker');
+                            if($(this.getActivePlayerId() + '_worker_' + this.selected_worker2_id)){
+                                dojo.addClass(this.getActivePlayerId() + '_worker_' + this.selected_worker2_id, 'secondWorker');
+                            }
                         }
 
                         this.selected_board_id_from = board_id;
@@ -4311,19 +4316,22 @@ define([
 
             notif_showEclipseBanner: function (notif) {
                 this.global_lastRound = notif.args.lastRound;
+                this.global_eclipseNumber = notif.args.eclipseNumber;
                 this.showEclipseBanner();
             },
 
             showEclipseBanner: function () {
                 if(this.global_eclipseDiscWhite >= this.global_eclipseDiscBlack){
-                    $('eclipse-title').innerHTML = _('Eclipse is triggered');
+                    $('eclipse-title').innerHTML = dojo.string.substitute(_('Eclipse ${number} is triggered'), {
+                        number: this.global_eclipseNumber
+                    });;
                     dojo.query('#eclipse-zone').addClass('show');
                     if(this.global_lastRound == 3){
                         $('eclipse-subtitle').innerHTML = _('Scoring happens immediately after the turn of the current player');
                     } else if(this.global_lastRound == 2){
-                        $('eclipse-subtitle').innerHTML = _('Finish current round and then play another full round, before proceeding to scoring');
+                        $('eclipse-subtitle').innerHTML = _('Finish current round and then play another full round, before eclipse scoring happens');
                     }  else if(this.global_lastRound == 1){
-                        $('eclipse-subtitle').innerHTML = _('Finish current round, before proceeding to scoring');
+                        $('eclipse-subtitle').innerHTML = _('Finish current round, before eclipse scoring happens');
                     }  else {
                         $('eclipse-title').innerHTML = _('Eclipse salary and scoring');
                         $('eclipse-subtitle').innerHTML = '';
