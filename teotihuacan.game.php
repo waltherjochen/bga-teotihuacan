@@ -4429,38 +4429,38 @@ class teotihuacan extends Table
                     'step' => $step,
                 ));
 
-                if (self::getGameStateValue('ascension')) {
-                    $this->gamestate->nextState("ascension");
-                } else if (self::getGameStateValue('isNobles')) {
-                    self::setGameStateValue('isNobles', 0);
-                    $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
-                    $countWorkers = (int)self::getUniqueValueFromDB($sql);
-
-                    $extraWorker = (int)self::getGameStateValue('extraWorker');
-                    $countWorkers += $extraWorker;
-
-                    if ($countWorkers == 1) {
-                        self::incGameStateValue('upgradeWorkers', 1);
-                        $this->gamestate->nextState("upgrade_workers");
-                    } else if ($countWorkers == 2) {
-                        self::incGameStateValue('upgradeWorkers', 1);
-                        $this->gamestate->nextState("upgrade_workers");
-                    } else if ($countWorkers >= 3) {
-                        self::incGameStateValue('upgradeWorkers', 2);
-                        $this->gamestate->nextState("upgrade_workers");
-                    }
-                } else if (!self::getGameStateValue('useDiscovery')) {
-                    $this->gamestate->nextState("check_end_turn");
-                } else {
-                    $this->goToPreviousState();
-                }
             }
         } else {
             self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} stays on top of avenue of dead'), array(
                 'player_id' => $player_id,
                 'player_name' => self::getActivePlayerName(),
             ));
+        }
+
+        if (self::getGameStateValue('useDiscovery')) {
             $this->goToPreviousState();
+        } else if (self::getGameStateValue('ascension')) {
+            $this->gamestate->nextState("ascension");
+        } else if (self::getGameStateValue('isNobles')) {
+            self::setGameStateValue('isNobles', 0);
+            $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
+            $countWorkers = (int)self::getUniqueValueFromDB($sql);
+
+            $extraWorker = (int)self::getGameStateValue('extraWorker');
+            $countWorkers += $extraWorker;
+
+            if ($countWorkers == 1) {
+                self::incGameStateValue('upgradeWorkers', 1);
+                $this->gamestate->nextState("upgrade_workers");
+            } else if ($countWorkers == 2) {
+                self::incGameStateValue('upgradeWorkers', 1);
+                $this->gamestate->nextState("upgrade_workers");
+            } else if ($countWorkers >= 3) {
+                self::incGameStateValue('upgradeWorkers', 2);
+                $this->gamestate->nextState("upgrade_workers");
+            }
+        } else {
+            $this->gamestate->nextState("check_end_turn");
         }
     }
 
@@ -4687,6 +4687,10 @@ class teotihuacan extends Table
             self::DbQuery($sql);
 
             $this->moveWorkerToBoard(0, $worker_id, $board_id_from, 1);
+        }
+        $ascension = (int)self::getGameStateValue('ascension');
+        if($ascension <= 0){
+            $this->ascensionCleanUp();
         }
     }
 
