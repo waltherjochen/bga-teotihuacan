@@ -1498,7 +1498,7 @@ define([
                                     dojo.query('#incrementGetGold').removeClass('disabled');
                                 }
                             }
-                            if (this.isFreeCocoa() && this.clientStateArgs.pay.cocoa > 0) {
+                            if (this.isFreeCocoa() && this.clientStateArgs.isPayCocoa > 0) {
                                 this.addActionButton('cocoa_free', this.getTokenSymbol('cocoa_free', true), 'doTradeConfirmedFree', null, false, 'gray');
                                 this.addTooltipHtml('cocoa_free', _("Ignore paying cocoa"));
                             }
@@ -1837,6 +1837,7 @@ define([
                 dojo.query('#claimDiscovery-zone.show').removeClass('show');
 
                 this.clickableWorkers = [];
+                $('workers').innerHTML = '';
             },
 
             moneyPreview: function (moneySymbol) {

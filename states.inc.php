@@ -255,6 +255,7 @@ $machinestates = array(
         "description" => clienttranslate('${actplayer} must place a Building'),
         "descriptionmyturn" => '',
         "type" => "activeplayer",
+        "action" => "nobles",
         "possibleactions" => array(
             "useDiscoveryTile",
             "nobles",

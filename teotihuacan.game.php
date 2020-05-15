@@ -2848,7 +2848,6 @@ class teotihuacan extends Table
             throw new BgaUserException(self::_("There is no space left"));
         }
         $this->gamestate->nextState("nobles");
-        $this->nobles();
     }
 
     function collectResource($player_id, $amount, $token, $source, $customMessage = '')
@@ -4937,6 +4936,10 @@ class teotihuacan extends Table
             if ($get_wood != $pay_cocoa || $get_stone != $pay_cocoa) {
                 throw new BgaUserException(self::_("This move is not possible."));
             }
+            if ($freeCocoa) {
+                $get_wood = $worker_power;
+                $get_stone = $worker_power;
+            }
         } else if ($tradeInfo['id'] == 'trade_r_2c') {
             if ($get_cocoa > ($worker_power * 2) || ($get_wood + $get_stone + $get_gold) > 0) {
                 throw new BgaUserException(self::_("This move is not possible."));
@@ -4951,6 +4954,10 @@ class teotihuacan extends Table
             if ($get_gold != $pay_cocoa || $get_stone != $pay_cocoa) {
                 throw new BgaUserException(self::_("This move is not possible."));
             }
+            if ($freeCocoa) {
+                $get_stone = $worker_power;
+                $get_gold = $worker_power;
+            }
         } else if ($tradeInfo['id'] == 'trade_cr_r') {
             if (($get_wood + $get_stone + $get_gold) > $worker_power || $get_cocoa > 0) {
                 throw new BgaUserException(self::_("This move is not possible."));
@@ -4961,6 +4968,9 @@ class teotihuacan extends Table
         } else if ($tradeInfo['id'] == 'trade_c_t') {
             if ($get_temple > ($worker_power - 1) || ($get_cocoa + $get_wood + $get_stone + $get_gold) > 0) {
                 throw new BgaUserException(self::_("This move is not possible."));
+            }
+            if ($freeCocoa) {
+                $get_temple = ($worker_power - 1);
             }
             for ($i = 0; $i < $get_temple; $i++) {
                 $sql = "INSERT INTO `temple_queue`(`queue`, `referrer`) VALUES ('temple_choose',1)";
@@ -4976,9 +4986,6 @@ class teotihuacan extends Table
         if (!$freeCocoa) {
             $this->payResource($player_id, -$pay_cocoa, 'cocoa', $target);
         } else {
-            if ($pay_cocoa == 0) {
-                throw new BgaUserException(self::_("This move is not possible."));
-            }
             $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (45,46,47) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
             $id = (int)self::getUniqueValueFromDB($sql);
             if (!$id) {
