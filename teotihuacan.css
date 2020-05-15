@@ -2237,14 +2237,12 @@
     margin: auto;
     margin-top: 5px;
 }
-#preclassic > div {
-    display: inline-block;
-    vertical-align: top;
-}
 #temple_orange.show {
     background-image: url('img/temple_orange.jpg');
     background-size: 100%;
     float: right;
+    display: inline-block;
+    vertical-align: top;
 }
 #actionBoard_info {
     display: none;
@@ -2254,6 +2252,7 @@
     background-position: -100% -500% !important;
     position: relative;
     float: left;
+    vertical-align: top;
 }
 #pyramid_wrapper_0.info {
     top: 53.5%;
