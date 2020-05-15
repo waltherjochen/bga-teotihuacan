@@ -1837,7 +1837,6 @@ define([
                 dojo.query('#claimDiscovery-zone.show').removeClass('show');
 
                 this.clickableWorkers = [];
-                $('workers').innerHTML = '';
             },
 
             moneyPreview: function (moneySymbol) {
