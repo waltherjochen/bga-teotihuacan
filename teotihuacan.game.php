@@ -147,6 +147,12 @@ class teotihuacan extends Table
             "dark_eclipse" => 101,
             "draft_mode" => 102,
             "pyramidSetup" => 103,
+            "latePreclassicPeriod" => 104,
+            "m1" => 105,
+            "m2" => 106,
+            "m3" => 107,
+            "m4" => 108,
+            "m5" => 109,
         ));
 
         $this->cards = self::getNew("module.common.deck");
@@ -766,6 +772,36 @@ class teotihuacan extends Table
     function isRandomPyramidSetup()
     {
         return self::getGameStateValue('pyramidSetup') == 2;
+    }
+
+    function isLatePreclassicPeriod()
+    {
+        return self::getGameStateValue('latePreclassicPeriod') == 2;
+    }
+
+    function isM1()
+    {
+        return self::getGameStateValue('m1') == 2;
+    }
+
+    function isM2()
+    {
+        return self::getGameStateValue('m2') == 2;
+    }
+
+    function isM3()
+    {
+        return self::getGameStateValue('m3') == 2;
+    }
+
+    function isM4()
+    {
+        return self::getGameStateValue('m4') == 2;
+    }
+
+    function isM5()
+    {
+        return self::getGameStateValue('m5') == 2;
     }
 
     function stGameStart()
@@ -1451,6 +1487,12 @@ class teotihuacan extends Table
             "row2" => $row2,
             "row3" => $row3,
             "isDraftMode" => $this->isDraftMode(),
+            "isLatePreclassicPeriod" => $this->isLatePreclassicPeriod(),
+            "isM1" => $this->isM1(),
+            "isM2" => $this->isM2(),
+            "isM3" => $this->isM3(),
+            "isM4" => $this->isM4(),
+            "isM5" => $this->isM5(),
         );
 
         $lockedWorkers = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = true AND `worship_pos` > 0");

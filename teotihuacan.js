@@ -167,6 +167,12 @@ define([
                 this.global_eclipseDiscBlack = parseInt(this.gamedatas_local.global.eclipseDiscBlack);
                 this.global_lastRound = parseInt(this.gamedatas_local.global.lastRound);
                 this.global_isDraftMode = this.gamedatas_local.global.isDraftMode;
+                this.global_isLatePreclassicPeriod = this.gamedatas_local.global.isLatePreclassicPeriod;
+                this.global_isM1 = this.gamedatas_local.global.isM1;
+                this.global_isM2 = this.gamedatas_local.global.isM2;
+                this.global_isM3 = this.gamedatas_local.global.isM3;
+                this.global_isM4 = this.gamedatas_local.global.isM4;
+                this.global_isM5 = this.gamedatas_local.global.isM5;
             },
             resizeGame: function () {
                 var player_panel = 240;
@@ -279,6 +285,12 @@ define([
                     dojo.style(queueEntries[i], 'width', decorationTile_width + "px");
                     dojo.style(queueEntries[i], 'height', decorationTile_height + "px");
                 }
+
+                if(this.global_isLatePreclassicPeriod && this.global_isM2){
+                    dojo.style('preclassic', 'width', bg_width + "px");
+                    dojo.style('temple_orange', 'width', (bg_width/2) + "px");
+                    dojo.style('temple_orange', 'height', (bg_width/2) + "px");
+                }
             },
 
             setupActionBoards: function () {
@@ -313,7 +325,7 @@ define([
                             }
                         }
                     }
-                    if (board.card_id != "7") {
+                    if (board.card_id != "7" || (this.global_isLatePreclassicPeriod && this.global_isM4)) {
                         var children = $('actionBoard_' + board.card_location_arg).childNodes;
                         for (var j = 0; j < children.length; j++) {
                             if (children[j].className == "decoration-wrapper") {
@@ -322,13 +334,32 @@ define([
                             }
                         }
                     }
-                    if (board.card_id != "8") {
+                    if (board.card_id != "8" || (this.global_isLatePreclassicPeriod && this.global_isM5)) {
                         var children = $('actionBoard_' + board.card_location_arg).childNodes;
                         for (var j = 0; j < children.length; j++) {
                             if (children[j].className == "pyramid-wrapper") {
                                 children[j].remove();
                                 break;
                             }
+                        }
+                    }
+                }
+
+                if(!this.global_isLatePreclassicPeriod && !this.global_isM4){
+                    var children = $('actionBoard_info').childNodes;
+                    for (var j = 0; j < children.length; j++) {
+                        if (children[j].className == "decoration-wrapper") {
+                            children[j].remove();
+                            break;
+                        }
+                    }
+                }
+                if(!this.global_isLatePreclassicPeriod && !this.global_isM5){
+                    var children = $('actionBoard_info').childNodes;
+                    for (var j = 0; j < children.length; j++) {
+                        if (children[j].className == "pyramid-wrapper") {
+                            children[j].remove();
+                            break;
                         }
                     }
                 }
@@ -456,6 +487,9 @@ define([
                             var target = 'building_' + j;
                             dojo.style(target, 'display', "none");
                         }
+                        if(this.global_isLatePreclassicPeriod && this.global_isM2){
+                            dojo.addClass('actionBoard_' + board.card_location_arg, 'm2');
+                        }
                     } else if (board.card_id == "7") {
                         for (var j in this.gamedatas_local.discoveryTiles.b7) {
                             var discoveryTile = this.gamedatas_local.discoveryTiles.b7[j];
@@ -483,6 +517,9 @@ define([
                             type_arg: '15',
                             location: '',
                         }), 'decoration_wrapper_deck');
+                        if(this.global_isLatePreclassicPeriod && this.global_isM4){
+                            dojo.addClass('actionBoard_' + board.card_location_arg, 'm4');
+                        }
                     } else if (board.card_id == "8") {
                         var pyramidTiles = this.gamedatas_local.pyramidTiles.pyramidTiles_0;
                         for (var j in pyramidTiles) {
@@ -509,9 +546,10 @@ define([
                                 rotate: 0
                             }), 'pyramid_wrapper_2');
                         }
-
+                        if(this.global_isLatePreclassicPeriod && this.global_isM5){
+                            dojo.addClass('actionBoard_' + board.card_location_arg, 'm5');
+                        }
                     }
-
                 }
 
                 this.queryAndAddEvent(".actionBoard", 'onclick', 'onActionBoardsSelectionChanged');
@@ -1002,6 +1040,13 @@ define([
                 this.showEclipseBanner();
                 this.setPyramidZoom();
                 this.setDecorationZoom();
+
+                if(this.global_isLatePreclassicPeriod && this.global_isM2){
+                    dojo.addClass('temple_orange', 'show');
+                }
+                if(this.global_isLatePreclassicPeriod && (this.global_isM3 || this.global_isM4 || this.global_isM5)){
+                    dojo.addClass('actionBoard_info', 'show');
+                }
             },
 
             setupClickEvents: function () {
@@ -1837,7 +1882,6 @@ define([
                 dojo.query('#claimDiscovery-zone.show').removeClass('show');
 
                 this.clickableWorkers = [];
-                $('workers').innerHTML = '';
             },
 
             moneyPreview: function (moneySymbol) {

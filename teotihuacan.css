@@ -328,6 +328,16 @@
     background-image: url('img/actionBoards.jpg');
 }
 
+.actionBoard.m2 {
+    background-position: -0% -400% !important;
+}
+.actionBoard.m4 {
+    background-position: -100% -400% !important;
+}
+.actionBoard.m5 {
+    background-position: -0% -500% !important;
+}
+
 .help-icon {
     position: absolute;
     right: 0;
@@ -2218,4 +2228,58 @@
 }
 #eclipse-zone.show {
     display: block;
+}
+.bg-wrapper {
+    display: inline-block;
+    vertical-align: top;
+}
+#preclassic {
+    margin: auto;
+    margin-top: 5px;
+}
+#preclassic > div {
+    display: inline-block;
+    vertical-align: top;
+}
+#temple_orange.show {
+    background-image: url('img/temple_orange.jpg');
+    background-size: 100%;
+    float: right;
+}
+#actionBoard_info {
+    display: none;
+}
+#actionBoard_info.show {
+    display: inline-block !important;
+    background-position: -100% -500% !important;
+    position: relative;
+    float: left;
+}
+#pyramid_wrapper_0.info {
+    top: 53.5%;
+    left: 9.5%;
+}
+#pyramid_wrapper_1.info {
+    top: 53.5%;
+    left: 26.8%;
+}
+#pyramid_wrapper_2.info {
+    top: 53.5%;
+    left: 44.2%;
+}
+#decoration_wrapper_deck.info {
+    top: 12.3%;
+    left: 44.3%;
+}
+#decoration_wrapper_0.info {
+    left: 74.6%;
+}
+#decoration_wrapper_1.info {
+    left: 74.6%;
+}
+#decoration_wrapper_2.info {
+    left: 74.6%;
+}
+#decoration_wrapper_3.info {
+    left: 74.6%;
 }

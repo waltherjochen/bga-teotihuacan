@@ -89,6 +89,125 @@ $game_options = array(
         )
     ),
 
+    104 => array(
+        'name' => totranslate('Late Preclassic period'),
+        'values' => array(
+            1 => array(
+                'name' => totranslate('Off')
+            ),
+            2 => array(
+                'name' => totranslate('On'),
+                'tmdisplay' => totranslate('Late Preclassic period'),
+                'nobeginner' => true
+            )
+        )
+    ),
+
+    105 => array(
+        'name' => totranslate('Priests and Priestesses (M1)'),
+        'values' => array(
+            1 => array(
+                'name' => totranslate('Off')
+            ),
+            2 => array(
+                'name' => totranslate('On'),
+                'tmdisplay' => totranslate('M1'),
+                'description' => totranslate('Devout worshippers grand special effects and abilities')
+            )
+        ),
+        'displaycondition' => array(
+            array(
+                'type' => 'otheroption',
+                'id' => 104,
+                'value' => array(2),
+            )
+        )
+    ),
+
+    106 => array(
+        'name' => totranslate('Height of Development (M2)'),
+        'values' => array(
+            1 => array(
+                'name' => totranslate('Off')
+            ),
+            2 => array(
+                'name' => totranslate('On'),
+                'tmdisplay' => totranslate('M2'),
+                'description' => totranslate('Expanded board an new temple offer fresh challenges')
+            )
+        ),
+        'displaycondition' => array(
+            array(
+                'type' => 'otheroption',
+                'id' => 104,
+                'value' => array(2),
+            )
+        )
+    ),
+
+    107 => array(
+        'name' => totranslate('Seasons of Progress (M3)'),
+        'values' => array(
+            1 => array(
+                'name' => totranslate('Off')
+            ),
+            2 => array(
+                'name' => totranslate('On'),
+                'tmdisplay' => totranslate('M3'),
+                'description' => totranslate('Variable effects impact each season and eclipse')
+            )
+        ),
+        'displaycondition' => array(
+            array(
+                'type' => 'otheroption',
+                'id' => 104,
+                'value' => array(2),
+            )
+        )
+    ),
+
+    108 => array(
+        'name' => totranslate('Arichitecture (M4)'),
+        'values' => array(
+            1 => array(
+                'name' => totranslate('Off')
+            ),
+            2 => array(
+                'name' => totranslate('On'),
+                'tmdisplay' => totranslate('M4'),
+                'description' => totranslate('Renewed plans for beatifying the Pyramid of the Sun')
+            )
+        ),
+        'displaycondition' => array(
+            array(
+                'type' => 'otheroption',
+                'id' => 104,
+                'value' => array(2),
+            )
+        )
+    ),
+
+    109 => array(
+        'name' => totranslate('Development (M5)'),
+        'values' => array(
+            1 => array(
+                'name' => totranslate('Off')
+            ),
+            2 => array(
+                'name' => totranslate('On'),
+                'tmdisplay' => totranslate('M5'),
+                'description' => totranslate('Build the pyramid using new engineering techniques')
+            )
+        ),
+        'displaycondition' => array(
+            array(
+                'type' => 'otheroption',
+                'id' => 104,
+                'value' => array(2),
+            )
+        )
+    ),
+
 );
 
 
