@@ -320,8 +320,8 @@ $machinestates = array(
 
     STATE_PLAYER_TURN_CHOOSE_TEMPLE_BONUS => array(
         "name" => "playerTurn_choose_temple_bonus",
-        "description" => clienttranslate('${actplayer} must choose the temple bonus'),
-        "descriptionmyturn" => clienttranslate('${you} must choose the temple bonus or'),
+        "description" => clienttranslate('${actplayer} may claim a discovery tile or temple bonus'),
+        "descriptionmyturn" => clienttranslate('${you} may claim a discovery tile or'),
         "type" => "activeplayer",
         "args" => "getTempleBonusValue",
         "possibleactions" => array(
@@ -385,6 +385,7 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('do ${you} want additional power up?'),
         "type" => "activeplayer",
         "possibleactions" => array(
+            "useDiscoveryTile",
             "buyPowerUp",
             "pass",
         ),

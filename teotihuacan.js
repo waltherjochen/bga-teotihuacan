@@ -4324,7 +4324,7 @@ define([
                 if(this.global_eclipseDiscWhite >= this.global_eclipseDiscBlack){
                     $('eclipse-title').innerHTML = dojo.string.substitute(_('Eclipse ${number} is triggered'), {
                         number: this.global_eclipseNumber
-                    });;
+                    });
                     dojo.query('#eclipse-zone').addClass('show');
                     if(this.global_lastRound == 3){
                         $('eclipse-subtitle').innerHTML = _('Scoring happens immediately after the turn of the current player');
@@ -4333,7 +4333,9 @@ define([
                     }  else if(this.global_lastRound == 1){
                         $('eclipse-subtitle').innerHTML = _('Finish current round, before eclipse scoring happens');
                     }  else {
-                        $('eclipse-title').innerHTML = _('Eclipse salary and scoring');
+                        $('eclipse-title').innerHTML = dojo.string.substitute(_('Eclipse ${number} salary and scoring'), {
+                            number: this.global_eclipseNumber
+                        });
                         $('eclipse-subtitle').innerHTML = '';
                     }
                 } else {

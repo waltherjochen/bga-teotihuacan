@@ -4471,6 +4471,9 @@ class teotihuacan extends Table
 
     function stepAvenueCleanup()
     {
+        $player_id = self::getActivePlayerId();
+        $selected_board_id_to = self::getGameStateValue('selected_board_id_to');
+
         if (self::getGameStateValue('useDiscovery')) {
             $this->goToPreviousState();
         } else if (self::getGameStateValue('ascension')) {
