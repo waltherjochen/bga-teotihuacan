@@ -4311,14 +4311,14 @@ class teotihuacan extends Table
             $this->gamestate->nextState("useDiscoveryTile");
             $this->gamestate->nextState("avenue_of_dead");
         } else if ($move_choose > 0) {
-            if ($this->gamestate->state()['name'] != 'playerTurn') {
+            if ($this->gamestate->state()['name'] != 'playerTurn' || self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')) {
                 throw new BgaUserException(self::_("You cannot use this Discovery Tile right now"));
             }
             $messageParts[] = clienttranslate(' ability to move worker anywhere.');
             self::setGameStateValue('useDiscoveryMoveWorkerAnywhere', 1);
         } else if ($move_double > 0) {
             $AreTwoWorkersAvailable = self::getUniqueValueFromDB("SELECT `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false group by actionboard_id having count(*) > 1");
-            if ($this->gamestate->state()['name'] != 'playerTurn' || !$AreTwoWorkersAvailable) {
+            if ($this->gamestate->state()['name'] != 'playerTurn' || !$AreTwoWorkersAvailable || self::getGameStateValue('useDiscoveryMoveTwoWorkers')) {
                 throw new BgaUserException(self::_("You cannot use this Discovery Tile right now"));
             }
             $messageParts[] = clienttranslate(' ability to move two workers');
