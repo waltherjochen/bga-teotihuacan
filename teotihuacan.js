@@ -2152,7 +2152,6 @@ define([
                         type_arg: discTile.type_arg,
                         location: "hand"
                     }), target);
-                    _this.addTooltipHtml("discoveryTile_" + discTile.type_arg, tooltip);
 
                     _this.queryAndAddEventThis(_this, '.discoveryTile', 'onclick', 'onDiscoveryClick');
 
@@ -2162,6 +2161,10 @@ define([
 
                     _this.resizeGame();
                 }, 2000);
+
+                setTimeout(function () {
+                    _this.addTooltipHtml("discoveryTile_" + discTile.type_arg, tooltip);
+                }, 2100);
 
             },
             animateBuilding: function (source, target) {
