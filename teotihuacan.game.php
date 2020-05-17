@@ -2574,13 +2574,13 @@ class teotihuacan extends Table
                 if($this->checkDecoration('top', count($top), false)){
                     $valid = true;
                 }
-                if($this->checkDecoration('right', count($top), false)){
+                if($this->checkDecoration('right', count($right), false)){
                     $valid = true;
                 }
-                if($this->checkDecoration('bottom', count($top), false)){
+                if($this->checkDecoration('bottom', count($bottom), false)){
                     $valid = true;
                 }
-                if($this->checkDecoration('left', count($top), false)){
+                if($this->checkDecoration('left', count($left), false)){
                     $valid = true;
                 }
                 if(!$valid){
@@ -5368,25 +5368,31 @@ class teotihuacan extends Table
                 $pyramidTaken0 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 4");
                 $pyramidTaken1 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 8");
 
-                if (!($pyramidTaken0 && $pyramidTaken1) && $exception) {
-                    throw new BgaUserException(self::_("This move is not possible."));
+                if (!($pyramidTaken0 && $pyramidTaken1)) {
+                    if($exception){
+                        throw new BgaUserException(self::_("This move is not possible."));
+                    }
+                    return false;
                 }
-                return false;
             } else if ($level == 2) {
                 $pyramidTaken0 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 103");
 
-                if (!($pyramidTaken0) && $exception) {
-                    throw new BgaUserException(self::_("This move is not possible."));
+                if (!($pyramidTaken0)) {
+                    if($exception){
+                        throw new BgaUserException(self::_("This move is not possible."));
+                    }
+                    return false;
                 }
-                return false;
             } else if ($level == 3) {
                 $pyramidTaken0 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 200");
                 $pyramidTaken1 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 202");
 
-                if (!($pyramidTaken0 && $pyramidTaken1) && $exception) {
-                    throw new BgaUserException(self::_("This move is not possible."));
+                if (!($pyramidTaken0 && $pyramidTaken1)) {
+                    if($exception){
+                        throw new BgaUserException(self::_("This move is not possible."));
+                    }
+                    return false;
                 }
-                return false;
             }
         } else if ($direction == "top") {
 
@@ -5394,25 +5400,31 @@ class teotihuacan extends Table
                 $pyramidTaken0 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 1");
                 $pyramidTaken1 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 2");
 
-                if (!($pyramidTaken0 && $pyramidTaken1) && $exception) {
-                    throw new BgaUserException(self::_("This move is not possible."));
+                if (!($pyramidTaken0 && $pyramidTaken1)) {
+                    if($exception){
+                        throw new BgaUserException(self::_("This move is not possible."));
+                    }
+                    return false;
                 }
-                return false;
             } else if ($level == 2) {
                 $pyramidTaken0 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 101");
 
-                if (!($pyramidTaken0) && $exception) {
-                    throw new BgaUserException(self::_("This move is not possible."));
+                if (!($pyramidTaken0)) {
+                    if($exception){
+                        throw new BgaUserException(self::_("This move is not possible."));
+                    }
+                    return false;
                 }
-                return false;
             } else if ($level == 3) {
                 $pyramidTaken0 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 200");
                 $pyramidTaken1 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 201");
 
-                if (!($pyramidTaken0 && $pyramidTaken1) && $exception) {
-                    throw new BgaUserException(self::_("This move is not possible."));
+                if (!($pyramidTaken0 && $pyramidTaken1)) {
+                    if($exception){
+                        throw new BgaUserException(self::_("This move is not possible."));
+                    }
+                    return false;
                 }
-                return false;
             }
         } else if ($direction == "right") {
 
@@ -5420,25 +5432,31 @@ class teotihuacan extends Table
                 $pyramidTaken0 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 7");
                 $pyramidTaken1 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 11");
 
-                if (!($pyramidTaken0 && $pyramidTaken1) && $exception) {
-                    throw new BgaUserException(self::_("This move is not possible."));
+                if (!($pyramidTaken0 && $pyramidTaken1)) {
+                    if($exception){
+                        throw new BgaUserException(self::_("This move is not possible."));
+                    }
+                    return false;
                 }
-                return false;
             } else if ($level == 2) {
                 $pyramidTaken0 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 105");
 
-                if (!($pyramidTaken0) && $exception) {
-                    throw new BgaUserException(self::_("This move is not possible."));
+                if (!($pyramidTaken0)) {
+                    if($exception){
+                        throw new BgaUserException(self::_("This move is not possible."));
+                    }
+                    return false;
                 }
-                return false;
             } else if ($level == 3) {
                 $pyramidTaken0 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 201");
                 $pyramidTaken1 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 203");
 
-                if (!($pyramidTaken0 && $pyramidTaken1) && $exception) {
-                    throw new BgaUserException(self::_("This move is not possible."));
+                if (!($pyramidTaken0 && $pyramidTaken1)) {
+                    if($exception){
+                        throw new BgaUserException(self::_("This move is not possible."));
+                    }
+                    return false;
                 }
-                return false;
             }
         } else if ($direction == "bottom") {
 
@@ -5446,25 +5464,31 @@ class teotihuacan extends Table
                 $pyramidTaken0 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 13");
                 $pyramidTaken1 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 14");
 
-                if (!($pyramidTaken0 && $pyramidTaken1) && $exception) {
-                    throw new BgaUserException(self::_("This move is not possible."));
+                if (!($pyramidTaken0 && $pyramidTaken1)) {
+                    if($exception){
+                        throw new BgaUserException(self::_("This move is not possible."));
+                    }
+                    return false;
                 }
-                return false;
             } else if ($level == 2) {
                 $pyramidTaken0 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 107");
 
-                if (!($pyramidTaken0) && $exception) {
-                    throw new BgaUserException(self::_("This move is not possible."));
+                if (!($pyramidTaken0)) {
+                    if($exception){
+                        throw new BgaUserException(self::_("This move is not possible."));
+                    }
+                    return false;
                 }
-                return false;
             } else if ($level == 3) {
                 $pyramidTaken0 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 202");
                 $pyramidTaken1 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 203");
 
-                if (!($pyramidTaken0 && $pyramidTaken1) && $exception) {
-                    throw new BgaUserException(self::_("This move is not possible."));
+                if (!($pyramidTaken0 && $pyramidTaken1)) {
+                    if($exception){
+                        throw new BgaUserException(self::_("This move is not possible."));
+                    }
+                    return false;
                 }
-                return false;
             }
         }
         return true;
