@@ -110,6 +110,7 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must place the workers'),
         "type" => "activeplayer",
         'args' => 'getPossibleBoards',
+        'action' => 'setupPlayerWorkers',
         "possibleactions" => array(
             "placeWorker",
         ),

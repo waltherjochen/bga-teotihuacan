@@ -2110,6 +2110,10 @@ define([
                 setTimeout(function () {
                     _this.bindData(_this.gamedatas_local);
                 }, delay + 2000 + amount * 200);
+
+                setTimeout(function () {
+                    $("workers").innerHTML = '';
+                }, delay + 2000 + amount * 200 + 100);
             },
 
             animateVP: function (player_id, amount, token, source, target, delay) {

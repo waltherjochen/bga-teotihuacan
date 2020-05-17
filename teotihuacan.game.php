@@ -2011,6 +2011,19 @@ class teotihuacan extends Table
         $this->gamestate->nextState("place_workers");
     }
 
+    function setupPlayerWorkers()
+    {
+//        $workersLeft = count($this->getPossibleBoards());
+//        if ($workersLeft == 3) {
+//            for ($i = 0; $i < $workersLeft; $i++) {
+//                $board_id = $this->getPossibleBoards()[0];
+//                $board_pos = (int)self::getUniqueValueFromDB("SELECT `card_location_arg` FROM `card` WHERE `card_type` = 'actionBoards' AND `card_id` = $board_id");
+//                $this->placeWorker($board_id, $board_pos);
+//            }
+//        }
+
+    }
+
     function getPossibleBoards()
     {
         $player_id = self::getActivePlayerId();
