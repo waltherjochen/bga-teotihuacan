@@ -4193,9 +4193,7 @@ class teotihuacan extends Table
         $countWorkers = (int)self::getUniqueValueFromDB($sql);
         self::setGameStateValue('last_temple_id', 0);
 
-        if ((int)self::getGameStateValue('startingTileBonus') > 0) {
-            $this->gamestate->nextState("calculate_next_bonus");
-        } else if (self::getGameStateValue('useDiscovery')) {
+        if (self::getGameStateValue('useDiscovery')) {
             $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
             if($worker && count($worker) > 0){
                 $this->gamestate->nextState("ascension");
@@ -4206,7 +4204,9 @@ class teotihuacan extends Table
             } else {
                 $this->goToPreviousState();
             }
-        } else if ($queueCount > 0 || $worship_actions_discovery > 0 || $royalTileAction > 0) {
+        } else if ((int)self::getGameStateValue('startingTileBonus') > 0 && !$queueCount) {
+            $this->gamestate->nextState("calculate_next_bonus");
+        }  else if ($queueCount > 0 || $worship_actions_discovery > 0 || $royalTileAction > 0) {
             $this->gamestate->nextState("action");
         } else if (self::getGameStateValue('isNobles')) {
             self::setGameStateValue('isNobles', 0);
@@ -4512,7 +4512,16 @@ class teotihuacan extends Table
         $selected_board_id_to = self::getGameStateValue('selected_board_id_to');
 
         if (self::getGameStateValue('useDiscovery')) {
-            $this->goToPreviousState();
+            $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
+            if($worker && count($worker) > 0){
+                $this->gamestate->nextState("ascension");
+            } else if(self::getGameStateValue('ascensionTempleSteps')){
+                $this->gamestate->nextState("action");
+            } else if(self::getGameStateValue('useDiscoveryPowerUp')){
+                $this->gamestate->nextState("upgrade_workers");
+            } else {
+                $this->goToPreviousState();
+            }
         } else if (self::getGameStateValue('ascension')) {
             $this->gamestate->nextState("ascension");
         } else if (self::getGameStateValue('isNobles')) {
