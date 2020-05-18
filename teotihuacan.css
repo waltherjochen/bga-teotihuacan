@@ -1389,6 +1389,7 @@
     left: 66%;
     font-size: 12px;
     color: #333;
+    user-select: none;
 }
 #decoration_wrapper_deck span {
     display: none;

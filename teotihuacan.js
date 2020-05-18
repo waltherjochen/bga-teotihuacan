@@ -1015,6 +1015,7 @@ define([
                 this.queryAndAddEvent('.pyramidTile', 'onclick', 'onPyramidTileChanged');
                 this.queryAndAddEvent('.construction-wrapper', 'onclick', 'onPyramidChanged');
                 this.queryAndAddEvent('.decorationTile', 'onclick', 'onDecorationTileChanged');
+                this.queryAndAddEvent('.decorationTile span', 'onclick', 'onDecorationTileChanged');
                 this.queryAndAddEvent('.pyramid_decoration-wrapper', 'onclick', 'onPyramidDecorationChanged');
                 this.queryAndAddEvent('#eclipse', 'onclick', 'onEclipseChanged');
                 this.addTooltipHtml('eclipse', _("Click to zoom"));
@@ -3439,14 +3440,17 @@ define([
             },
 
             onDecorationTileChanged: function (event) {
+                dojo.stopEvent(event);
                 var element = event.target;
+                while (!dojo.hasClass(element, 'decorationTile')) {
+                    element = element.parentElement;
+                }
                 if (dojo.hasClass(element, 'clickable')) {
-                    dojo.stopEvent(event);
                     this.setupDecoration(false);
                     dojo.query('.actionBoard .decorationTile.selected').removeClass('selected');
                     dojo.query('.pyramid_decoration-wrapper.unlocked:not(.disabled)').addClass('clickable');
-                    dojo.addClass(event.target, 'selected');
-                    this.decorationTile = event.target;
+                    dojo.addClass(element, 'selected');
+                    this.decorationTile = element;
                 }
             },
 
@@ -4288,6 +4292,7 @@ define([
                     }), decorationWrapper);
 
                     _this.queryAndAddEvent('.decorationTile', 'onclick', 'onDecorationTileChanged');
+                    _this.queryAndAddEvent('.decorationTile span', 'onclick', 'onDecorationTileChanged');
                     _this.resizeGame();
                 }, 2000);
             },
