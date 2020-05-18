@@ -1166,7 +1166,9 @@ class teotihuacan extends Table
     function checkEndGame()
     {
         $eclipse = (int)self::getGameStateValue('eclipse');
-        self::incGameStateValue('eclipse', 1);
+        if($eclipse < 2){
+            self::incGameStateValue('eclipse', 1);
+        }
 
         $players = self::getObjectListFromDB("SELECT `player_id` FROM `player`");
 

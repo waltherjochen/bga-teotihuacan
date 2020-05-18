@@ -490,8 +490,12 @@
     left: 75%;
 }
 
+.actionBoard .dice:hover {
+    opacity: 0.2;
+}
 .actionBoard .dice.clickable {
     border: 3px solid #11d017;
+    opacity: 1;
 }
 .actionBoard .dice.selected {
     border: 3px solid #FFFFFF;
