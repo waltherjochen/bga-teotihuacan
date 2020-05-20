@@ -273,10 +273,6 @@ class teotihuacan extends Table
             $cards[] = array('type' => "discoveryTiles", 'type_arg' => $key, 'nbr' => 1);
         }
         $this->cards->createCards($cards, 'discTiles_deck');
-        $firstPlayer = self::getUniqueValueFromDB("SELECT `player_id` FROM `player` WHERE player_no = 1");
-        for ($i = 20; $i < 41; $i++) {
-            self::DbQuery("UPDATE `card` SET card_location  = 'hand', card_location_arg = $firstPlayer WHERE card_type = 'discoveryTiles' AND card_type_arg = $i");
-        }
 
         $this->cards->shuffle('discTiles_deck');
 
@@ -1905,7 +1901,7 @@ class teotihuacan extends Table
 
         $useStartingTile = (int)self::getGameStateValue('startingTileBonus') > 0;
 
-        if ($countWorkers == 0 && !$discoveryQueueCount) {
+        if ($countWorkers == 0 && !$discoveryQueueCount && !$useStartingTile) {
             $upgradeWorkers = (int)self::getGameStateValue('upgradeWorkers');
             self::setGameStateValue('upgradeWorkers', 0);
 
@@ -4314,10 +4310,6 @@ class teotihuacan extends Table
             throw new BgaUserException(self::_("This move is not possible."));
         }
 
-        //All checks done
-        self::setGameStateValue('useDiscoveryId', $id);
-        $this->cards->moveCard($card_id_discoveryTile, 'hand_used', $player_id);
-
         $discTile_details = $this->discoveryTiles[$id]['bonus'];
 
         $vp = $discTile_details['vp'];
@@ -4337,9 +4329,13 @@ class teotihuacan extends Table
         $message = '${player_name} ${fulfilled_text}';// NOI18N
         $messageParts = array();
 
-        if ($this->gamestate->state()['name'] == 'pay_salary' && $cocoa <= 0) {
+        if ($this->gamestate->state()['name'] == 'pay_salary' && ($cocoa <= 0 && $free_cocoa <= 0)) {
             throw new BgaUserException(self::_("You cannot use this Discovery Tile right now"));
         }
+
+        //All checks done
+        self::setGameStateValue('useDiscoveryId', $id);
+        $this->cards->moveCard($card_id_discoveryTile, 'hand_used', $player_id);
 
         if ($vp > 0) {
             $messageParts[] = ' ${vp}${token_vp}';// NOI18N
@@ -4550,7 +4546,6 @@ class teotihuacan extends Table
         $player_id = self::getActivePlayerId();
         $selected_board_id_to = self::getGameStateValue('selected_board_id_to');
         $discoveryQueueCount = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `discovery_queue` ORDER BY id DESC LIMIT 1");
-
         if ($discoveryQueueCount) {
             $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
             if($worker && count($worker) > 0){
@@ -5071,7 +5066,6 @@ class teotihuacan extends Table
             for ($i = 0; $i < $get_temple; $i++) {
                 $sql = "INSERT INTO `temple_queue`(`queue`, `referrer`) VALUES ('temple_choose',1)";
                 self::DbQuery($sql);
-                self::setGameStateValue('ascensionTempleSteps', $get_temple);
             }
         }
 
@@ -6148,7 +6142,7 @@ class teotihuacan extends Table
         if( $from_version <= 2005071758 )
         {
             // ! important ! Use DBPREFIX_<table_name> for all tables
-            $sql = "CREATE TABLE IF NOT EXISTS `discovery_queue` (`id` int(10) unsigned NOT NULL AUTO_INCREMENT, `queue` varchar(16) NOT NULL, `referrer` INT NOT NULL DEFAULT '0', PRIMARY KEY (`id`) ) ENGINE = InnoDB";
+            $sql = "CREATE TABLE IF NOT EXISTS `DBPREFIX_discovery_queue` (`id` int(10) unsigned NOT NULL AUTO_INCREMENT, `queue` varchar(16) NOT NULL, `referrer` INT NOT NULL DEFAULT '0', PRIMARY KEY (`id`) ) ENGINE = InnoDB";
             self::applyDbUpgradeToAllDB( $sql );
         }
     }

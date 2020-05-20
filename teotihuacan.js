@@ -530,11 +530,16 @@ define([
                         var map = map_player[j];
                         var board_id = map.actionboard_id;
                         if (typeof workerOnBoard[board_id] === 'undefined') {
-                            workerOnBoard[board_id] = 0;
+                            if (map.locked == false){
+                                workerOnBoard[board_id] = 0;
+                            }
+                            this.createWorker(map.player_id, map.worker_id, map.worker_power, map.locked, map.worship_pos, board_id, 0);
                         } else {
-                            workerOnBoard[board_id]++;
+                            if (map.locked == false){
+                                workerOnBoard[board_id]++;
+                            }
+                            this.createWorker(map.player_id, map.worker_id, map.worker_power, map.locked, map.worship_pos, board_id, workerOnBoard[board_id]);
                         }
-                        this.createWorker(map.player_id, map.worker_id, map.worker_power, map.locked, map.worship_pos, board_id, workerOnBoard[board_id]);
                     }
                 }
             },
@@ -2010,28 +2015,28 @@ define([
                 return false;
             },
 
-            animateWorker: function (player_id, worship_pos, worker_id, nextBoard) {
+            animateWorker: function (player_id, worship_pos, worker_id, nextBoard, workersAlreadyonBoard) {
                 var worker = player_id + '_worker_' + worker_id;
                 var dice_board = 'aBoard_' + nextBoard;
                 var dice_group = dice_board + '_dGroup_' + player_id + '';
                 var board_id = parseInt(dojo.attr($(worker), "data-board-id"));
                 var target = '';
-                var workersAlreadyonBoard = 0;
+                var workersAlreadyonBoardTemp = 0;
 
                 for (var i = 0; i < 4; i++) {
                     target = 'POS_' + dice_group + '_dice_' + i;
                     if (!$(target).hasChildNodes()) {
-                        workersAlreadyonBoard = i;
+                        workersAlreadyonBoardTemp = i;
                         break;
                     }
                 }
+                if(workersAlreadyonBoard != null){
+                    workersAlreadyonBoard += workersAlreadyonBoardTemp;
+                } else {
+                    workersAlreadyonBoard = workersAlreadyonBoardTemp;
+                }
                 if (board_id == nextBoard) {
                     target = $(worker).parentElement;
-                    workersAlreadyonBoard = parseInt($(worker).parentElement.id.substr(-1));
-                }
-                if (this.animateWorkerOnNextPostion == 1) {
-                    workersAlreadyonBoard++;
-                    this.animateWorkerOnNextPostion = 0;
                 }
                 if (worship_pos > 0) {
                     target = 'POS_' + dice_board + '_dice_worship_' + worship_pos;
@@ -3906,8 +3911,9 @@ define([
                 var selected_board_id_from = parseInt(notif.args.selected_board_id_from);
                 var _this = this;
 
+                var animateWorkerOnNextPostion = null;
                 if (selected_board_id_from == -1) {
-                    this.animateWorkerOnNextPostion = 1;
+                    animateWorkerOnNextPostion = 1;
                     for (var index in this.gamedatas_local.map[player_id]) {
                         var map = this.gamedatas_local.map[player_id][index];
                         if (map.worker_id == worker_id) {
@@ -3917,11 +3923,11 @@ define([
                     }
                     dojo.query('#' + player_id + '_worker_' + worker_id).removeClass('locked');
                 }
-                this.animateWorker(player_id, worship_pos, worker_id, nextBoard);
+                this.animateWorker(player_id, worship_pos, worker_id, nextBoard, animateWorkerOnNextPostion);
 
                 if (moveTwoWorkers == true && worker2_id > 0) {
                     setTimeout(function () {
-                        _this.animateWorker(player_id, 0, worker2_id, nextBoard);
+                        _this.animateWorker(player_id, 0, worker2_id, nextBoard, null);
                     }, 500);
                 }
             },
@@ -3960,7 +3966,7 @@ define([
                 var player_id = notif.args.player_id;
                 var pay = notif.args.pay;
 
-                var multipleWorkers = false;
+                var multipleWorkers = 0;
 
                 for (var index in this.gamedatas_local.map[player_id]) {
                     var map = this.gamedatas_local.map[player_id][index];
@@ -3969,15 +3975,15 @@ define([
                         var worker = player_id + '_worker_' + worker_id;
                         var nextBoard = parseInt(dojo.attr(worker, "data-board-id"));
                         var worship_pos = 0;
-
-                        if (multipleWorkers) {
-                            this.animateWorkerOnNextPostion = 1;
-                        }
+                        var animateWorkerOnNextPostion = null;
 
                         if (nextBoard == 1) {
-                            multipleWorkers = true;
+                            if (multipleWorkers) {
+                                animateWorkerOnNextPostion = multipleWorkers;
+                            }
+                            multipleWorkers++;
                         }
-                        this.animateWorker(player_id, worship_pos, worker_id, nextBoard);
+                        this.animateWorker(player_id, worship_pos, worker_id, nextBoard, animateWorkerOnNextPostion);
                         this.gamedatas_local.map[player_id][index].locked = false;
                         this.gamedatas_local.map[player_id][index].worship_pos = 0;
                     }
@@ -3994,7 +4000,7 @@ define([
                 var worker = player_id + '_worker_' + worker_id;
                 var nextBoard = parseInt(dojo.attr(worker, "data-board-id"));
                 var worship_pos = 0;
-                this.animateWorker(player_id, worship_pos, worker_id, nextBoard);
+                this.animateWorker(player_id, worship_pos, worker_id, nextBoard, null);
 
                 for (var index in this.gamedatas_local.map[player_id]) {
                     var map = this.gamedatas_local.map[player_id][index];
