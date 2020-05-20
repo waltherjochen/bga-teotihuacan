@@ -1035,11 +1035,12 @@ define([
                 this.deselectAll();
                 var player_id = this.getThisPlayerId();
 
-                if (this.isCurrentPlayerActive()) {
-
+                if (this.getActivePlayers().includes(player_id.toString())) {
                     if (this.checkPossibleActions("useDiscoveryTile")) {
                         dojo.query('#other_' + player_id + ' .discoveryTile').addClass('clickable');
                     }
+                }
+                if (this.isCurrentPlayerActive()) {
 
                     switch (stateName) {
 
@@ -1083,6 +1084,7 @@ define([
                             this.templeResouceConfirm();
                             break;
                         case 'playerTurn_choose_temple_bonus':
+                            this.global_last_temple_id = args.args.last_temple_id;
                             this.setTempleDiscoveryTilesClickable();
                             break;
                         case 'playerTurn_avenue_of_dead':
@@ -1219,6 +1221,7 @@ define([
                         this.clientStateArgs = {};
                         this.clientStateArgs.max = args.args.playersData[player_id]['max'];
                         this.clientStateArgs.cocoa = args.args.playersData[player_id]['cocoa'];
+                        console.log("this.clientStateArgs",this.clientStateArgs);
                         this.paySalaryConfirm();
                         break;
                     case 'choose_starting_tiles':
@@ -2089,12 +2092,24 @@ define([
 
                 if (token == 'cocoa') {
                     this.gamedatas_local.players[player_id].cocoa = parseInt(this.gamedatas_local.players[player_id].cocoa) + amount;
+                    if(this.gamedatas_local.players[player_id].cocoa < 0){
+                        this.gamedatas_local.players[player_id].cocoa = 0;
+                    }
                 } else if (token == 'wood') {
                     this.gamedatas_local.players[player_id].wood = parseInt(this.gamedatas_local.players[player_id].wood) + amount;
+                    if(this.gamedatas_local.players[player_id].wood < 0){
+                        this.gamedatas_local.players[player_id].wood = 0;
+                    }
                 } else if (token == 'stone') {
                     this.gamedatas_local.players[player_id].stone = parseInt(this.gamedatas_local.players[player_id].stone) + amount;
+                    if(this.gamedatas_local.players[player_id].stone < 0){
+                        this.gamedatas_local.players[player_id].stone = 0;
+                    }
                 } else if (token == 'gold') {
                     this.gamedatas_local.players[player_id].gold = parseInt(this.gamedatas_local.players[player_id].gold) + amount;
+                    if(this.gamedatas_local.players[player_id].gold < 0){
+                        this.gamedatas_local.players[player_id].gold = 0;
+                    }
                 }
 
                 if (amount < 0) {
@@ -4029,10 +4044,6 @@ define([
                 var wood = parseInt(notif.args.wood);
                 var stone = parseInt(notif.args.stone);
                 var gold = parseInt(notif.args.gold);
-
-                this.gamedatas_local.players[player_id].wood = parseInt(this.gamedatas_local.players[player_id].wood) + wood;
-                this.gamedatas_local.players[player_id].stone = parseInt(this.gamedatas_local.players[player_id].stone) + stone;
-                this.gamedatas_local.players[player_id].gold = parseInt(this.gamedatas_local.players[player_id].gold) + gold;
 
                 this.bindData(this.gamedatas_local);
             },
