@@ -6142,7 +6142,7 @@ class teotihuacan extends Table
         if( $from_version <= 2005071758 )
         {
             // ! important ! Use DBPREFIX_<table_name> for all tables
-            $sql = "CREATE TABLE IF NOT EXISTS `DBPREFIX_discovery_queue` (`id` int(10) unsigned NOT NULL AUTO_INCREMENT, `queue` varchar(16) NOT NULL, `referrer` INT NOT NULL DEFAULT '0', PRIMARY KEY (`id`) ) ENGINE = InnoDB";
+            $sql = "CREATE TABLE IF NOT EXISTS `DBPREFIX_discovery_queue` (`id` int(10) unsigned NOT NULL AUTO_INCREMENT, `queue` varchar(16) NOT NULL, `referrer` INT NOT NULL DEFAULT '0', PRIMARY KEY (`id`))";
             self::applyDbUpgradeToAllDB( $sql );
         }
     }

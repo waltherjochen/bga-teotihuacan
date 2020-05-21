@@ -1040,12 +1040,10 @@ define([
                 this.deselectAll();
                 var player_id = this.getThisPlayerId();
 
-                if (this.getActivePlayers().includes(player_id.toString())) {
+                if (this.isCurrentPlayerActive()) {
                     if (this.checkPossibleActions("useDiscoveryTile")) {
                         dojo.query('#other_' + player_id + ' .discoveryTile').addClass('clickable');
                     }
-                }
-                if (this.isCurrentPlayerActive()) {
 
                     switch (stateName) {
 
@@ -1223,6 +1221,7 @@ define([
                         }
                         break;
                     case 'pay_salary':
+                        dojo.query('#other_' + player_id + ' .discoveryTile').addClass('clickable');
                         this.clientStateArgs = {};
                         this.clientStateArgs.max = args.args.playersData[player_id]['max'];
                         this.clientStateArgs.cocoa = args.args.playersData[player_id]['cocoa'];
@@ -3913,7 +3912,6 @@ define([
 
                 var animateWorkerOnNextPostion = null;
                 if (selected_board_id_from == -1) {
-                    animateWorkerOnNextPostion = 1;
                     for (var index in this.gamedatas_local.map[player_id]) {
                         var map = this.gamedatas_local.map[player_id][index];
                         if (map.worker_id == worker_id) {
