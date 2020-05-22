@@ -5350,10 +5350,18 @@ class teotihuacan extends Table
         }
 
         if ($level == 3) {
+
+            $black = (int)self::getGameStateValue('eclipseDiscBlack');
+            $white = (int)self::getGameStateValue('eclipseDiscWhite');
+
             self::setGameStateValue('canBuildPyramidTiles', 0);
-            self::setGameStateValue('eclipseDiscWhite', (int)self::getGameStateValue('eclipseDiscBlack'));
-            self::incGameStateValue('eclipseDiscWhite', -1);
-            $this->advanceCalenderTrack(clienttranslate('The light disc moved directly to the position of the black disc'));
+            self::setGameStateInitialValue('eclipse', 3);
+
+            if($white < $black){
+                self::setGameStateValue('eclipseDiscWhite', (int)self::getGameStateValue('eclipseDiscBlack'));
+                self::incGameStateValue('eclipseDiscWhite', -1);
+                $this->advanceCalenderTrack(clienttranslate('The light disc moved directly to the position of the black disc'));
+            }
         } else {
             self::incGameStateValue('canBuildPyramidTiles', -1);
         }
