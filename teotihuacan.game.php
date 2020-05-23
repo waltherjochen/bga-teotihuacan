@@ -344,11 +344,16 @@ class teotihuacan extends Table
         $this->cards->createCards($cards, 'royalTiles_deck');
 
         if ($this->isRandomSetup()) {
-            $this->cards->shuffle('royalTiles_deck');
+            $a = array(3,4,8);
+            $b = array(1,5,6);
+            $c = array(0,2,7);
+            $setA = $a[random_int(0, 2)];
+            $setB = $b[random_int(0, 2)];
+            $setC = $c[random_int(0, 2)];
 
-            $this->cards->pickCardsForLocation(1, 'royalTiles_deck', 'royalTiles0');
-            $this->cards->pickCardsForLocation(1, 'royalTiles_deck', 'royalTiles1');
-            $this->cards->pickCardsForLocation(1, 'royalTiles_deck', 'royalTiles2');
+            self::DbQuery("UPDATE `card` SET card_location  = 'royalTiles0' WHERE card_type = 'royalTiles' AND card_type_arg = $setA");
+            self::DbQuery("UPDATE `card` SET card_location  = 'royalTiles1' WHERE card_type = 'royalTiles' AND card_type_arg = $setB");
+            self::DbQuery("UPDATE `card` SET card_location  = 'royalTiles2' WHERE card_type = 'royalTiles' AND card_type_arg = $setC");
         } else {
             self::DbQuery("UPDATE `card` SET card_location  = 'royalTiles0' WHERE card_type = 'royalTiles' AND card_type_arg = 0");
             self::DbQuery("UPDATE `card` SET card_location  = 'royalTiles1' WHERE card_type = 'royalTiles' AND card_type_arg = 5");
@@ -2929,7 +2934,7 @@ class teotihuacan extends Table
 
         $message = clienttranslate('${player_name} got ${amount}${token_cocoa}${token_wood}${token_stone}${token_gold}${token_vp}${token_temple_choose}${token_temple_blue}${token_temple_red}${token_temple_green}');
 
-        if ($customMessage = ' ') {
+        if ($customMessage == ' ') {
             $message = '';
         } else if ($customMessage != '') {
             $message = $customMessage;
@@ -3383,7 +3388,11 @@ class teotihuacan extends Table
         $workersOnBoard = self::getObjectListFromDB($sql, true);
         $workersOnBoard = implode(',', $workersOnBoard);
 
-        $message = clienttranslate('${player_name} moved worker ${worker_power} from ${board_name_from} to ${board_name_to} with workers (${workersOnBoard})');
+
+        $card_id_to = (int)self::getUniqueValueFromDB($sql = "SELECT `card_id` FROM `card` WHERE `card_type` = 'actionBoards' AND `card_location_arg` = $selected_board_id_to");
+        $card_id_from = (int)self::getUniqueValueFromDB($sql = "SELECT `card_id` FROM `card` WHERE `card_type` = 'actionBoards' AND `card_location_arg` = $selected_board_id_from");
+
+        $message = clienttranslate('${player_name} moved worker ${worker_power} from ${board_name_from} (${card_id_from}) to ${board_name_to} (${card_id_to}) with workers (${workersOnBoard})');
 
         if($worker_power == 6){
             $message = clienttranslate('${player_name} moved worker ${worker_power} from ${board_name_from} to ${board_name_to} as a new worker 1');
@@ -3394,6 +3403,8 @@ class teotihuacan extends Table
             'i18n' => array('board_name_to'),
             'board_name_from' => $board_name_from,
             'board_name_to' => $board_name_to,
+            'card_id_to' => $card_id_to,
+            'card_id_from' => $card_id_from,
             'player_id' => $player_id,
             'player_name' => self::getActivePlayerName(),
             'selected_board_id_to' => $selected_board_id_to,
@@ -4373,8 +4384,10 @@ class teotihuacan extends Table
                 'token' => 'cocoa',
                 'source' => $source
             ));
-            $this->setPreviousState();
-            $this->goToPreviousState();
+            if ($this->gamestate->state()['name'] != 'pay_salary'){
+                $this->setPreviousState();
+                $this->goToPreviousState();
+            }
         } else if ($r > 0) {
             $messageParts[] = ' ${r}${token_r}';// NOI18N
             self::setGameStateValue('choose_resources_max', $r);

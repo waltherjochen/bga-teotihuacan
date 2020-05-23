@@ -1220,8 +1220,10 @@ define([
                             this.bindData(this.gamedatas_local);
                         }
                         break;
-                    case 'pay_salary':
+                    case 'client_playerTurn_paySalary_confirm':
                         dojo.query('#other_' + player_id + ' .discoveryTile').addClass('clickable');
+                        break;
+                    case 'pay_salary':
                         this.clientStateArgs = {};
                         this.clientStateArgs.max = args.args.playersData[player_id]['max'];
                         this.clientStateArgs.cocoa = args.args.playersData[player_id]['cocoa'];
