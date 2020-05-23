@@ -999,7 +999,7 @@ class teotihuacan extends Table
             $playersData[$player_id]['scoring_avenue'] = $amount . " ($step)";
             self::incStat($amount, "summary_avenue", $player_id);
 
-            if($amount > 0){
+            if ($amount > 0) {
                 self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} scored ${amount}${token_vp} on Avenue of Dead'), array(
                     'player_id' => $player_id,
                     'player_name' => $player_name,
@@ -1042,7 +1042,7 @@ class teotihuacan extends Table
             $playersData[$player_id]['scoring_pyramid_track'] = $amount . " ($step)";
             self::incStat($amount, "summary_pyramid", $player_id);
 
-            if($amount > 0){
+            if ($amount > 0) {
                 self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} scored ${amount}${token_vp} on pyramid track'), array(
                     'player_id' => $player_id,
                     'player_name' => $player_name,
@@ -1079,7 +1079,7 @@ class teotihuacan extends Table
             $this->updateVP($amount, $player_id);
             $playersData[$player_id]['scoring_masks'] = $amount . " " . $text;
 
-            if($amount > 0){
+            if ($amount > 0) {
                 self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} scored ${amount}${token_vp} on masks'), array(
                     'player_id' => $player_id,
                     'player_name' => $player_name,
@@ -1094,7 +1094,7 @@ class teotihuacan extends Table
             array(''),
             array(
                 array('str' => clienttranslate('${amount} VP for each step on Avenue of Dead: (summary)'),
-                    'args' => array( 'amount'=> $buildingVP ),
+                    'args' => array('amount' => $buildingVP),
                 )
             ),
             array(
@@ -1104,7 +1104,7 @@ class teotihuacan extends Table
             ),
             array(
                 array('str' => clienttranslate('${amount} VP for each step on Pyramid track: (summary)'),
-                    'args' => array( 'amount'=> $pyramidVP ),
+                    'args' => array('amount' => $pyramidVP),
                 )
             ),
             array(
@@ -1166,7 +1166,7 @@ class teotihuacan extends Table
     function checkEndGame()
     {
         $eclipse = (int)self::getGameStateValue('eclipse');
-        if($eclipse < 3){
+        if ($eclipse < 3) {
             self::incGameStateValue('eclipse', 1);
         }
 
@@ -1257,7 +1257,7 @@ class teotihuacan extends Table
                 $amount = $this->getTempleBonus('blue', $player_id);
                 $this->updateVP($amount, $player_id);
                 $playersData[$player_id]['scoring_temple_blue'] = $amount;
-                if($amount > 0){
+                if ($amount > 0) {
                     self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} scored ${amount}${token_vp} on temple blue'), array(
                         'player_id' => $player_id,
                         'player_name' => $player_name,
@@ -1272,7 +1272,7 @@ class teotihuacan extends Table
                 $amount = $this->getTempleBonus('red', $player_id);
                 $this->updateVP($amount, $player_id);
                 $playersData[$player_id]['scoring_temple_red'] = $amount;
-                if($amount > 0){
+                if ($amount > 0) {
                     self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} scored ${amount}${token_vp} on temple red'), array(
                         'player_id' => $player_id,
                         'player_name' => $player_name,
@@ -1287,7 +1287,7 @@ class teotihuacan extends Table
                 $amount = $this->getTempleBonus('green', $player_id);
                 $this->updateVP($amount, $player_id);
                 $playersData[$player_id]['scoring_temple_green'] = $amount;
-                if($amount > 0){
+                if ($amount > 0) {
                     self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} scored ${amount}${token_vp} on temple green'), array(
                         'player_id' => $player_id,
                         'player_name' => $player_name,
@@ -1463,7 +1463,7 @@ class teotihuacan extends Table
         }
 
         $playerInfo = self::getCollectionFromDb("SELECT player_id id, player_score score, cocoa, wood, stone, gold FROM player ");
-        $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false",true);
+        $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false", true);
 
         return array(
             'global' => $global,
@@ -1687,7 +1687,7 @@ class teotihuacan extends Table
         self::setGameStateValue('doMainAction', 0);
 
         $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
-        if($worker && count($worker) > 0){
+        if ($worker && count($worker) > 0) {
             $this->gamestate->nextState("ascension");
         } else if ($upgradeWorkers > 0) {
             $this->gamestate->nextState("upgrade_workers");
@@ -1787,8 +1787,8 @@ class teotihuacan extends Table
         $card_id_actionBoards = (int)self::getUniqueValueFromDB("SELECT `card_id` FROM `card` WHERE `card_type` = 'actionBoards' AND `card_location_arg` = $selected_board_id_to");
         $discoveryTile_id = self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_b$card_id_actionBoards'");
 
-        if($discoveryTile_id != null){
-            $discoveryTile_id = (int) $discoveryTile_id;
+        if ($discoveryTile_id != null) {
+            $discoveryTile_id = (int)$discoveryTile_id;
             $priceCocoa = $this->discoveryTiles[$discoveryTile_id]['price']['cocoa'];
             $priceWood = $this->discoveryTiles[$discoveryTile_id]['price']['wood'];
             $priceGold = $this->discoveryTiles[$discoveryTile_id]['price']['gold'];
@@ -1797,10 +1797,10 @@ class teotihuacan extends Table
             $wood = (int)self::getUniqueValueFromDB("SELECT `wood` FROM `player` WHERE `player_id` = $player_id");
             $gold = (int)self::getUniqueValueFromDB("SELECT `gold` FROM `player` WHERE `player_id` = $player_id");
 
-            if($cocoa >= $priceCocoa && $wood >= $priceWood && $gold >= $priceGold){
+            if ($cocoa >= $priceCocoa && $wood >= $priceWood && $gold >= $priceGold) {
                 $canBuyDiscoveryTile = true;
             }
-            if(($cocoa - 1) >= $priceCocoa && $wood >= $priceWood && $gold >= $priceGold){
+            if (($cocoa - 1) >= $priceCocoa && $wood >= $priceWood && $gold >= $priceGold) {
                 $canBuyDiscoveryTileBoth = true;
             }
         }
@@ -1826,10 +1826,10 @@ class teotihuacan extends Table
         $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
         $countWorkers = (int)self::getUniqueValueFromDB($sql);
 
-        if($this->isTechAquired(7)){
+        if ($this->isTechAquired(7)) {
             $countWorkers++;
         }
-        if(self::getGameStateValue('extraWorker')){
+        if (self::getGameStateValue('extraWorker')) {
             $countWorkers++;
         }
 
@@ -1933,13 +1933,13 @@ class teotihuacan extends Table
 
         $undo = false;
 
-        if($discoveryQueueCount > 0 || $useStartingTile){
-            $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `worker_power` < 6",true);
+        if ($discoveryQueueCount > 0 || $useStartingTile) {
+            $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `worker_power` < 6", true);
         } else {
-            $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `worker_power` < 6 AND `actionboard_id` = $selected_board_id_to",true);
+            $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `worker_power` < 6 AND `actionboard_id` = $selected_board_id_to", true);
             self::setGameStateValue('doMainAction', 0);
             $usedOnePowerUp = (int)self::getGameStateValue('draftReverse');
-            if(!$usedOnePowerUp){
+            if (!$usedOnePowerUp) {
                 $undo = true;
             }
         }
@@ -1949,8 +1949,8 @@ class teotihuacan extends Table
         $amountPowerUpsDiscovery = '';
         $amountPowerUps = $upgradeWorkers;
 
-        if($useDiscoveryPowerUp){
-            $amountPowerUpsDiscovery = ' + ('.$useDiscoveryPowerUp.'x ' . self::_("discovery tile") . ')';
+        if ($useDiscoveryPowerUp) {
+            $amountPowerUpsDiscovery = ' + (' . $useDiscoveryPowerUp . 'x ' . self::_("discovery tile") . ')';
             $amountPowerUps = $amountPowerUps - $useDiscoveryPowerUp;
         }
 
@@ -2125,7 +2125,7 @@ class teotihuacan extends Table
             $maxResources += 2;
         }
 
-        if($this->isDraftMode() && $maxResources > 0){
+        if ($this->isDraftMode() && $maxResources > 0) {
             self::setGameStateValue('choose_resources_max', $maxResources);
             self::setGameStateValue('useDiscoveryId', -1);
             if ($startingTile0 == 6 || $startingTile0 == 17) {
@@ -2353,7 +2353,7 @@ class teotihuacan extends Table
         $sql = "SELECT `avenue_of_dead` FROM `player` WHERE `player_id` = $player_id";
         $step = (int)self::getUniqueValueFromDB($sql);
 
-        if($notification){
+        if ($notification) {
             self::notifyAllPlayers("stepAvenue", clienttranslate('${player_name} advanced one space on Avenue of Dead'), array(
                 'player_id' => $player_id,
                 'player_name' => self::getActivePlayerName(),
@@ -2388,7 +2388,7 @@ class teotihuacan extends Table
             $this->collectResource($player_id, $bonus[0], 'cocoa', $source);
         }
 
-        if($notification){
+        if ($notification) {
             self::notifyAllPlayers("stepTemple", clienttranslate('${player_name} advanced one space on temple ${temple}'), array(
                 'i18n' => array('temple'),
                 'player_id' => $player_id,
@@ -2558,7 +2558,7 @@ class teotihuacan extends Table
             $this->updateWood(-2, false, null, clienttranslate("You do not have enough wood for the main action."));
         } else if ($card_id == 7) {
             $gold = 4 - ($countWorkers + 1);
-            if(self::getGameStateValue('useDiscoveryMoveTwoWorkers') && self::getGameStateValue('selected_worker2_id')){
+            if (self::getGameStateValue('useDiscoveryMoveTwoWorkers') && self::getGameStateValue('selected_worker2_id')) {
                 $gold = $gold - 1;
             }
             if ($gold < 1) {
@@ -2571,22 +2571,22 @@ class teotihuacan extends Table
             $bottom = self::getObjectListFromDB("SELECT `card_location_arg` FROM `card` WHERE `card_location` like 'deco_p_bottom'", true);
             $left = self::getObjectListFromDB("SELECT `card_location_arg` FROM `card` WHERE `card_location` like 'deco_p_left'", true);
 
-            if(count($top) > 0 && count($right) > 0 && count($bottom) > 0 && count($left) > 0){
+            if (count($top) > 0 && count($right) > 0 && count($bottom) > 0 && count($left) > 0) {
                 $valid = false;
 
-                if($this->checkDecoration('top', count($top), false)){
+                if ($this->checkDecoration('top', count($top), false)) {
                     $valid = true;
                 }
-                if($this->checkDecoration('right', count($right), false)){
+                if ($this->checkDecoration('right', count($right), false)) {
                     $valid = true;
                 }
-                if($this->checkDecoration('bottom', count($bottom), false)){
+                if ($this->checkDecoration('bottom', count($bottom), false)) {
                     $valid = true;
                 }
-                if($this->checkDecoration('left', count($left), false)){
+                if ($this->checkDecoration('left', count($left), false)) {
                     $valid = true;
                 }
-                if(!$valid){
+                if (!$valid) {
                     throw new BgaUserException(self::_("There is no space for decorations"));
                 }
             }
@@ -2871,13 +2871,13 @@ class teotihuacan extends Table
 
         $player_id = self::getActivePlayerId();
 
-        if((int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (51) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1")){
+        if ((int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (51) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1")) {
             $countWorkers++;
         }
-        if((int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (52) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1")){
+        if ((int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (52) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1")) {
             $countWorkers++;
         }
-        if((int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (53) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1")){
+        if ((int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (53) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1")) {
             $countWorkers++;
         }
 
@@ -2929,7 +2929,9 @@ class teotihuacan extends Table
 
         $message = clienttranslate('${player_name} got ${amount}${token_cocoa}${token_wood}${token_stone}${token_gold}${token_vp}${token_temple_choose}${token_temple_blue}${token_temple_red}${token_temple_green}');
 
-        if ($customMessage != '') {
+        if ($customMessage = ' ') {
+            $message = '';
+        } else if ($customMessage != '') {
             $message = $customMessage;
         }
 
@@ -3195,7 +3197,7 @@ class teotihuacan extends Table
         }
     }
 
-    function unlockAllWorkers($pay,$freeCocoa)
+    function unlockAllWorkers($pay, $freeCocoa)
     {
         self::checkAction('unlockAllWorkers');
         $player_id = self::getActivePlayerId();
@@ -3310,7 +3312,7 @@ class teotihuacan extends Table
         $board_id = self::getGameStateValue('selected_board_id_to');
         $selected_worker_id = (int)self::getGameStateValue('selected_worker_id');
 
-        if($this->isTechAquired(0) && self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')){
+        if ($this->isTechAquired(0) && self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')) {
             $sql = "SELECT COUNT(DISTINCT `player_id`) AS Count FROM `map` WHERE `actionboard_id` = $board_id and locked = false and not (`worker_id` = $selected_worker_id and `player_id` = $player_id)";
         } else {
 
@@ -3342,6 +3344,8 @@ class teotihuacan extends Table
         if ($board_id_from != null) {
             $selected_board_id_from = $board_id_from;
         }
+
+        $worker_power = (int)self::getUniqueValueFromDB("SELECT `worker_power` FROM `map` WHERE `player_id` = $player_id AND `worker_id`=$selected_worker_id");
 
         $sql = "UPDATE `map` SET actionboard_id  = $selected_board_id_to WHERE player_id = $player_id AND worker_id = $selected_worker_id";
         self::DbQuery($sql);
@@ -3375,7 +3379,17 @@ class teotihuacan extends Table
 
         $board_name_to = $this->actionBoards[$card["card_id"]]["name"];
 
-        self::notifyAllPlayers("moveWokerToBoard", clienttranslate('${player_name} moved from ${board_name_from} to ${board_name_to}'), array(
+        $sql = "SELECT `worker_power` FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
+        $workersOnBoard = self::getObjectListFromDB($sql, true);
+        $workersOnBoard = implode(',', $workersOnBoard);
+
+        $message = clienttranslate('${player_name} moved worker ${worker_power} from ${board_name_from} to ${board_name_to} with workers (${workersOnBoard})');
+
+        if($worker_power == 6){
+            $message = clienttranslate('${player_name} moved worker ${worker_power} from ${board_name_from} to ${board_name_to} as a new worker 1');
+        }
+
+        self::notifyAllPlayers("moveWokerToBoard", $message, array(
             'i18n' => array('board_name_from'),
             'i18n' => array('board_name_to'),
             'board_name_from' => $board_name_from,
@@ -3387,6 +3401,8 @@ class teotihuacan extends Table
             'worship_pos' => $worship_pos,
             'selected_worker_id' => $selected_worker_id,
             'selected_worker2_id' => $selected_worker2_id,
+            'worker_power' => $worker_power,
+            'workersOnBoard' => $workersOnBoard,
             'moveTwoWorkers' => $useDiscoveryMoveTwoWorkers
         ));
 
@@ -3409,14 +3425,14 @@ class teotihuacan extends Table
         $selected_board_id_to = self::getGameStateValue('selected_board_id_to');
         $board_id = (int)self::getUniqueValueFromDB("SELECT `card_id` FROM `card` WHERE `card_type` = 'actionBoards' AND `card_location_arg` = $selected_board_id_to");
 
-        if($board_id == 2){
+        if ($board_id == 2) {
             $temple = 'red';
-        } else if($board_id == 3){
+        } else if ($board_id == 3) {
             $temple = 'green';
-        } else if($board_id == 4){
+        } else if ($board_id == 4) {
             $temple = 'blue';
         }
-        if($worship && isset($temple)){
+        if ($worship && isset($temple)) {
             $sql = "SELECT `temple_$temple` FROM `player` WHERE `player_id` = $player_id";
             $step = (int)self::getUniqueValueFromDB($sql);
 
@@ -3717,13 +3733,13 @@ class teotihuacan extends Table
                 $discTiles_tg0 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_tg0'");
                 $discTiles_tg1 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_tg1'");
 
-                if($temple == 'blue' && $step == 4 && $discTiles_tb0 == 0){
+                if ($temple == 'blue' && $step == 4 && $discTiles_tb0 == 0) {
                     $this->temple_bonus();
-                } else if($temple == 'red' && $step == 5 && $discTiles_tr0 == 0){
+                } else if ($temple == 'red' && $step == 5 && $discTiles_tr0 == 0) {
                     $this->temple_bonus();
-                } else if($temple == 'green' && $step == 3 && $discTiles_tg0 == 0){
+                } else if ($temple == 'green' && $step == 3 && $discTiles_tg0 == 0) {
                     $this->temple_bonus();
-                } else if($temple == 'green' && $step == 6 && $discTiles_tg1 == 0){
+                } else if ($temple == 'green' && $step == 6 && $discTiles_tg1 == 0) {
                     $this->temple_bonus();
                 }
             } else {
@@ -3771,7 +3787,7 @@ class teotihuacan extends Table
         $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
         $countWorkers = (int)self::getUniqueValueFromDB($sql);
 
-        if($notification){
+        if ($notification) {
             self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} passed'), array(
                 'player_id' => $player_id,
                 'player_name' => self::getActivePlayerName(),
@@ -3930,7 +3946,7 @@ class teotihuacan extends Table
 
         if ($discoveryQueueCount > 0) {
             $id = self::getGameStateValue('useDiscoveryId');
-            if($id > 100){
+            if ($id > 100) {
                 $id = $id - 100;
                 $source = 'startingTile_' . $id;
                 $this->collectResource($player_id, $wood, 'wood', $source, clienttranslate('${player_name} choosed ${amount}${token_wood} as starting resource(s)'));
@@ -3990,7 +4006,7 @@ class teotihuacan extends Table
             self::setGameStateValue('previous_game_state', STATE_PAY_SALARY);
         }
         $gameStateValue = self::getGameStateValue('previous_game_state');
-        if($name == ''){
+        if ($name == '') {
             $gameStateName = self::getGameStateValue('useDiscoveryId');
         } else {
             $gameStateName = $name;
@@ -4007,10 +4023,10 @@ class teotihuacan extends Table
         $useDiscoveryPowerUp = (int)self::getGameStateValue('useDiscoveryPowerUp');
         self::setGameStateValue('previous_game_state', $referrer);
 
-        if(!(($queue == '39' || $queue == '40' || $queue == '41' ) && $useDiscoveryPowerUp > 0)){
+        if (!(($queue == '39' || $queue == '40' || $queue == '41') && $useDiscoveryPowerUp > 0)) {
             self::DbQuery("DELETE FROM `discovery_queue` ORDER BY id DESC limit 1");
 
-            if($referrer == STATE_PLAYER_TURN_CHOOSE_TEMPLE_BONUS) {
+            if ($referrer == STATE_PLAYER_TURN_CHOOSE_TEMPLE_BONUS) {
                 $last_temple_id = (int)$queue;
                 self::setGameStateValue('last_temple_id', $last_temple_id);
 
@@ -4073,7 +4089,7 @@ class teotihuacan extends Table
                 $this->gamestate->nextState("pay_salary");
             }
             self::setGameStateValue('previous_game_state', 0);
-        } else  {
+        } else {
             $this->gamestate->nextState("upgrade_workers");
         }
     }
@@ -4207,7 +4223,7 @@ class teotihuacan extends Table
             'player_hand' => $player_hand,
         ));
 
-        if(self::getGameStateValue('worship_actions_discovery') && $last_temple_id == 0){
+        if (self::getGameStateValue('worship_actions_discovery') && $last_temple_id == 0) {
             self::incGameStateValue('worship_actions_discovery', -1);
         }
 
@@ -4230,16 +4246,16 @@ class teotihuacan extends Table
 
         if ($discoveryQueueCount > 0) {
             $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
-            if($worker && count($worker) > 0){
+            if ($worker && count($worker) > 0) {
                 $this->gamestate->nextState("ascension");
-            } else if(self::getGameStateValue('ascensionTempleSteps')){
+            } else if (self::getGameStateValue('ascensionTempleSteps')) {
                 $this->gamestate->nextState("action");
             } else {
                 $this->goToPreviousState();
             }
         } else if ((int)self::getGameStateValue('startingTileBonus') > 0 && !$queueCount) {
             $this->gamestate->nextState("calculate_next_bonus");
-        }  else if ($queueCount > 0 || $worship_actions_discovery > 0 || $royalTileAction > 0) {
+        } else if ($queueCount > 0 || $worship_actions_discovery > 0 || $royalTileAction > 0) {
             $this->gamestate->nextState("action");
         } else if (self::getGameStateValue('isNobles')) {
             self::setGameStateValue('isNobles', 0);
@@ -4252,7 +4268,7 @@ class teotihuacan extends Table
             $this->gamestate->nextState("ascension");
         } else if (self::getGameStateValue('upgradeWorkers')) {
             $this->gamestate->nextState("upgrade_workers");
-        }  else if (self::getGameStateValue('isConstruction')) {
+        } else if (self::getGameStateValue('isConstruction')) {
             if ($canBuildPyramidTiles > 0) {
                 $this->gamestate->nextState("construction");
             } else {
@@ -4339,7 +4355,7 @@ class teotihuacan extends Table
 
         if ($vp > 0) {
             $messageParts[] = ' ${vp}${token_vp}';// NOI18N
-            $this->updateVP($vp, true, $player_id);
+            $this->updateVP($vp, $player_id);
             $source = 'discoveryTile_' . $id;
             self::notifyAllPlayers("collectResource", "", array(
                 'player_id' => $player_id,
@@ -4514,11 +4530,11 @@ class teotihuacan extends Table
                 $discTiles_a2 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_a2'");
 
 
-                if($step == 3 && $discTiles_a0 == 0){
+                if ($step == 3 && $discTiles_a0 == 0) {
                     $this->pass(false);
-                } else if($step == 6 && $discTiles_a1 == 0){
+                } else if ($step == 6 && $discTiles_a1 == 0) {
                     $this->pass(false);
-                } else if($step == 8 && $discTiles_a2 == 0){
+                } else if ($step == 8 && $discTiles_a2 == 0) {
                     $this->pass(false);
                 }
             } else {
@@ -4548,9 +4564,9 @@ class teotihuacan extends Table
         $discoveryQueueCount = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `discovery_queue` ORDER BY id DESC LIMIT 1");
         if ($discoveryQueueCount) {
             $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
-            if($worker && count($worker) > 0){
+            if ($worker && count($worker) > 0) {
                 $this->gamestate->nextState("ascension");
-            } else if(self::getGameStateValue('ascensionTempleSteps')){
+            } else if (self::getGameStateValue('ascensionTempleSteps')) {
                 $this->gamestate->nextState("action");
             } else {
                 $this->goToPreviousState();
@@ -4603,7 +4619,7 @@ class teotihuacan extends Table
 
         $useDiscoveryPowerUp = (int)self::getGameStateValue('useDiscoveryPowerUp') > 0;
 
-        if (!$discoveryQueueCount&& !self::getGameStateValue('startingTileBonus') && !$useDiscoveryPowerUp) {
+        if (!$discoveryQueueCount && !self::getGameStateValue('startingTileBonus') && !$useDiscoveryPowerUp) {
             if ($board_id == null || $board_id_from != $board_id) {
                 throw new BgaUserException(self::_("This move is not possible."));
             }
@@ -4613,7 +4629,7 @@ class teotihuacan extends Table
             }
         }
 
-        if(((int) self::getGameStateValue('doMainAction') > 0) && ($selected_worker_id == $worker_id || $selected_worker2_id == $worker_id)){
+        if (((int)self::getGameStateValue('doMainAction') > 0) && ($selected_worker_id == $worker_id || $selected_worker2_id == $worker_id)) {
             throw new BgaUserException(self::_("You must finish the main action before power up the worker you just moved"));
         }
 
@@ -4624,7 +4640,7 @@ class teotihuacan extends Table
         $discoveryQueueCount = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `discovery_queue` ORDER BY id DESC LIMIT 1");
         $useStartingTile = (int)self::getGameStateValue('startingTileBonus') > 0;
 
-        if(!($discoveryQueueCount > 0 || $useStartingTile)){
+        if (!($discoveryQueueCount > 0 || $useStartingTile)) {
             self::setGameStateValue('draftReverse', 1); // used at least one power up
         }
 
@@ -4667,7 +4683,7 @@ class teotihuacan extends Table
         if (self::getGameStateValue('ascension') && $worker && count($worker) > 0) {
             $this->gamestate->nextState("avenue_of_dead");
         } else if ($discoveryQueueCount > 0) {
-            if(self::getGameStateValue('useDiscoveryPowerUp')){
+            if (self::getGameStateValue('useDiscoveryPowerUp')) {
                 $this->gamestate->nextState("upgrade_workers");
             } else {
                 $this->goToPreviousState();
@@ -4717,7 +4733,7 @@ class teotihuacan extends Table
 
         if ($id == 0) {
             $messageParts[] = ' ${vp}${token_vp}';// NOI18N
-            $this->collectResource($player_id, 5, 'vp', $source);
+            $this->collectResource($player_id, 5, 'vp', $source, ' ');
         } else if ($id == 1) {
             $messageParts[] = ' 2 ${token_temple_choose}';// NOI18N
 
@@ -4761,7 +4777,7 @@ class teotihuacan extends Table
             $this->gamestate->nextState("action");
         } else if ($id == 4) {
             $messageParts[] = ' ${cocoa}${token_cocoa}';// NOI18N
-            $this->collectResource($player_id, 5, 'cocoa', $source);
+            $this->collectResource($player_id, 5, 'cocoa', $source, ' ');
         } else {
             throw new BgaUserException(self::_("This move is not possible."));
         }
@@ -4788,9 +4804,9 @@ class teotihuacan extends Table
     function preAscension()
     {
         $player_id = self::getActivePlayerId();
-        
+
         $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
-        if($worker && count($worker) > 0){
+        if ($worker && count($worker) > 0) {
             $this->advanceCalenderTrack();
 
             $worker_id = $worker[0]['worker_id'];
@@ -4803,13 +4819,13 @@ class teotihuacan extends Table
                 'worker_power' => 1,
             ));
 
+            $this->moveWorkerToBoard(0, $worker_id, $board_id_from, 1);
+
             $sql = "UPDATE `map` SET worker_power  = 1 WHERE player_id = $player_id AND `worker_id` = $worker_id";
             self::DbQuery($sql);
-
-            $this->moveWorkerToBoard(0, $worker_id, $board_id_from, 1);
         }
         $ascension = (int)self::getGameStateValue('ascension');
-        if($ascension <= 0){
+        if ($ascension <= 0) {
             $this->ascensionCleanUp();
         }
     }
@@ -4826,20 +4842,20 @@ class teotihuacan extends Table
         $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
         $countWorkers = (int)self::getUniqueValueFromDB($sql);
 
-         if ($discoveryQueueCount > 0) {
+        if ($discoveryQueueCount > 0) {
             $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
-            if($worker && count($worker) > 0){
+            if ($worker && count($worker) > 0) {
                 $this->gamestate->nextState("ascension");
-            } else if(self::getGameStateValue('ascensionTempleSteps')){
+            } else if (self::getGameStateValue('ascensionTempleSteps')) {
                 $this->gamestate->nextState("action");
             } else {
                 $this->goToPreviousState();
             }
         } else if (self::getGameStateValue('ascension')) {
             $this->gamestate->nextState("ascension");
-        }else if ($upgradeWorkers > 0) {
+        } else if ($upgradeWorkers > 0) {
             $this->gamestate->nextState("upgrade_workers");
-        }  else if ($this->isTechAquired(6) && !self::getGameStateValue('paidPowerUp') && $countWorkers > 0) {
+        } else if ($this->isTechAquired(6) && !self::getGameStateValue('paidPowerUp') && $countWorkers > 0) {
             self::setGameStateValue('paidPowerUp', 1);
             $this->gamestate->nextState("buy");
         } else {
@@ -4879,8 +4895,8 @@ class teotihuacan extends Table
             $progression = 10 + 85 * $currentStep / $maxSteps;
             self::setGameStateValue('progression', $progression);
 
-            if($white >= $black){
-                if($this->isDarkEclipse()){
+            if ($white >= $black) {
+                if ($this->isDarkEclipse()) {
                     self::setGameStateValue('lastRound', 3);
                     self::notifyAllPlayers("showEclipseBanner", clienttranslate('*** Eclipse is triggered ***'), array(
                         'lastRound' => (int)self::getGameStateValue('lastRound'),
@@ -5357,7 +5373,7 @@ class teotihuacan extends Table
             self::setGameStateValue('canBuildPyramidTiles', 0);
             self::setGameStateInitialValue('eclipse', 3);
 
-            if($white < $black){
+            if ($white < $black) {
                 self::setGameStateValue('eclipseDiscWhite', (int)self::getGameStateValue('eclipseDiscBlack'));
                 self::incGameStateValue('eclipseDiscWhite', -1);
                 $this->advanceCalenderTrack(clienttranslate('The light disc moved directly to the position of the black disc'));
@@ -5429,7 +5445,7 @@ class teotihuacan extends Table
                 $pyramidTaken1 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 8");
 
                 if (!($pyramidTaken0 && $pyramidTaken1)) {
-                    if($exception){
+                    if ($exception) {
                         throw new BgaUserException(self::_("This move is not possible."));
                     }
                     return false;
@@ -5438,7 +5454,7 @@ class teotihuacan extends Table
                 $pyramidTaken0 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 103");
 
                 if (!($pyramidTaken0)) {
-                    if($exception){
+                    if ($exception) {
                         throw new BgaUserException(self::_("This move is not possible."));
                     }
                     return false;
@@ -5448,7 +5464,7 @@ class teotihuacan extends Table
                 $pyramidTaken1 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 202");
 
                 if (!($pyramidTaken0 && $pyramidTaken1)) {
-                    if($exception){
+                    if ($exception) {
                         throw new BgaUserException(self::_("This move is not possible."));
                     }
                     return false;
@@ -5461,7 +5477,7 @@ class teotihuacan extends Table
                 $pyramidTaken1 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 2");
 
                 if (!($pyramidTaken0 && $pyramidTaken1)) {
-                    if($exception){
+                    if ($exception) {
                         throw new BgaUserException(self::_("This move is not possible."));
                     }
                     return false;
@@ -5470,7 +5486,7 @@ class teotihuacan extends Table
                 $pyramidTaken0 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 101");
 
                 if (!($pyramidTaken0)) {
-                    if($exception){
+                    if ($exception) {
                         throw new BgaUserException(self::_("This move is not possible."));
                     }
                     return false;
@@ -5480,7 +5496,7 @@ class teotihuacan extends Table
                 $pyramidTaken1 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 201");
 
                 if (!($pyramidTaken0 && $pyramidTaken1)) {
-                    if($exception){
+                    if ($exception) {
                         throw new BgaUserException(self::_("This move is not possible."));
                     }
                     return false;
@@ -5493,7 +5509,7 @@ class teotihuacan extends Table
                 $pyramidTaken1 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 11");
 
                 if (!($pyramidTaken0 && $pyramidTaken1)) {
-                    if($exception){
+                    if ($exception) {
                         throw new BgaUserException(self::_("This move is not possible."));
                     }
                     return false;
@@ -5502,7 +5518,7 @@ class teotihuacan extends Table
                 $pyramidTaken0 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 105");
 
                 if (!($pyramidTaken0)) {
-                    if($exception){
+                    if ($exception) {
                         throw new BgaUserException(self::_("This move is not possible."));
                     }
                     return false;
@@ -5512,7 +5528,7 @@ class teotihuacan extends Table
                 $pyramidTaken1 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 203");
 
                 if (!($pyramidTaken0 && $pyramidTaken1)) {
-                    if($exception){
+                    if ($exception) {
                         throw new BgaUserException(self::_("This move is not possible."));
                     }
                     return false;
@@ -5525,7 +5541,7 @@ class teotihuacan extends Table
                 $pyramidTaken1 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 14");
 
                 if (!($pyramidTaken0 && $pyramidTaken1)) {
-                    if($exception){
+                    if ($exception) {
                         throw new BgaUserException(self::_("This move is not possible."));
                     }
                     return false;
@@ -5534,7 +5550,7 @@ class teotihuacan extends Table
                 $pyramidTaken0 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 107");
 
                 if (!($pyramidTaken0)) {
-                    if($exception){
+                    if ($exception) {
                         throw new BgaUserException(self::_("This move is not possible."));
                     }
                     return false;
@@ -5544,7 +5560,7 @@ class teotihuacan extends Table
                 $pyramidTaken1 = (int)self::getUniqueValueFromDB("SELECT * FROM `card` WHERE `card_location` like 'pyra_rotate_%' AND `card_location_arg` = 203");
 
                 if (!($pyramidTaken0 && $pyramidTaken1)) {
-                    if($exception){
+                    if ($exception) {
                         throw new BgaUserException(self::_("This move is not possible."));
                     }
                     return false;
@@ -5818,7 +5834,7 @@ class teotihuacan extends Table
                 $discoveryTile = (int)(array_shift($discoveryCard)['type_arg']);
 
                 if ($firstTile != null) {
-                     self::DbQuery("UPDATE `player` SET startingDiscovery1 = $discoveryTile WHERE player_id = $player_id");
+                    self::DbQuery("UPDATE `player` SET startingDiscovery1 = $discoveryTile WHERE player_id = $player_id");
                 } else {
                     self::DbQuery("UPDATE `player` SET startingDiscovery0 = $discoveryTile WHERE player_id = $player_id");
                 }
@@ -5878,7 +5894,7 @@ class teotihuacan extends Table
     function undo()
     {
         $usedOnePowerUp = (int)self::getGameStateValue('draftReverse');
-        if($usedOnePowerUp){
+        if ($usedOnePowerUp) {
             throw new BgaUserException(self::_("This move is not possible."));
         }
         $this->undoRestorePoint();
@@ -6147,11 +6163,10 @@ class teotihuacan extends Table
 //            self::applyDbUpgradeToAllDB( $sql );
 //        }
 //        // Please add your future database scheme changes here
-        if( $from_version <= 2005071758 )
-        {
+        if ($from_version <= 2005071758) {
             // ! important ! Use DBPREFIX_<table_name> for all tables
             $sql = "CREATE TABLE IF NOT EXISTS `DBPREFIX_discovery_queue` (`id` int(10) unsigned NOT NULL AUTO_INCREMENT, `queue` varchar(16) NOT NULL, `referrer` INT NOT NULL DEFAULT '0', PRIMARY KEY (`id`))";
-            self::applyDbUpgradeToAllDB( $sql );
+            self::applyDbUpgradeToAllDB($sql);
         }
     }
 }

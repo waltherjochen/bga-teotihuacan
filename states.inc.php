@@ -395,8 +395,8 @@ $machinestates = array(
     ),
     STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS => array(
         "name" => "playerTurn_ascension_choose_bonus",
-        "description" => clienttranslate('${actplayer} chooses a ascension bonus (${amount}x)'),
-        "descriptionmyturn" => clienttranslate('${you} must choose a ascension bonus (${amount}x)'),
+        "description" => clienttranslate('${actplayer} must choose an ascension bonus (${amount}x)'),
+        "descriptionmyturn" => clienttranslate('${you} must choose an ascension bonus (${amount}x)'),
         "type" => "activeplayer",
         "action" => "preAscension",
         "args" => "getAscensionBonusAmount",

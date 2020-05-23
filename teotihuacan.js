@@ -1699,6 +1699,12 @@ define([
                 return tokenDiv;
             },
 
+            getDiscoveryIconDiv: function (key, args) {
+                var token_id = args[key];
+                var tokenDiv = this.getTokenSymbol(token_id, true);
+                return tokenDiv;
+            },
+
             /* Implementation of proper colored You with background in case of white or light colors  */
 
             divYou: function () {
