@@ -1212,6 +1212,7 @@ define([
                 }
 
                 switch (stateName) {
+                    case 'check_end_game':
                     case 'playerTurn':
                         for (var player_id in args.args.playerInfo) {
                             var info = args.args.playerInfo[player_id];

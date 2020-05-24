@@ -475,6 +475,7 @@ $machinestates = array(
         "type" => "game",
         "possibleactions" => array(),
         "action" => "checkEndGame",
+        "args" => "getGlobalVariables",
         "updateGameProgression" => true,
         "transitions" => array("next_player" => STATE_START_TURN, "game_end" => 99)
     ),
