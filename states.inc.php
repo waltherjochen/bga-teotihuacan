@@ -297,6 +297,7 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} ${description}'),
         "type" => "activeplayer",
         "args" => "getWorshipInfo",
+        "action" => "preWorshipActions",
         "possibleactions" => array(
             "useDiscoveryTile",
             "royalTileAction",

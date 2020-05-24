@@ -1047,6 +1047,11 @@ define([
 
                     switch (stateName) {
 
+                        case 'startTurn':
+                            setTimeout(function () {
+                                $("workers").innerHTML = '';
+                            }, 2000);
+                            break;
                         case 'playerTurn':
                             this.clickableWorkers = args.args.clickableWorkers;
                             this.isGamePreparation = false;
@@ -1624,8 +1629,6 @@ define([
                             this.addTooltipHtml('incrementGold', _("Increment number of gold"));
 
                             this.checkIfButtonsAreEnabled(this.clientStateArgs.wood, this.clientStateArgs.stone, this.clientStateArgs.gold, isMax);
-                            cancelConfirm = true;
-                            cancelMessage = _('reset');
                             break;
                         case 'claim_starting_discovery_tiles':
                             this.addActionButton('button_1_id', _('Done'), 'onPassClick', null, false, 'gray');
@@ -1806,9 +1809,11 @@ define([
                         var map = map_player[j];
                         if (board_id == map.actionboard_id && map.locked == false) {
                             var selectedWorker = $(this.getActivePlayerId() + '_worker_' + this.selected_worker_id);
-                            var selectedWorkerBoard = dojo.attr(selectedWorker, "data-board-id");
-                            if(!(this.isPalaceTechAquired && board_id == selectedWorkerBoard && map.worker_id == this.selected_worker_id && map.player_id == this.getActivePlayerId())){
-                                workers++;
+                            if($(selectedWorker)){
+                                var selectedWorkerBoard = dojo.attr(selectedWorker, "data-board-id");
+                                if(!(this.isPalaceTechAquired && board_id == selectedWorkerBoard && map.worker_id == this.selected_worker_id && map.player_id == this.getActivePlayerId())){
+                                    workers++;
+                                }
                             }
                         }
                     }
@@ -2138,10 +2143,6 @@ define([
                 setTimeout(function () {
                     _this.bindData(_this.gamedatas_local);
                 }, delay + 2000 + amount * 200);
-
-                setTimeout(function () {
-                    $("workers").innerHTML = '';
-                }, delay + 2000 + amount * 200 + 100);
             },
 
             animateVP: function (player_id, amount, token, source, target, delay) {

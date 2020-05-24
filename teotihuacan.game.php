@@ -3392,10 +3392,15 @@ class teotihuacan extends Table
         $card_id_to = (int)self::getUniqueValueFromDB($sql = "SELECT `card_id` FROM `card` WHERE `card_type` = 'actionBoards' AND `card_location_arg` = $selected_board_id_to");
         $card_id_from = (int)self::getUniqueValueFromDB($sql = "SELECT `card_id` FROM `card` WHERE `card_type` = 'actionBoards' AND `card_location_arg` = $selected_board_id_from");
 
-        $message = clienttranslate('${player_name} moved worker ${worker_power} from ${board_name_from} (${card_id_from}) to ${board_name_to} (${card_id_to}) with workers (${workersOnBoard})');
+        $message = clienttranslate('${player_name} moved worker ${worker_power}${worker_power2} from ${board_name_from} (${card_id_from}) to ${board_name_to} (${card_id_to}) with workers (${workersOnBoard})');
 
         if($worker_power == 6){
             $message = clienttranslate('${player_name} moved worker ${worker_power} from ${board_name_from} to ${board_name_to} as a new worker 1');
+        }
+
+        $worker_power2 = '';
+        if($selected_worker2_id){
+            $worker_power2 = ',' . (int)self::getUniqueValueFromDB("SELECT `worker_power` FROM `map` WHERE `player_id` = $player_id AND `worker_id`=$selected_worker2_id");
         }
 
         self::notifyAllPlayers("moveWokerToBoard", $message, array(
@@ -3413,6 +3418,7 @@ class teotihuacan extends Table
             'selected_worker_id' => $selected_worker_id,
             'selected_worker2_id' => $selected_worker2_id,
             'worker_power' => $worker_power,
+            'worker_power2' => $worker_power2,
             'workersOnBoard' => $workersOnBoard,
             'moveTwoWorkers' => $useDiscoveryMoveTwoWorkers
         ));
@@ -4239,6 +4245,17 @@ class teotihuacan extends Table
         }
 
         $this->goToNextState();
+    }
+
+    function preWorshipActions()
+    {
+        $queueCount = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `temple_queue`");
+        $worship_actions_discovery = (int)self::getGameStateValue('worship_actions_discovery');
+        $royalTileAction = (int)self::getGameStateValue('royalTileAction');
+
+        if (!($queueCount > 0 || $worship_actions_discovery > 0 || $royalTileAction > 0)) {
+            $this->goToNextState();
+        }
     }
 
     function goToNextState()
