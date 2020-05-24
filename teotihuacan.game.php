@@ -4992,11 +4992,23 @@ class teotihuacan extends Table
         $rowDB = (int)self::getUniqueValueFromDB("SELECT `row$row` FROM `nobles`");
 
         if ($row == 0 && $rowDB >= 5) {
-            throw new BgaUserException(self::_("You cannot build in this row"));
+            if ((int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (51,52,53) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1")) {
+                throw new BgaUserException(self::_("You cannot build in this row. You may use your discovery tile to get an extra worker for a different row"));
+            } else {
+                throw new BgaUserException(self::_("You cannot build in this row"));
+            }
         } else if ($row == 1 && $rowDB >= 4) {
-            throw new BgaUserException(self::_("You cannot build in this row"));
+            if ((int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (51,52,53) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1")) {
+                throw new BgaUserException(self::_("You cannot build in this row. You may use your discovery tile to get an extra worker for a different row"));
+            } else {
+                throw new BgaUserException(self::_("You cannot build in this row"));
+            }
         } else if ($row == 2 && $rowDB >= 3) {
-            throw new BgaUserException(self::_("You cannot build in this row"));
+            if ((int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (51,52,53) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1")) {
+                throw new BgaUserException(self::_("You cannot build in this row. You may use your discovery tile to get an extra worker for a different row"));
+            } else {
+                throw new BgaUserException(self::_("You cannot build in this row"));
+            }
         }
 
         $sql = "UPDATE `nobles` SET `row$row`  = `row$row` + 1";
