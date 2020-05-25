@@ -1762,7 +1762,6 @@ class teotihuacan extends Table
                 } else {
                     $this->gamestate->nextState("pass");
                 }
-
             }
         }
     }
@@ -3936,9 +3935,14 @@ class teotihuacan extends Table
         } else if ($discoveryQueueCount > 0) {
             $this->goToPreviousState();
         } else {
-            $this->gamestate->nextState("pass");
-        }
+            $enableUndo = (int)self::getUniqueValueFromDB("SELECT `enableUndo` FROM `player` WHERE `player_id` = $player_id");
 
+            if($enableUndo > 0){
+                $this->gamestate->nextState("undo");
+            } else {
+                $this->gamestate->nextState("pass");
+            }
+        }
     }
 
     function boardgetUpgrades($countWorkers)
@@ -4472,6 +4476,8 @@ class teotihuacan extends Table
                 'token' => 'vp',
                 'source' => $source
             ));
+            $this->setPreviousState();
+            $this->goToPreviousState();
         } else if ($cocoa > 0) {
             $messageParts[] = ' ${cocoa}${token_cocoa}';// NOI18N
             $this->updateCocoa($cocoa, true, $player_id);

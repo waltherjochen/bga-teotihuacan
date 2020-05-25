@@ -55,8 +55,8 @@ ALTER TABLE `player` ADD `startingDiscovery1` INT DEFAULT NULL;
 ALTER TABLE `player` ADD `startingResourceWood` INT UNSIGNED NOT NULL DEFAULT '0';
 ALTER TABLE `player` ADD `startingResourceStone` INT UNSIGNED NOT NULL DEFAULT '0';
 ALTER TABLE `player` ADD `startingResourceGold` INT UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `player` ADD `enableUndo` INT UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `player` ADD `enableAuto` INT UNSIGNED NOT NULL DEFAULT '0';
+ALTER TABLE `player` ADD `enableUndo` INT UNSIGNED NOT NULL DEFAULT '1';
+ALTER TABLE `player` ADD `enableAuto` INT UNSIGNED NOT NULL DEFAULT '1';
 
 CREATE TABLE IF NOT EXISTS `card` (
     `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,

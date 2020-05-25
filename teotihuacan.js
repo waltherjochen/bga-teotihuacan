@@ -1010,23 +1010,14 @@ define([
 
                 for (var player_id in this.gamedatas_local.players) {
                     if (player_id != this.getThisPlayerId()) {
-                        $('enableAuto_' + player_id).remove();
                         $('enableUndo_' + player_id).remove();
                     }
                 }
 
                 this.queryAndAddEvent('#enableUndo_'+this.getThisPlayerId(), 'onclick', 'enableUndoChanged');
                 $('enableUndo_'+this.getThisPlayerId()+'_text').innerHTML = _('Ask for undo after my turn');
-                this.queryAndAddEvent('#enableAuto_'+this.getThisPlayerId(), 'onclick', 'enableAutoChanged');
-                $('enableAuto_'+this.getThisPlayerId()+'_text').innerHTML = _('Automate actions');
 
-                var enableAuto = this.gamedatas_local.players[this.getThisPlayerId()].enableAuto;
                 var enableUndo = this.gamedatas_local.players[this.getThisPlayerId()].enableUndo;
-                if(enableAuto > 0){
-                    $('enableAuto_' + this.getThisPlayerId()).innerHTML = 'X';
-                } else {
-                    $('enableAuto_' + this.getThisPlayerId()).innerHTML = '';
-                }
                 if(enableUndo > 0){
                     $('enableUndo_' + this.getThisPlayerId()).innerHTML = 'X';
                 } else {

@@ -295,7 +295,6 @@
 */
     var jstpl_playerTable = '<div class="table whiteblock" id="player_table_${id}">' +
         '            <div class="checkboxArea"><div class="enableButton" id="enableUndo_${id}">X</div><div class="enableButton_text" id="enableUndo_${id}_text"></div></div>' +
-        '            <div class="checkboxArea"><div class="enableButton" id="enableAuto_${id}">X</div><div class="enableButton_text" id="enableAuto_${id}_text"></div></div>' +
         '            <h3 style="color: #${player_color}">${player_name}</h3>' +
         '            <div class="playerOrder player${player_order}"></div>' +
         '            <div id="player_${id}_startingTiles" class="player_startingTiles"></div>' +
