@@ -4021,6 +4021,8 @@ class teotihuacan extends Table
             self::setGameStateValue('previous_game_state', STATE_PLAYER_TURN_CHOOSE_AVENUE_BONUS);
         } else if ($this->gamestate->state()['name'] == 'pay_salary') {
             self::setGameStateValue('previous_game_state', STATE_PAY_SALARY);
+        } else if ($this->gamestate->state()['name'] == 'playerTurn_nobles_choose_row') {
+            self::setGameStateValue('previous_game_state', STATE_PLAYER_TURN_NOBLES_BUILD);
         }
         $gameStateValue = self::getGameStateValue('previous_game_state');
         if ($name == '') {
@@ -4104,6 +4106,8 @@ class teotihuacan extends Table
                 $this->gamestate->nextState("choose_avenue_bonus");
             } else if (self::getGameStateValue('previous_game_state') == STATE_PAY_SALARY) {
                 $this->gamestate->nextState("pay_salary");
+            } else if (self::getGameStateValue('previous_game_state') == STATE_PLAYER_TURN_NOBLES_BUILD) {
+                $this->gamestate->nextState("choose_row");
             }
             self::setGameStateValue('previous_game_state', 0);
         } else {

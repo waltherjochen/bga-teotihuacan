@@ -73,7 +73,7 @@ $stats_type = array(
         "ahead_on_pyramid_track_eclipse3" => array("id"=> 19,"name" => totranslate("Are you ahead on pyramid track in eclipse 3"),"type" => "int" ),
         "pyramid_same_symbol" => array("id"=> 20,"name" => totranslate("Points for same symbol on Pyramid"),"type" => "int" ),
         "build_decoration" => array("id"=> 21,"name" => totranslate("Decorations added"),"type" => "int" ),
-        "decoration_same_symbol" => array("id"=> 22,"name" => totranslate("Points for same symbol on Pyramid"),"type" => "int" ),
+        "decoration_same_symbol" => array("id"=> 22,"name" => totranslate("Points for same symbol on Decoration"),"type" => "int" ),
         "place_nobles_building_round1" => array("id"=> 23,"name" => totranslate("Placed nobles building in eclipse 1"),"type" => "int" ),
         "place_nobles_building_round2" => array("id"=> 24,"name" => totranslate("Placed nobles building in eclipse 2"),"type" => "int" ),
         "place_nobles_building_round3" => array("id"=> 25,"name" => totranslate("Placed nobles building in eclipse 3"),"type" => "int" ),
