@@ -64,6 +64,7 @@ define("STATE_PLAYER_TURN_DECORATION", 50);
 define("STATE_PLAYER_TURN_PASS", 55);
 define("STATE_PLAYER_TURN_CHECK_END_TURN", 58);
 define("STATE_PLAYER_END_TURN", 60);
+define("STATE_PLAYER_TURN_UNDO", 61);
 
 
 define("STATE_PAY_SALARY", 70);
@@ -577,7 +578,7 @@ class teotihuacan extends Table
 
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-        $sql = "SELECT player_id id, player_no player_order, player_score score, player_color, player_name, startingTile0, startingTile1, startingDiscovery0, startingDiscovery1, cocoa, wood, stone, gold, temple_blue, temple_red, temple_green, avenue_of_dead, techTiles_r1_c1, techTiles_r1_c2, techTiles_r1_c3, techTiles_r2_c1, techTiles_r2_c2, techTiles_r2_c3, pyramid_track FROM player";
+        $sql = "SELECT player_id id, player_no player_order, player_score score, player_color, player_name, enableAuto, enableUndo, startingTile0, startingTile1, startingDiscovery0, startingDiscovery1, cocoa, wood, stone, gold, temple_blue, temple_red, temple_green, avenue_of_dead, techTiles_r1_c1, techTiles_r1_c2, techTiles_r1_c3, techTiles_r2_c1, techTiles_r2_c2, techTiles_r2_c3, pyramid_track FROM player";
         $result['players'] = self::getCollectionFromDb($sql);
         $result['players_count'] = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `player`");
 
@@ -927,6 +928,7 @@ class teotihuacan extends Table
     function prepareNextPlayer()
     {
         $this->resetGameStateValues();
+        $this->refillTiles();
 
         $eclipse = (int)self::getGameStateValue('eclipse');
 
@@ -1579,12 +1581,17 @@ class teotihuacan extends Table
 
     function checkEndTurn()
     {
-        $this->refillTiles();
-
         if ($this->canUseDiscoveryTiles()) {
             $this->gamestate->nextState("check_pass");
         } else {
-            $this->gamestate->nextState("next_player");
+            $player_id = self::getCurrentPlayerId();
+            $enableUndo = (int)self::getUniqueValueFromDB("SELECT `enableUndo` FROM `player` WHERE `player_id` = $player_id");
+
+            if($enableUndo > 0){
+                $this->gamestate->nextState("undo");
+            } else {
+                $this->gamestate->nextState("next_player");
+            }
         }
     }
 
@@ -1683,6 +1690,44 @@ class teotihuacan extends Table
                 'decorationTiles' => $decorationTiles,
             ));
         }
+
+        $newTiles = array();
+
+        $discTiles_b1 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_b1'");
+        $discTiles_b2 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_b2'");
+        $discTiles_b3 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_b3'");
+        $discTiles_b4 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_b4'");
+        $discTiles_b7 = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_location` = 'discTiles_b7'");
+
+        if ($discTiles_b1 <= 0) {
+            $this->cards->pickCardsForLocation(1, 'discTiles_deck', 'discTiles_b1');
+            array_push($newTiles, current($this->cards->getCardsInLocation('discTiles_b1')));
+        }
+        if ($discTiles_b2 <= 0) {
+            $this->cards->pickCardsForLocation(1, 'discTiles_deck', 'discTiles_b2');
+            array_push($newTiles, current($this->cards->getCardsInLocation('discTiles_b2')));
+        }
+        if ($discTiles_b3 <= 0) {
+            $this->cards->pickCardsForLocation(1, 'discTiles_deck', 'discTiles_b3');
+            array_push($newTiles, current($this->cards->getCardsInLocation('discTiles_b3')));
+        }
+        if ($discTiles_b4 <= 0) {
+            $this->cards->pickCardsForLocation(1, 'discTiles_deck', 'discTiles_b4');
+            array_push($newTiles, current($this->cards->getCardsInLocation('discTiles_b4')));
+        }
+        if ($discTiles_b7 <= 0) {
+            $this->cards->pickCardsForLocation(1, 'discTiles_deck', 'discTiles_b7');
+            array_push($newTiles, current($this->cards->getCardsInLocation('discTiles_b7')));
+        }
+
+        if (count($newTiles) > 0) {
+            $discoveryTiles = $this->getAllDatas()['discoveryTiles'];
+
+            self::notifyAllPlayers("refillDiscoveryTilesOffer", '', array(
+                'newTiles' => $newTiles,
+                'discoveryTiles' => $discoveryTiles,
+            ));
+        }
     }
 
     function areDiscoveryTilesLeft()
@@ -1710,7 +1755,14 @@ class teotihuacan extends Table
                 }
             }
             if (!$isInArray) {
-                $this->gamestate->nextState("pass");
+                $enableUndo = (int)self::getUniqueValueFromDB("SELECT `enableUndo` FROM `player` WHERE `player_id` = $player_id");
+
+                if($enableUndo > 0){
+                    $this->gamestate->nextState("undo");
+                } else {
+                    $this->gamestate->nextState("pass");
+                }
+
             }
         }
     }
@@ -1899,6 +1951,7 @@ class teotihuacan extends Table
     {
         $player_id = self::getActivePlayerId();
         $selected_board_id_to = self::getGameStateValue('selected_board_id_to');
+        $selected_worker_id = (int)self::getGameStateValue('selected_worker_id');
         $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
         $countWorkers = (int)self::getUniqueValueFromDB($sql);
 
@@ -1922,6 +1975,13 @@ class teotihuacan extends Table
                 'amount' => $upgradeWorkers,
             ));
             $this->cleanUpPowerUp();
+        } else {
+            $enableAuto = (int)self::getUniqueValueFromDB("SELECT `enableAuto` FROM `player` WHERE `player_id` = $player_id");
+            $workersOnBoard = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to");
+
+            if($enableAuto > 0 && $workersOnBoard == 1){
+                $this->upgradeWorker($selected_worker_id, $selected_board_id_to);
+            }
         }
     }
 
@@ -1943,10 +2003,6 @@ class teotihuacan extends Table
         } else {
             $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `worker_power` < 6 AND `actionboard_id` = $selected_board_id_to", true);
             self::setGameStateValue('doMainAction', 0);
-            $usedOnePowerUp = (int)self::getGameStateValue('draftReverse');
-            if (!$usedOnePowerUp) {
-                $undo = true;
-            }
         }
 
         $upgradeWorkers = (int)self::getGameStateValue('upgradeWorkers');
@@ -1965,7 +2021,6 @@ class teotihuacan extends Table
             'clickableWorkers' => $clickableWorkers,
             'amount' => $amountPowerUps,
             'amountPowerUpsDiscovery' => $amountPowerUpsDiscovery,
-            'undo' => $undo,
         );
     }
 
@@ -4222,9 +4277,6 @@ class teotihuacan extends Table
         }
 
         $this->cards->moveCard($card_id_discoveryTiles, 'hand', $player_id);
-        if (strpos($discTile['location'], 'discTiles_b') === 0) {
-            $this->cards->pickCardsForLocation(1, 'discTiles_deck', $discTile['location']);
-        }
 
         $discoveryTiles = $this->getAllDatas()['discoveryTiles'];
         $player_hand = $this->getAllDatas()['playersHand'];
@@ -4251,6 +4303,16 @@ class teotihuacan extends Table
         $this->goToNextState();
     }
 
+    function preStepAvenue()
+    {
+        $player_id = self::getActivePlayerId();
+        $enableAuto = (int)self::getUniqueValueFromDB("SELECT `enableAuto` FROM `player` WHERE `player_id` = $player_id");
+
+        if($enableAuto > 0){
+            $this->stepAvenue();
+        }
+    }
+
     function preWorshipActions()
     {
         $queueCount = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `temple_queue`");
@@ -4259,6 +4321,21 @@ class teotihuacan extends Table
 
         if (!($queueCount > 0 || $worship_actions_discovery > 0 || $royalTileAction > 0)) {
             $this->goToNextState();
+        } else {
+            $player_id = self::getActivePlayerId();
+            $enableAuto = (int)self::getUniqueValueFromDB("SELECT `enableAuto` FROM `player` WHERE `player_id` = $player_id");
+
+            if($enableAuto > 0 && ($queueCount > 0 && $worship_actions_discovery == 0 && $royalTileAction == 0)){
+                $temple_queue = self::getUniqueValueFromDB("SELECT queue FROM `temple_queue` ORDER BY id DESC LIMIT 1");
+
+                if ($temple_queue == 'temple_blue') {
+                    $this->stepTemple('blue');
+                } else if ($temple_queue == 'temple_red') {
+                    $this->stepTemple('red');
+                } else if ($temple_queue == 'temple_green') {
+                    $this->stepTemple('green');
+                }
+            }
         }
     }
 
@@ -4673,11 +4750,6 @@ class teotihuacan extends Table
 
         $discoveryQueueCount = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `discovery_queue` ORDER BY id DESC LIMIT 1");
         $useStartingTile = (int)self::getGameStateValue('startingTileBonus') > 0;
-
-        if (!($discoveryQueueCount > 0 || $useStartingTile)) {
-            self::setGameStateValue('draftReverse', 1); // used at least one power up
-        }
-
 
         $sql = "SELECT `worker_power` FROM `map` WHERE `player_id` = $player_id AND `worker_id` = $worker_id";
         $worker_power = (int)self::getUniqueValueFromDB($sql);
@@ -5939,11 +6011,30 @@ class teotihuacan extends Table
 
     function undo()
     {
-        $usedOnePowerUp = (int)self::getGameStateValue('draftReverse');
-        if ($usedOnePowerUp) {
-            throw new BgaUserException(self::_("This move is not possible."));
-        }
+        self::checkAction('undo');
         $this->undoRestorePoint();
+    }
+
+    function noUndo()
+    {
+        self::checkAction('noUndo');
+        $this->gamestate->nextState("pass");
+    }
+
+    function enableUndo($checked)
+    {
+        $player_id = $this->getCurrentPlayerId();
+        $checked = (int) $checked;
+        self::DbQuery("UPDATE `player` SET enableUndo = $checked WHERE player_id = $player_id");
+        self::notifyAllPlayers("enableUndo", '', array());
+    }
+
+    function enableAuto($checked)
+    {
+        $player_id = $this->getCurrentPlayerId();
+        $checked = (int) $checked;
+        self::DbQuery("UPDATE `player` SET enableAuto = $checked WHERE player_id = $player_id");
+        self::notifyAllPlayers("enableAuto", '', array());
     }
 
     function placeWorker($board_id, $board_pos)
@@ -6212,6 +6303,13 @@ class teotihuacan extends Table
         if ($from_version <= 2005071758) {
             // ! important ! Use DBPREFIX_<table_name> for all tables
             $sql = "CREATE TABLE IF NOT EXISTS `DBPREFIX_discovery_queue` (`id` int(10) unsigned NOT NULL AUTO_INCREMENT, `queue` varchar(16) NOT NULL, `referrer` INT NOT NULL DEFAULT '0', PRIMARY KEY (`id`))";
+            self::applyDbUpgradeToAllDB($sql);
+        }
+        if ($from_version <= 2005251328) {
+            // ! important ! Use DBPREFIX_<table_name> for all tables
+            $sql = "ALTER TABLE DBPREFIX_player ADD `enableUndo` INT UNSIGNED NOT NULL DEFAULT '0'";
+            self::applyDbUpgradeToAllDB($sql);
+            $sql = "ALTER TABLE DBPREFIX_player ADD `enableAuto` INT UNSIGNED NOT NULL DEFAULT '0'";
             self::applyDbUpgradeToAllDB($sql);
         }
     }

@@ -359,6 +359,14 @@
 
           self::ajaxResponse( );
       }
+      public function noUndo()
+      {
+          self::setAjaxMode();
+
+          $this->game->noUndo();
+
+          self::ajaxResponse( );
+      }
       public function placeWorker()
       {
           self::setAjaxMode();
@@ -367,6 +375,28 @@
           $board_pos = self::getArg( "board_pos", AT_posint, true );
 
           $this->game->placeWorker($board_id, $board_pos);
+
+          self::ajaxResponse( );
+      }
+
+      public function enableUndo()
+      {
+          self::setAjaxMode();
+
+          $checked = self::getArg( "checked", AT_bool, true );
+
+          $this->game->enableUndo($checked);
+
+          self::ajaxResponse( );
+      }
+
+      public function enableAuto()
+      {
+          self::setAjaxMode();
+
+          $checked = self::getArg( "checked", AT_bool, true );
+
+          $this->game->enableAuto($checked);
 
           self::ajaxResponse( );
       }

@@ -1007,6 +1007,31 @@ define([
                 this.showEclipseBanner();
                 this.setPyramidZoom();
                 this.setDecorationZoom();
+
+                for (var player_id in this.gamedatas_local.players) {
+                    if (player_id != this.getThisPlayerId()) {
+                        $('enableAuto_' + player_id).remove();
+                        $('enableUndo_' + player_id).remove();
+                    }
+                }
+
+                this.queryAndAddEvent('#enableUndo_'+this.getThisPlayerId(), 'onclick', 'enableUndoChanged');
+                $('enableUndo_'+this.getThisPlayerId()+'_text').innerHTML = _('Ask for undo after my turn');
+                this.queryAndAddEvent('#enableAuto_'+this.getThisPlayerId(), 'onclick', 'enableAutoChanged');
+                $('enableAuto_'+this.getThisPlayerId()+'_text').innerHTML = _('Automate actions');
+
+                var enableAuto = this.gamedatas_local.players[this.getThisPlayerId()].enableAuto;
+                var enableUndo = this.gamedatas_local.players[this.getThisPlayerId()].enableUndo;
+                if(enableAuto > 0){
+                    $('enableAuto_' + this.getThisPlayerId()).innerHTML = 'X';
+                } else {
+                    $('enableAuto_' + this.getThisPlayerId()).innerHTML = '';
+                }
+                if(enableUndo > 0){
+                    $('enableUndo_' + this.getThisPlayerId()).innerHTML = 'X';
+                } else {
+                    $('enableUndo_' + this.getThisPlayerId()).innerHTML = '';
+                }
             },
 
             setupClickEvents: function () {
@@ -1530,9 +1555,6 @@ define([
                                     this.addTooltipHtml('cocoa_free', _("Ignore paying cocoa"));
                                 }
                             }
-                            if (args.undo > 0) {
-                                this.addActionButton('button_2_id', _('Undo Main action'), 'undo', null, false, 'red');
-                            }
                             break;
                         case 'playerTurn_upgrade_workers_buy':
                             this.addActionButton('button_1_id', _('Buy') + "(-1" + this.getTokenSymbol('cocoa', true) + ")", 'buyPowerUpsConfirmed', null, false, 'gray');
@@ -1637,6 +1659,10 @@ define([
                         case 'client_playerTurn_ascension_cocoaFree_confirm':
                             this.addActionButton('button_1_id', _('Yes'), 'onAscensionFreeCocoaAccepted', null, false, 'gray');
                             this.addActionButton('button_2_id', _('No'), 'onAscensionFreeCocoaDeclined', null, false, 'red');
+                            break;
+                        case 'playerTurn_check_undo':
+                            this.addActionButton('button_1_id', _('Pass'), 'noUndo', null, false, 'gray');
+                            this.addActionButton('button_2_id', _('Undo complete turn'), 'undo', null, false, 'red');
                             break;
                     }
 
@@ -3385,6 +3411,14 @@ define([
                 }
             },
 
+            noUndo: function (event) {
+                dojo.stopEvent(event);
+                var action = 'noUndo';
+                if (this.checkAction(action)) {
+                    this.ajaxAction(action);
+                }
+            },
+
             onAscensionFreeCocoaAccepted: function (event) {
                 dojo.stopEvent(event);
                 var action = 'ascension';
@@ -3679,6 +3713,30 @@ define([
                 }
             },
 
+            enableUndoChanged: function (event) {
+                dojo.stopEvent(event);
+                this.ajaxAction('enableUndo', {
+                    checked: !this.isCheckbox('enableUndo')
+                });
+            },
+
+            enableAutoChanged: function (event) {
+                dojo.stopEvent(event);
+                this.ajaxAction('enableAuto', {
+                    checked: !this.isCheckbox('enableAuto')
+                });
+            },
+
+            isCheckbox: function (name) {
+                var checked = $(name + '_' + this.getThisPlayerId()).innerHTML == 'X';
+                if(checked){
+                    $(name + '_' + this.getThisPlayerId()).innerHTML = '';
+                } else {
+                    $(name + '_' + this.getThisPlayerId()).innerHTML = 'X';
+                }
+                return checked;
+            },
+
             onStartingTileChanged: function (event) {
                 dojo.stopEvent(event);
                 var element = event.target;
@@ -3898,6 +3956,7 @@ define([
                 dojo.subscribe('buildPyramid', this, "notif_buildPyramid");
                 dojo.subscribe('refillPyramidTileOffer', this, "notif_refillPyramidTileOffer");
                 dojo.subscribe('refillDecorationTileOffer', this, "notif_refillDecorationTileOffer");
+                dojo.subscribe('refillDiscoveryTilesOffer', this, "notif_refillDiscoveryTilesOffer");
                 dojo.subscribe('stepPyramidTrack', this, "notif_stepPyramidTrack");
                 dojo.subscribe('buildDecoration', this, "notif_buildDecoration");
                 dojo.subscribe('updateCalenderTrack', this, "notif_updateCalenderTrack");
@@ -4073,9 +4132,6 @@ define([
 
             notif_claimDiscovery: function (notif) {
                 var player_id = notif.args.player_id;
-                var cocoa = parseInt(notif.args.cocoa);
-                var wood = parseInt(notif.args.wood);
-                var gold = parseInt(notif.args.gold);
                 var discoveryTiles = notif.args.discoveryTiles;
                 var row = notif.args.row;
                 var discTile = notif.args.discTile;
@@ -4102,26 +4158,6 @@ define([
                     }
                 }
                 this.animateClaimDiscovery(discTile, target);
-
-                if (discTile['location'].startsWith("discTiles_b")) {
-                    var board_id = dojo.attr($('actionBoard_' + board_location), "data-id");
-                    var target = 'POS_aBoard_' + board_location + '_discoveryTile_0';
-
-                    if (board_id == 1) {
-                        target = 'POS_aBoard_' + board_location + '_discoveryTile_1';
-                    }
-
-                    for (var i in discoveryTiles) {
-                        for (var disc in discoveryTiles[i]) {
-                            if (discoveryTiles[i][disc].location == 'discTiles_b' + board_id) {
-                                dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTiles[i][disc]), target);
-                                this.addTooltipHtml("discoveryTile_" + discoveryTiles[i][disc].type_arg, this.getDiscoveryTileTooltip(discoveryTiles[i][disc].type_arg));
-                                break;
-                            }
-                        }
-                    }
-                }
-
                 this.resizeGame();
             },
 
@@ -4281,7 +4317,6 @@ define([
                 for (var id in newTiles) {
                     var newTile = newTiles[id];
                     if (newTile && newTile.location) {
-                        console.log("newTile",newTile);
                         var target = 'decoration_wrapper_' + newTile.location.split('_')[1];
                         dojo.place(this.format_block('jstpl_decorationTiles', {
                             type_arg: newTile.type_arg,
@@ -4293,6 +4328,34 @@ define([
                 this.queryAndAddEvent('.pyramidTile', 'onclick', 'onPyramidTileChanged');
                 this.resizeGame();
                 this.setDecorationZoom();
+            },
+
+            notif_refillDiscoveryTilesOffer: function (notif) {
+                var newTiles = notif.args.newTiles;
+                var discoveryTiles = notif.args.discoveryTiles;
+
+                this.gamedatas_local.discoveryTiles = discoveryTiles;
+
+                for (var id in newTiles) {
+                    var newTile = newTiles[id];
+                    if (newTile && newTile.location) {
+                        var board = newTile.location.split('b')[1];
+                        board = this.gamedatas_local.actionBoards[board].card_location_arg;
+                        var position = 0;
+                        if(board == 1){
+                            position = 1;
+                        }
+                        var target = 'POS_aBoard_' + board + '_discoveryTile_' + position;
+                        dojo.place(this.format_block('jstpl_discoveryTiles', {
+                            type_arg: newTile.type_arg,
+                            location: newTile.location
+                        }), target);
+                        this.addTooltipHtml("discoveryTile_" + newTile.type_arg, this.getDiscoveryTileTooltip(newTile.type_arg));
+                    }
+                }
+
+                this.queryAndAddEvent('.discoveryTile', 'onclick', 'onDiscoveryClick');
+                this.resizeGame();
             },
 
             notif_buildDecoration: function (notif) {

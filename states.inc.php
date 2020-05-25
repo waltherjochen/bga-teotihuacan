@@ -351,6 +351,7 @@ $machinestates = array(
         "description" => clienttranslate('${actplayer} must step on Avenue of Dead'),
         "descriptionmyturn" => clienttranslate('${you} must step on Avenue of Dead'),
         "type" => "activeplayer",
+        "action" => "preStepAvenue",
         "possibleactions" => array(
             "stepAvenue",
             "pass",
@@ -429,7 +430,7 @@ $machinestates = array(
         "type" => "game",
         "possibleactions" => array(),
         "action" => "checkEndTurn",
-        "transitions" => array("next_player" => STATE_PLAYER_END_TURN, "check_pass" => STATE_PLAYER_TURN_PASS, "zombiePass" => STATE_PLAYER_END_TURN)
+        "transitions" => array("undo" => STATE_PLAYER_TURN_UNDO, "next_player" => STATE_PLAYER_END_TURN, "check_pass" => STATE_PLAYER_TURN_PASS, "zombiePass" => STATE_PLAYER_END_TURN)
     ),
     STATE_PLAYER_TURN_PASS => array(
         "name" => "playerTurn_check_pass",
@@ -441,8 +442,21 @@ $machinestates = array(
             "useDiscoveryTile",
             "pass",
         ),
-        "transitions" => array("pass" => STATE_PLAYER_END_TURN, "ascension" => STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "zombiePass" => STATE_PLAYER_END_TURN)
+        "transitions" => array("undo" => STATE_PLAYER_TURN_UNDO, "pass" => STATE_PLAYER_END_TURN, "ascension" => STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "zombiePass" => STATE_PLAYER_END_TURN)
     ),
+
+    STATE_PLAYER_TURN_UNDO => array(
+        "name" => "playerTurn_check_undo",
+        "description" => clienttranslate('${actplayer} can undo'),
+        "descriptionmyturn" => clienttranslate('Undo turn?'),
+        "type" => "activeplayer",
+        "possibleactions" => array(
+            "noUndo",
+            "undo",
+        ),
+        "transitions" => array("next_player" => STATE_PLAYER_TURN, "pass" => STATE_PLAYER_END_TURN)
+    ),
+
     STATE_PLAYER_END_TURN => array(
         "name" => "playerTurn_end_turn",
         "description" => '',
@@ -477,7 +491,7 @@ $machinestates = array(
         "action" => "checkEndGame",
         "args" => "getGlobalVariables",
         "updateGameProgression" => true,
-        "transitions" => array("next_player" => STATE_START_TURN, "game_end" => 99)
+        "transitions" => array("next_player" => STATE_PLAYER_TURN, "game_end" => 99)
     ),
 
     // Final state.

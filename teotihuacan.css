@@ -2224,3 +2224,24 @@
 #eclipse-zone.show {
     display: block;
 }
+
+.checkboxArea div {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.enableButton_text {
+    line-height: 20px;
+}
+
+.enableButton {
+    border: 1px solid #000;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    user-select: none;
+    cursor: pointer;
+}
