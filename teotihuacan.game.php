@@ -1977,9 +1977,11 @@ class teotihuacan extends Table
         } else {
             $enableAuto = (int)self::getUniqueValueFromDB("SELECT `enableAuto` FROM `player` WHERE `player_id` = $player_id");
             $workersOnBoard = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to");
+            $worker_power = (int)self::getUniqueValueFromDB("SELECT `worker_power` FROM `map` WHERE `player_id` = $player_id AND `worker_id` = $selected_worker_id");
+            $workerOnBoardId = (int)self::getUniqueValueFromDB("SELECT worker_id FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to");
 
-            if($enableAuto > 0 && $workersOnBoard == 1){
-                $this->upgradeWorker($selected_worker_id, $selected_board_id_to);
+            if($enableAuto > 0 && $worker_power < 5 && $workersOnBoard == 1 && $discoveryQueueCount == 0 && !$useStartingTile){
+                $this->upgradeWorker($workerOnBoardId, $selected_board_id_to);
             }
         }
     }
@@ -4768,13 +4770,23 @@ class teotihuacan extends Table
         $sql = "SELECT `worker_power` FROM `map` WHERE `player_id` = $player_id AND `worker_id` = $worker_id";
         $worker_power_after = (int)self::getUniqueValueFromDB($sql);
 
-        self::notifyAllPlayers("upgradeWorker", clienttranslate('${player_name} upgrades a worker from ${worker_power_previous} to ${worker_power}'), array(
+        $sql = "SELECT `card_id` FROM `card` WHERE `card_type` = 'actionBoards' AND `card_location_arg` = $board_id_from";
+        $card = self::getObjectFromDB($sql);
+
+        $board_name_to = $this->actionBoards[$card["card_id"]]["name"];
+
+        $card_id_to = (int)self::getUniqueValueFromDB($sql = "SELECT `card_id` FROM `card` WHERE `card_type` = 'actionBoards' AND `card_location_arg` = $board_id_from");
+
+
+        self::notifyAllPlayers("upgradeWorker", clienttranslate('${player_name} upgrades a worker on ${board_name_to} (${card_id_to}) from ${worker_power_previous} to ${worker_power}'), array(
             'i18n' => array('temple'),
             'player_id' => $player_id,
             'player_name' => self::getActivePlayerName(),
             'worker_id' => $worker_id,
             'worker_power' => $worker_power_after,
             'worker_power_previous' => $worker_power,
+            'board_name_to' => $board_name_to,
+            'card_id_to' => $card_id_to,
         ));
 
         if (self::getGameStateValue('useDiscoveryPowerUp')) {
