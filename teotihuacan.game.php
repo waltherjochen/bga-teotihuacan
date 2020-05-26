@@ -1913,7 +1913,7 @@ class teotihuacan extends Table
     function isTechAquired($type_arg, $player_id = null)
     {
         if ($player_id == null) {
-            $player_id = self::getActivePlayerId();
+            $player_id = self::getCurrentPlayerId();
         }
         $sql = "SELECT `card_id` FROM `card` WHERE `card_type` = 'technologyTiles' AND `card_type_arg` = $type_arg";
         $techTile = $this->cards->getCard((int)self::getUniqueValueFromDB($sql));
@@ -2783,6 +2783,7 @@ class teotihuacan extends Table
             } else if ($worker_power == 4 || $worker_power == 5) {
                 $this->collectResource($player_id, 2, 'wood', $source);
             }
+            $this->checkExtraResource($player_id, 'wood',$source);
             self::incGameStateValue('upgradeWorkers', 1);
             $this->gamestate->nextState("upgrade_workers");
         } else if ($countWorkers == 2) {
@@ -2794,6 +2795,7 @@ class teotihuacan extends Table
                 $this->collectResource($player_id, 2, 'cocoa', $source);
                 $this->collectResource($player_id, 3, 'wood', $source);
             }
+            $this->checkExtraResource($player_id, 'wood',$source);
             self::incGameStateValue('upgradeWorkers', 1);
             $this->gamestate->nextState("upgrade_workers");
         } else if ($countWorkers >= 3) {
@@ -2807,18 +2809,21 @@ class teotihuacan extends Table
                 $this->collectResource($player_id, 5, 'cocoa', $source);
                 $this->collectResource($player_id, 4, 'wood', $source);
             }
+            $this->checkExtraResource($player_id, 'wood',$source);
             self::incGameStateValue('upgradeWorkers', 2);
             $this->gamestate->nextState("upgrade_workers");
         }
+    }
 
+    function checkExtraResource($player_id, $token, $source)
+    {
         if ($this->isTechAquired(2)) {
-            $this->collectResource($player_id, 1, 'wood', $source, clienttranslate('${player_name} got ${amount}${token_wood} extra (technology tile 5)'));
+            $this->collectResource($player_id, 1, $token, $source, clienttranslate('${player_name} got ${amount}${token_wood}${token_stone}${token_gold} extra (technology tile 5)'));
         }
         if ($this->isTechAquired(3)) {
             $this->collectResource($player_id, 1, 'vp', $source, clienttranslate('${player_name} got ${amount}${token_vp} extra (technology tile 7)'));
             $this->collectResource($player_id, 1, 'cocoa', $source, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 7)'));
         }
-
     }
 
     function perfomMainActionOnBoardStoneQuarry($player_id, $countWorkers, $worker_power, $source)
@@ -2831,6 +2836,7 @@ class teotihuacan extends Table
             } else if ($worker_power == 4 || $worker_power == 5) {
                 $this->collectResource($player_id, 2, 'stone', $source);
             }
+            $this->checkExtraResource($player_id, 'stone',$source);
             self::incGameStateValue('upgradeWorkers', 1);
             $this->gamestate->nextState("upgrade_workers");
         } else if ($countWorkers == 2) {
@@ -2842,6 +2848,7 @@ class teotihuacan extends Table
                 $this->collectResource($player_id, 2, 'vp', $source);
                 $this->collectResource($player_id, 3, 'stone', $source);
             }
+            $this->checkExtraResource($player_id, 'stone',$source);
             self::incGameStateValue('upgradeWorkers', 1);
             $this->gamestate->nextState("upgrade_workers");
         } else if ($countWorkers >= 3) {
@@ -2855,15 +2862,9 @@ class teotihuacan extends Table
                 $this->collectResource($player_id, 5, 'vp', $source);
                 $this->collectResource($player_id, 4, 'stone', $source);
             }
+            $this->checkExtraResource($player_id, 'stone',$source);
             self::incGameStateValue('upgradeWorkers', 2);
             $this->gamestate->nextState("upgrade_workers");
-        }
-        if ($this->isTechAquired(2)) {
-            $this->collectResource($player_id, 1, 'stone', $source, clienttranslate('${player_name} got ${amount}${token_stone} extra (technology tile 5)'));
-        }
-        if ($this->isTechAquired(3)) {
-            $this->collectResource($player_id, 1, 'vp', $source, clienttranslate('${player_name} got ${amount}${token_vp} extra (technology tile 7)'));
-            $this->collectResource($player_id, 1, 'cocoa', $source, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 7)'));
         }
     }
 
@@ -2877,6 +2878,7 @@ class teotihuacan extends Table
             } else if ($worker_power == 4 || $worker_power == 5) {
                 $this->collectResource($player_id, 2, 'gold', $source);
             }
+            $this->checkExtraResource($player_id, 'gold',$source);
             self::incGameStateValue('upgradeWorkers', 1);
             $this->gamestate->nextState("upgrade_workers");
         } else if ($countWorkers == 2) {
@@ -2888,17 +2890,20 @@ class teotihuacan extends Table
                 $this->collectResource($player_id, 2, 'vp', $source);
                 $this->collectResource($player_id, 3, 'gold', $source);
             }
+            $this->checkExtraResource($player_id, 'gold',$source);
             self::incGameStateValue('upgradeWorkers', 1);
             $this->gamestate->nextState("upgrade_workers");
         } else if ($countWorkers >= 3) {
             if ($worker_power == 1) {
                 $this->collectResource($player_id, 1, 'cocoa', $source);
                 $this->collectResource($player_id, 2, 'gold', $source);
+                $this->checkExtraResource($player_id, 'gold',$source);
                 self::incGameStateValue('upgradeWorkers', 2);
                 $this->gamestate->nextState("upgrade_workers");
             } else if ($worker_power == 2 || $worker_power == 3) {
                 $this->collectResource($player_id, 1, 'temple_choose', $source);
                 $this->collectResource($player_id, 3, 'gold', $source);
+                $this->checkExtraResource($player_id, 'gold',$source);
                 $sql = "INSERT INTO `temple_queue`(`queue`, `referrer`) VALUES ('temple_choose',1)";
                 self::DbQuery($sql);
                 self::incGameStateValue('upgradeWorkers', 2);
@@ -2906,19 +2911,13 @@ class teotihuacan extends Table
             } else if ($worker_power == 4 || $worker_power == 5) {
                 $this->collectResource($player_id, 2, 'temple_choose', $source);
                 $this->collectResource($player_id, 4, 'gold', $source);
+                $this->checkExtraResource($player_id, 'gold',$source);
                 $sql = "INSERT INTO `temple_queue`(`queue`, `referrer`) VALUES ('temple_choose',1)";
                 self::DbQuery($sql);
                 self::DbQuery($sql);
                 self::incGameStateValue('upgradeWorkers', 2);
                 $this->gamestate->nextState("action");
             }
-        }
-        if ($this->isTechAquired(2)) {
-            $this->collectResource($player_id, 1, 'gold', $source, clienttranslate('${player_name} got ${amount}${token_gold} extra (technology tile 5)'));
-        }
-        if ($this->isTechAquired(3)) {
-            $this->collectResource($player_id, 1, 'vp', $source, clienttranslate('${player_name} got ${amount}${token_vp} extra (technology tile 7)'));
-            $this->collectResource($player_id, 1, 'cocoa', $source, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 7)'));
         }
     }
 

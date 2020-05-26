@@ -1009,20 +1009,22 @@ define([
                 this.setDecorationZoom();
 
                 for (var player_id in this.gamedatas_local.players) {
-                    if (player_id != this.getThisPlayerId()) {
+                    if (player_id != this.getThisPlayerId() || this.isSpectator) {
                         $('enableUndo_' + player_id).remove();
                     }
                 }
 
-                this.queryAndAddEvent('#enableUndo_'+this.getThisPlayerId(), 'onclick', 'enableUndoChanged');
-                $('enableUndo_'+this.getThisPlayerId()+'_text').innerHTML = _('Ask for undo after my turn');
-                this.addTooltipHtml('enableUndo_'+this.getThisPlayerId()+'_text', _('Enable, when you want to undo your turn'));
+                if(!this.isSpectator){
+                    this.queryAndAddEvent('#enableUndo_'+this.getThisPlayerId(), 'onclick', 'enableUndoChanged');
+                    $('enableUndo_'+this.getThisPlayerId()+'_text').innerHTML = _('Ask for undo after my turn');
+                    this.addTooltipHtml('enableUndo_'+this.getThisPlayerId()+'_text', _('Enable, when you want to undo your turn'));
 
-                var enableUndo = this.gamedatas_local.players[this.getThisPlayerId()].enableUndo;
-                if(enableUndo > 0){
-                    $('enableUndo_' + this.getThisPlayerId()).innerHTML = 'X';
-                } else {
-                    $('enableUndo_' + this.getThisPlayerId()).innerHTML = '';
+                    var enableUndo = this.gamedatas_local.players[this.getThisPlayerId()].enableUndo;
+                    if(enableUndo > 0){
+                        $('enableUndo_' + this.getThisPlayerId()).innerHTML = 'X';
+                    } else {
+                        $('enableUndo_' + this.getThisPlayerId()).innerHTML = '';
+                    }
                 }
             },
 
