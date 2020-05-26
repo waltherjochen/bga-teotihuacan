@@ -5103,7 +5103,6 @@ class teotihuacan extends Table
         $sum = $row1 + $row2 + $row3;
 
         $vp = $this->nobles['row' . $row][$rowDB];
-        $this->updateVP($vp);
 
         $source = 'building_' . $rowDB . '_row_' . $row;
 
@@ -6315,7 +6314,7 @@ class teotihuacan extends Table
             // ! important ! Use DBPREFIX_<table_name> for all tables
             $sql = "ALTER TABLE DBPREFIX_player ADD `enableUndo` INT UNSIGNED NOT NULL DEFAULT '0'";
             self::applyDbUpgradeToAllDB($sql);
-            $sql = "ALTER TABLE DBPREFIX_player ADD `enableAuto` INT UNSIGNED NOT NULL DEFAULT '0'";
+            $sql = "ALTER TABLE DBPREFIX_player ADD `enableAuto` INT UNSIGNED NOT NULL DEFAULT '1'";
             self::applyDbUpgradeToAllDB($sql);
         }
     }

@@ -1016,6 +1016,7 @@ define([
 
                 this.queryAndAddEvent('#enableUndo_'+this.getThisPlayerId(), 'onclick', 'enableUndoChanged');
                 $('enableUndo_'+this.getThisPlayerId()+'_text').innerHTML = _('Ask for undo after my turn');
+                this.addTooltipHtml('enableUndo_'+this.getThisPlayerId()+'_text', _('Enable, when you want to undo your turn'));
 
                 var enableUndo = this.gamedatas_local.players[this.getThisPlayerId()].enableUndo;
                 if(enableUndo > 0){
@@ -4316,7 +4317,7 @@ define([
                     }
                 }
 
-                this.queryAndAddEvent('.pyramidTile', 'onclick', 'onPyramidTileChanged');
+                this.queryAndAddEvent('.decorationTile', 'onclick', 'onDecorationTileChanged');
                 this.resizeGame();
                 this.setDecorationZoom();
             },
