@@ -1598,6 +1598,7 @@ define([
                             cancelConfirm = true;
                             break;
                         case 'client_playerTurn_paySalary_confirm':
+                            this.gamedatas_local.playersHand = args.player_hand;
                             if (this.clientStateArgs) {
                                 this.addActionButton('decrementCocoa', "-1" + this.getTokenSymbol('cocoa', true), 'decrementSalaryCocoa', null, false, 'gray');
                                 this.addTooltipHtml('decrementCocoa', _("Decrement number of cocoa"));

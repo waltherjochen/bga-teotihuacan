@@ -2055,9 +2055,11 @@ class teotihuacan extends Table
             $playersData[$player_id]['cocoa'] = $cocoa;
         }
 
+        $playerHand = $this->getAllDatas()['playersHand'];
 
         return array(
             'playersData' => $playersData,
+            'player_hand' => $playerHand
         );
     }
 
