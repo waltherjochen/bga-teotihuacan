@@ -248,10 +248,10 @@ class teotihuacan extends Table
         $sql .= implode($values, ',');
         self::DbQuery($sql);
 
-        $sql = "INSERT INTO `map`(`actionboard_id`, `player_id`, `worker_id`,`worker_power`, `locked`) VALUES";
+        $sql = "INSERT INTO `map`(`actionboard_id`, `player_id`, `worker_id`,`worker_power`, `locked`, `worship_pos`) VALUES";
         $values = array();
         foreach ($players as $player_id => $player) {
-            $values[] = "(-1,'" . $player_id . "','4','3',1)";
+            $values[] = "(-1,'" . $player_id . "','4','3',1, 0)";
         }
         $sql .= implode($values, ',');
         self::DbQuery($sql);
@@ -822,11 +822,11 @@ class teotihuacan extends Table
 
     function setPlayerWorkers($player_id, $board1, $board2, $board3, $power1, $power2, $power3)
     {
-        $sql = "INSERT INTO `map`(`actionboard_id`, `player_id`, `worker_id`,`worker_power`, `locked`) VALUES";
+        $sql = "INSERT INTO `map`(`actionboard_id`, `player_id`, `worker_id`,`worker_power`, `locked`, `worship_pos`) VALUES";
         $values = array();
-        $values[] = "($board1,'" . $player_id . "','1','$power1',0)";
-        $values[] = "($board2,'" . $player_id . "','2','$power2',0)";
-        $values[] = "($board3,'" . $player_id . "','3','$power3',0)";
+        $values[] = "($board1,'" . $player_id . "','1','$power1',0, 0)";
+        $values[] = "($board2,'" . $player_id . "','2','$power2',0, 0)";
+        $values[] = "($board3,'" . $player_id . "','3','$power3',0, 0)";
         $sql .= implode($values, ',');
         self::DbQuery($sql);
     }
@@ -1978,9 +1978,9 @@ class teotihuacan extends Table
             $enableAuto = (int)self::getUniqueValueFromDB("SELECT `enableAuto` FROM `player` WHERE `player_id` = $player_id");
             $workersOnBoard = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to");
             $worker_power = (int)self::getUniqueValueFromDB("SELECT `worker_power` FROM `map` WHERE `player_id` = $player_id AND `worker_id` = $selected_worker_id");
-            $workerOnBoardId = (int)self::getUniqueValueFromDB("SELECT worker_id FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to");
 
             if($enableAuto > 0 && $worker_power < 5 && $workersOnBoard == 1 && $discoveryQueueCount == 0 && !$useStartingTile){
+                $workerOnBoardId = (int)self::getUniqueValueFromDB("SELECT worker_id FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to");
                 $this->upgradeWorker($workerOnBoardId, $selected_board_id_to);
             }
         }
@@ -2767,6 +2767,9 @@ class teotihuacan extends Table
             if ($this->isTechAquired(7)) {
                 $countWorkers++;
                 self::setGameStateValue('getTechnologyDiscount', 1);
+            }
+            if($countWorkers > 3){
+                $countWorkers = 3;
             }
             self::setGameStateValue('canBuildPyramidTiles', $countWorkers);
             $this->gamestate->nextState("construction");
@@ -4553,6 +4556,10 @@ class teotihuacan extends Table
                 $this->gamestate->nextState("alchemy");
             } else if ($this->gamestate->state()['name'] == 'playerTurn_construction') {
                 $messageParts[] = ' ${token_extra_worker}';// NOI18N
+                $canBuildPyramidTiles = (int)self::getGameStateValue('canBuildPyramidTiles');
+                if($canBuildPyramidTiles == 3){
+                    throw new BgaUserException(self::_("You already have enough workers on this board"));
+                }
                 self::incGameStateValue('canBuildPyramidTiles', 1);
                 self::incGameStateValue('extraWorker', 1);
             } else if ($this->gamestate->state()['name'] == 'playerTurn_nobles_choose_row') {

@@ -1066,12 +1066,11 @@ define([
 
                     switch (stateName) {
 
-                        case 'startTurn':
-                            setTimeout(function () {
-                                $("workers").innerHTML = '';
-                            }, 2000);
-                            break;
                         case 'playerTurn':
+                            var _this = this;
+                            setTimeout(function () {
+                                _this.checkIsMapComplete();
+                            }, 2000);
                             this.clickableWorkers = args.args.clickableWorkers;
                             this.isGamePreparation = false;
                             this.gamedatas_local.global = args.args.global;
@@ -1821,6 +1820,32 @@ define([
                 return result;
             },
 
+            checkIsMapComplete: function () {
+                $("workers").innerHTML = '';
+                for (player_id in this.gamedatas_local.map) {
+                    for (var index in this.gamedatas_local.map[player_id]) {
+                        var map = this.gamedatas_local.map[player_id][index];
+                        var worker_id = player_id + '_worker_' + map.worker_id;
+                        if (!$(worker_id)) {
+                            var nextBoard = map.actionboard_id;
+                            var dice_board = 'aBoard_' + nextBoard;
+                            var dice_group = dice_board + '_dGroup_' + player_id + '';
+                            var workersAlreadyonBoard = 0;
+
+                            for (var i = 0; i < 4; i++) {
+                                target = 'POS_' + dice_group + '_dice_' + i;
+                                if (!$(target).hasChildNodes()) {
+                                    workersAlreadyonBoard = i;
+                                    break;
+                                }
+                            }
+                            this.createWorker(map.player_id, map.worker_id, map.worker_power, map.locked, map.worship_pos, nextBoard, workersAlreadyonBoard);
+                            break;
+                        }
+                    }
+                }
+            },
+
             getDiffrentColorsOnBoard: function (board_id) {
                 var result = 0;
                 for (i in this.gamedatas_local.map) {
@@ -2202,6 +2227,7 @@ define([
 
                 setTimeout(function () {
                     $("discoveryTile_-1").remove();
+                    $("discoveryTile_" + discTile.type_arg).remove();
                     dojo.place(_this.format_block('jstpl_discoveryTiles', {
                         type_arg: discTile.type_arg,
                         location: "hand"
