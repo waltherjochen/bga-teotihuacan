@@ -2229,6 +2229,9 @@ define([
                 setTimeout(function () {
                     $("discoveryTile_-1").remove();
                     $("discoveryTile_" + discTile.type_arg).remove();
+                }, 2000);
+
+                setTimeout(function () {
                     dojo.place(_this.format_block('jstpl_discoveryTiles', {
                         type_arg: discTile.type_arg,
                         location: "hand"
@@ -2241,11 +2244,11 @@ define([
                     }
 
                     _this.resizeGame();
-                }, 2000);
+                }, 2100);
 
                 setTimeout(function () {
                     _this.addTooltipHtml("discoveryTile_" + discTile.type_arg, tooltip);
-                }, 2100);
+                }, 2200);
 
             },
             animateBuilding: function (source, target) {

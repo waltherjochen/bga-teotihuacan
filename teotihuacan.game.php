@@ -2761,6 +2761,9 @@ class teotihuacan extends Table
             $this->perfomMainActionOnBoardGoldDeposit($player_id, $countWorkers, $worker_power, $source);
         } else if ($card_id == 5) {
             $this->gamestate->nextState("alchemy");
+            if ($countWorkers == 1 && $worker_power < 4 && $id) {
+                $this->useDiscoveryTile($id);
+            }
         } else if ($card_id == 6) {
             $this->perfomMainActionOnBoardNobles($countWorkers);
         } else if ($card_id == 7) {
@@ -2935,25 +2938,46 @@ class teotihuacan extends Table
         $row3 = (int)self::getUniqueValueFromDB("SELECT `row2` FROM `nobles`");
 
         $player_id = self::getActivePlayerId();
+        $canUseExtraWorker = 0;
 
         if ((int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (51) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1")) {
-            $countWorkers++;
+            $canUseExtraWorker++;
         }
         if ((int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (52) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1")) {
-            $countWorkers++;
+            $canUseExtraWorker++;
         }
         if ((int)self::getUniqueValueFromDB("SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (53) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1")) {
-            $countWorkers++;
+            $canUseExtraWorker++;
         }
 
-        if ($countWorkers == 1 && $row1 >= 5) {
+        if ($row1 >= 5 && $row2 >= 4 && $row3 >= 3) {
             throw new BgaUserException(self::_("There is no space left"));
-        } else if ($countWorkers == 2 && $row1 >= 5 && $row2 >= 4) {
-            throw new BgaUserException(self::_("There is no space left"));
-        } else if ($countWorkers == 3 && $row1 >= 5 && $row2 >= 4 && $row3 >= 3) {
-            throw new BgaUserException(self::_("There is no space left"));
+        } else if ($row1 >= 5 && $row2 >= 4) {
+            if (($countWorkers + $canUseExtraWorker) < 3){
+                throw new BgaUserException(self::_("There is no space left"));
+            }
+            $this->gamestate->nextState("nobles");
+
+            for($i = 0; $i < (3 - $countWorkers); $i++){
+                $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (51,52,53) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
+                $id = (int)self::getUniqueValueFromDB($sql);
+                $this->useDiscoveryTile($id);
+            }
+        } else if ($row1 >= 5) {
+            if (($countWorkers + $canUseExtraWorker) < 2){
+                throw new BgaUserException(self::_("There is no space left"));
+            }
+            $this->gamestate->nextState("nobles");
+
+            for($i = 0; $i < (2 - $countWorkers); $i++){
+                $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (51,52,53) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
+                $id = (int)self::getUniqueValueFromDB($sql);
+                $this->useDiscoveryTile($id);
+            }
+        } else {
+            $this->gamestate->nextState("nobles");
         }
-        $this->gamestate->nextState("nobles");
+
     }
 
     function collectResource($player_id, $amount, $token, $source, $customMessage = '')
@@ -3454,6 +3478,9 @@ class teotihuacan extends Table
 
         $message = clienttranslate('${player_name} moved worker ${worker_power}${worker_power2} from ${board_name_from} (${card_id_from}) to ${board_name_to} (${card_id_to}) with workers (${workersOnBoard})');
 
+        if ($worship_pos > 0) {
+            $message = clienttranslate('${player_name} moved worker ${worker_power}${worker_power2} from ${board_name_from} (${card_id_from}) to worship on ${board_name_to} (${card_id_to})');
+        }
         if($worker_power == 6){
             $message = clienttranslate('${player_name} moved worker ${worker_power} from ${board_name_from} to ${board_name_to} as a new worker 1');
         }
@@ -3757,6 +3784,12 @@ class teotihuacan extends Table
             self::DbQuery($sql);
         }
 
+        $notification = true;
+        $temple_queue = self::getUniqueValueFromDB("SELECT `queue` FROM `temple_queue` ORDER BY id DESC LIMIT 1");
+        if($temple_queue && $temple_queue == 'temple_' . $temple){
+            $notification = false;
+        }
+
         if (!($step >= 11 || $step == 10 && $used)) {
             if ($temple == 'blue') {
                 self::setGameStateValue('last_temple_id', 1);
@@ -3827,14 +3860,23 @@ class teotihuacan extends Table
                     $this->collectResource($player_id, $bonus[0], 'cocoa', $source);
                 }
 
-                self::notifyAllPlayers("stepTemple", clienttranslate('${player_name} advanced one space on temple ${temple}'), array(
-                    'i18n' => array('temple'),
-                    'player_id' => $player_id,
-                    'player_name' => self::getActivePlayerName(),
-                    'temple' => $temple,
-                    'step' => $step,
-                    'bonus' => $bonus,
-                ));
+                if($notification){
+                    self::notifyAllPlayers("stepTemple", clienttranslate('${player_name} advanced one space on temple ${temple}'), array(
+                        'i18n' => array('temple'),
+                        'player_id' => $player_id,
+                        'player_name' => self::getActivePlayerName(),
+                        'temple' => $temple,
+                        'step' => $step,
+                        'bonus' => $bonus,
+                    ));
+                } else {
+                    self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} advanced one space on temple ${temple}'), array(
+                        'i18n' => array('temple'),
+                        'player_id' => $player_id,
+                        'player_name' => self::getActivePlayerName(),
+                        'temple' => $temple,
+                    ));
+                }
 
                 if ($bonus[1] == 'r') {
                     self::setGameStateValue('choose_resources_max', (int)$bonus[0]);
@@ -3943,7 +3985,9 @@ class teotihuacan extends Table
         } else {
             $enableUndo = (int)self::getUniqueValueFromDB("SELECT `enableUndo` FROM `player` WHERE `player_id` = $player_id");
 
-            if($enableUndo > 0){
+            $transitions = array_keys($this->gamestate->state()['transitions']);
+
+            if($enableUndo > 0 && in_array('undo', $transitions)){
                 $this->gamestate->nextState("undo");
             } else {
                 $this->gamestate->nextState("pass");
