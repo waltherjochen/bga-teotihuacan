@@ -1518,11 +1518,11 @@ class teotihuacan extends Table
         $worship_actions_discovery = (int)self::getGameStateValue('worship_actions_discovery');
 
         if ($worship_actions_discovery && $queueCount > 0) {
-            $description = clienttranslate('have to step on the temple or may claim the discovery tile');
+            $description = clienttranslate('have to select a temple advance or may claim the discovery tile');
         } else if ($worship_actions_discovery && $queueCount <= 0) {
             $description = clienttranslate('may claim the discovery tile');
         } else if (!$worship_actions_discovery && $queueCount > 0) {
-            $description = clienttranslate('have to step on the temple');
+            $description = clienttranslate('have to select a temple advance');
         } else {
             $description = clienttranslate('have to choose the worship action');
         }
@@ -1995,14 +1995,14 @@ class teotihuacan extends Table
         $discoveryQueueCount = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `discovery_queue` ORDER BY id DESC LIMIT 1");
         $useStartingTile = (int)self::getGameStateValue('startingTileBonus') > 0;
 
-        $lockedWorkers = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = true AND `worship_pos` > 0");
-
         $undo = false;
 
         if ($discoveryQueueCount > 0 || $useStartingTile) {
             $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `worker_power` < 6", true);
+            $lockedWorkers = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = true AND `worship_pos` > 0");
         } else {
             $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `worker_power` < 6 AND `actionboard_id` = $selected_board_id_to", true);
+            $lockedWorkers = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = true AND `worship_pos` > 0 AND `actionboard_id` = $selected_board_id_to");
             self::setGameStateValue('doMainAction', 0);
         }
 
@@ -2600,15 +2600,15 @@ class teotihuacan extends Table
             $techTiles_r2_c2 = (int)self::getUniqueValueFromDB($sql = "SELECT `techTiles_r2_c2` FROM `player` WHERE `player_id` = $player_id");
             $techTiles_r2_c3 = (int)self::getUniqueValueFromDB($sql = "SELECT `techTiles_r2_c3` FROM `player` WHERE `player_id` = $player_id");
 
+            $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (51,52,53) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
+            $id = (int)self::getUniqueValueFromDB($sql);
+
             if ($techTiles_r1_c1 && $techTiles_r1_c2 && $techTiles_r1_c3 && $techTiles_r2_c1 && $techTiles_r2_c2 && $techTiles_r2_c3) {
                 throw new BgaUserException(self::_("You already aquired all technologies."));
             } else if ($techTiles_r1_c1 && $techTiles_r1_c2 && $techTiles_r1_c3) {
                 $this->updateGold(-2, false, null, clienttranslate("You do not have enough gold for the main action."));
 
                 $worker_power = (int)self::getUniqueValueFromDB("SELECT `worker_power` FROM `map` WHERE `player_id` = $player_id AND `worker_id`=$selected_worker_id");
-
-                $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (51,52,53) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
-                $id = (int)self::getUniqueValueFromDB($sql);
 
                 if (!($countWorkers > 0 || $worker_power >= 4 || $id)) {
                     throw new BgaUserException(self::_("This move is not possible."));
@@ -3758,39 +3758,39 @@ class teotihuacan extends Table
         $sql = "SELECT count(*) FROM `player` WHERE `temple_$temple` >= 11";
         $used = (int)self::getUniqueValueFromDB($sql);
 
-        // all checks done
         $sql = "SELECT `referrer` FROM `temple_queue` ORDER BY id DESC LIMIT 1";
         $referrer = self::getUniqueValueFromDB($sql);
 
         $sql = "SELECT * FROM `temple_queue` ORDER BY id DESC LIMIT 1";
         $temple_queue = self::getObjectFromDB($sql);
 
-        if (self::getGameStateValue('ascensionTempleSteps')) {
-            self::incGameStateValue('ascensionTempleSteps', -1);
-        }
-
-        if (substr($temple_queue['queue'], 0, 4) === "deco") {
-            $temple1 = explode("_", $temple_queue['queue'])[1];
-            $temple2 = explode("_", $temple_queue['queue'])[2];
-            $id = $temple_queue['id'];
-
-            if ($temple1 === $temple) {
-                self::DbQuery("UPDATE `temple_queue` SET `queue`='temple_$temple2' WHERE id = $id");
-            } else {
-                self::DbQuery("UPDATE `temple_queue` SET `queue`='temple_$temple1' WHERE id = $id");
-            }
-        } else {
-            $sql = "DELETE FROM `temple_queue` ORDER BY id DESC limit 1";
-            self::DbQuery($sql);
-        }
-
-        $notification = true;
-        $temple_queue = self::getUniqueValueFromDB("SELECT `queue` FROM `temple_queue` ORDER BY id DESC LIMIT 1");
-        if($temple_queue && $temple_queue == 'temple_' . $temple){
-            $notification = false;
-        }
-
+        // all checks done
         if (!($step >= 11 || $step == 10 && $used)) {
+            if (self::getGameStateValue('ascensionTempleSteps')) {
+                self::incGameStateValue('ascensionTempleSteps', -1);
+            }
+
+            if (substr($temple_queue['queue'], 0, 4) === "deco") {
+                $temple1 = explode("_", $temple_queue['queue'])[1];
+                $temple2 = explode("_", $temple_queue['queue'])[2];
+                $id = $temple_queue['id'];
+
+                if ($temple1 === $temple) {
+                    self::DbQuery("UPDATE `temple_queue` SET `queue`='temple_$temple2' WHERE id = $id");
+                } else {
+                    self::DbQuery("UPDATE `temple_queue` SET `queue`='temple_$temple1' WHERE id = $id");
+                }
+            } else {
+                $sql = "DELETE FROM `temple_queue` ORDER BY id DESC limit 1";
+                self::DbQuery($sql);
+            }
+
+            $notification = true;
+            $temple_queue = self::getUniqueValueFromDB("SELECT `queue` FROM `temple_queue` ORDER BY id DESC LIMIT 1");
+            if($temple_queue && $temple_queue == 'temple_' . $temple){
+                $notification = false;
+            }
+
             if ($temple == 'blue') {
                 self::setGameStateValue('last_temple_id', 1);
             } else if ($temple == 'red') {
@@ -3886,12 +3886,49 @@ class teotihuacan extends Table
                 }
             }
         } else {
-            self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} stays on top of temple ${temple} and gain no further benefit'), array(
-                'player_id' => $player_id,
-                'player_name' => self::getActivePlayerName(),
-                'temple' => $temple,
-            ));
-            $this->goToNextState();
+            $allTop = false;
+
+            $temples = ['blue', 'red', 'green'];
+
+            for ($i = 0; $i < count($temples); $i++) {
+                $temple_check = $temples[$i];
+                $step = (int)self::getUniqueValueFromDB("SELECT `temple_$temple_check` FROM `player` WHERE `player_id` = $player_id");
+                $used = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `player` WHERE `temple_$temple_check` >= 11");
+
+                if (!($step >= 11 || $step == 10 && $used)) {
+                    $allTop = true;
+                }
+            }
+
+            if($temple_queue && $temple_queue['queue'] == 'temple_choose' && $allTop){
+                throw new BgaUserException(self::_("You are already on top"));
+            } else {
+                if (self::getGameStateValue('ascensionTempleSteps')) {
+                    self::incGameStateValue('ascensionTempleSteps', -1);
+                }
+
+                if (substr($temple_queue['queue'], 0, 4) === "deco") {
+                    $temple1 = explode("_", $temple_queue['queue'])[1];
+                    $temple2 = explode("_", $temple_queue['queue'])[2];
+                    $id = $temple_queue['id'];
+
+                    if ($temple1 === $temple) {
+                        self::DbQuery("UPDATE `temple_queue` SET `queue`='temple_$temple2' WHERE id = $id");
+                    } else {
+                        self::DbQuery("UPDATE `temple_queue` SET `queue`='temple_$temple1' WHERE id = $id");
+                    }
+                } else {
+                    $sql = "DELETE FROM `temple_queue` ORDER BY id DESC limit 1";
+                    self::DbQuery($sql);
+                }
+
+                self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} stays on top of temple ${temple} and gain no further benefit'), array(
+                    'player_id' => $player_id,
+                    'player_name' => self::getActivePlayerName(),
+                    'temple' => $temple,
+                ));
+                $this->goToNextState();
+            }
         }
     }
 
@@ -5801,11 +5838,13 @@ class teotihuacan extends Table
 
         $this->cards->pickCardsForLocation(1, $decorationTileCard['location'], "deco_p_$direction", $level);
 
-        self::notifyAllPlayers("buildDecoration", clienttranslate('${player_name} adds a decoration tile to the pyramid'), array(
+        self::notifyAllPlayers("buildDecoration", clienttranslate('${player_name} adds a decoration tile to the pyramid (${direction})'), array(
+            'i18n' => array('direction'),
             'player_id' => $player_id,
             'player_name' => self::getActivePlayerName(),
             'decorationTile' => $decorationTile,
             'decorationWrapper' => $decorationWrapper,
+            'direction' => $direction,
         ));
 
         self::incStat(1, "build_decoration", $player_id);
