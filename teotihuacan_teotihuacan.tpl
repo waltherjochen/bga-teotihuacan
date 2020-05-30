@@ -305,6 +305,7 @@
         '            </div>';
 
     var jstpl_player_side = '<div id="cc_player_board_${id}" class="cc_player_board">' +
+        '<div id="player_side_order_${player_order}" class="playerOrder player${player_order}"></div>' +
         '<span class="cc_counter"><span id="player_money_${id}" data-binding="b.players[${id}].cocoa">${cocoa}</span><span id="cocoa_${id}_side" class="token24 tokentext cocoa tooltipenable"></span></span>' +
         '<span class="cc_counter"><span id="player_money_${id}" data-binding="b.players[${id}].wood">${wood}</span><span id="wood_${id}_side" class="token24 tokentext wood tooltipenable"></span></span>' +
         '<span class="cc_counter"><span id="player_money_${id}" data-binding="b.players[${id}].stone">${stone}</span><span id="stone_${id}_side" class="token24 tokentext stone tooltipenable"></span></span>' +

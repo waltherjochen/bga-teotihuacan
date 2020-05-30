@@ -61,7 +61,7 @@ define([
                 this.setupTemples();
                 this.setupMarkers();
                 this.setupDiscoveryTiles();
-                this.setupPlayerHand();
+                this.setupPlayerHand(false);
                 this.setupPyramid(true);
                 this.setupDecoration(true);
                 this.setupOthers();
@@ -784,7 +784,7 @@ define([
                 this.queryAndAddEvent('.discoveryTile', 'onclick', 'onDiscoveryClick');
             },
 
-            setupPlayerHand: function () {
+            setupPlayerHand: function (refresh) {
                 for (var i = 0; i < 3; i++) {
                     for (var player_id in this.gamedatas_local.players) {
                         var discoveryTiles_mask = this.gamedatas_local.playersHand[player_id]['mask'][i];
@@ -796,8 +796,10 @@ define([
                         }
                         for (var discoveryTile_index in discoveryTiles_mask) {
                             var discoveryTile = discoveryTiles_mask[discoveryTile_index];
-                            dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), row);
-                            this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
+                            if(!refresh || !$("discoveryTile_" + discoveryTile.type_arg)){
+                                dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), row);
+                                this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
+                            }
                         }
                     }
                 }
@@ -808,17 +810,24 @@ define([
 
                     for (var discoveryTile_index in discoveryTiles_other) {
                         var discoveryTile = discoveryTiles_other[discoveryTile_index];
-                        dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
-                        this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
+                        if(!refresh || !$("discoveryTile_" + discoveryTile.type_arg)){
+                            dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
+                            this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
+                            if (refresh && this.isCurrentPlayerActive() && this.checkPossibleActions("useDiscoveryTile")) {
+                                dojo.query("discoveryTile_" + discoveryTile.type_arg).addClass('clickable');
+                            }
+                        }
                     }
 
                     var discoveryTiles_used = this.gamedatas_local.playersHand[player_id]['used'];
 
                     for (var discoveryTile_index in discoveryTiles_used) {
                         var discoveryTile = discoveryTiles_used[discoveryTile_index];
-                        dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
-                        dojo.query('#discoveryTile_' + discoveryTile['type_arg']).addClass('used');
-                        this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
+                        if(!refresh || !$("discoveryTile_" + discoveryTile.type_arg)){
+                            dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
+                            dojo.query('#discoveryTile_' + discoveryTile['type_arg']).addClass('used');
+                            this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
+                        }
                     }
                 }
 
@@ -1026,6 +1035,13 @@ define([
                         $('enableUndo_' + this.getThisPlayerId()).innerHTML = '';
                     }
                 }
+                $('player_side_order_2').remove();
+                if($('player_side_order_3')){
+                    $('player_side_order_3').remove();
+                    if($('player_side_order_4')){
+                        $('player_side_order_4').remove();
+                    }
+                }
             },
 
             setupClickEvents: function () {
@@ -1067,10 +1083,6 @@ define([
                     switch (stateName) {
 
                         case 'playerTurn':
-                            var _this = this;
-                            setTimeout(function () {
-                                _this.checkIsMapComplete();
-                            }, 2000);
                             this.clickableWorkers = args.args.clickableWorkers;
                             this.isGamePreparation = false;
                             this.gamedatas_local.global = args.args.global;
@@ -1232,6 +1244,10 @@ define([
                 switch (stateName) {
                     case 'check_end_game':
                     case 'playerTurn':
+                        var _this = this;
+                        setTimeout(function () {
+                            _this.checkIsMapComplete();
+                        }, 2000);
                         for (var player_id in args.args.playerInfo) {
                             var info = args.args.playerInfo[player_id];
                             this.gamedatas_local.players[player_id].cocoa = info.cocoa;
@@ -1845,6 +1861,8 @@ define([
                         }
                     }
                 }
+                this.setupPlayerHand(true);
+                this.resizeGame();
             },
 
             getDiffrentColorsOnBoard: function (board_id) {

@@ -949,6 +949,14 @@
     vertical-align: top;
     margin-right: 10px;
 }
+.cc_player_board .playerOrder {
+    height: 24px;
+    width: 24px;
+    position: absolute;
+    top: 19px;
+    right: 25px;
+    border: none;
+}
 .playerOrder.player1 {
     background-position: -0 -0;
 }
