@@ -2600,8 +2600,6 @@ class teotihuacan extends Table
             $techTiles_r2_c2 = (int)self::getUniqueValueFromDB($sql = "SELECT `techTiles_r2_c2` FROM `player` WHERE `player_id` = $player_id");
             $techTiles_r2_c3 = (int)self::getUniqueValueFromDB($sql = "SELECT `techTiles_r2_c3` FROM `player` WHERE `player_id` = $player_id");
 
-            $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (51,52,53) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
-            $id = (int)self::getUniqueValueFromDB($sql);
 
             if ($techTiles_r1_c1 && $techTiles_r1_c2 && $techTiles_r1_c3 && $techTiles_r2_c1 && $techTiles_r2_c2 && $techTiles_r2_c3) {
                 throw new BgaUserException(self::_("You already aquired all technologies."));
@@ -2609,6 +2607,8 @@ class teotihuacan extends Table
                 $this->updateGold(-2, false, null, clienttranslate("You do not have enough gold for the main action."));
 
                 $worker_power = (int)self::getUniqueValueFromDB("SELECT `worker_power` FROM `map` WHERE `player_id` = $player_id AND `worker_id`=$selected_worker_id");
+                $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (51,52,53) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
+                $id = (int)self::getUniqueValueFromDB($sql);
 
                 if (!($countWorkers > 0 || $worker_power >= 4 || $id)) {
                     throw new BgaUserException(self::_("This move is not possible."));
@@ -2761,7 +2761,7 @@ class teotihuacan extends Table
             $this->perfomMainActionOnBoardGoldDeposit($player_id, $countWorkers, $worker_power, $source);
         } else if ($card_id == 5) {
             $this->gamestate->nextState("alchemy");
-            if ($countWorkers == 1 && $worker_power < 4 && $id) {
+            if ($countWorkers == 1 && $worker_power < 4 && isset($id) && $id) {
                 $this->useDiscoveryTile($id);
             }
         } else if ($card_id == 6) {
