@@ -791,7 +791,7 @@ define([
                         var row = 'mask_' + player_id + '_row_' + i;
                         var target = "mask_" + player_id;
 
-                        if (discoveryTiles_mask.length > 0) {
+                        if (discoveryTiles_mask.length > 0 && !$(row)) {
                             dojo.place('<div class="row" id="' + row + '"></div>', target);
                         }
                         for (var discoveryTile_index in discoveryTiles_mask) {
@@ -1247,7 +1247,7 @@ define([
                         var _this = this;
                         setTimeout(function () {
                             _this.checkIsMapComplete();
-                        }, 2000);
+                        }, 2300);
                         for (var player_id in args.args.playerInfo) {
                             var info = args.args.playerInfo[player_id];
                             this.gamedatas_local.players[player_id].cocoa = info.cocoa;
@@ -2247,9 +2247,7 @@ define([
                 setTimeout(function () {
                     $("discoveryTile_-1").remove();
                     $("discoveryTile_" + discTile.type_arg).remove();
-                }, 2000);
 
-                setTimeout(function () {
                     dojo.place(_this.format_block('jstpl_discoveryTiles', {
                         type_arg: discTile.type_arg,
                         location: "hand"
@@ -2262,11 +2260,11 @@ define([
                     }
 
                     _this.resizeGame();
-                }, 2100);
+                }, 2000);
 
                 setTimeout(function () {
                     _this.addTooltipHtml("discoveryTile_" + discTile.type_arg, tooltip);
-                }, 2200);
+                }, 2100);
 
             },
             animateBuilding: function (source, target) {

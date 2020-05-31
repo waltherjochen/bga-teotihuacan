@@ -3479,6 +3479,7 @@ class teotihuacan extends Table
         $message = clienttranslate('${player_name} moved worker ${worker_power}${worker_power2} from ${board_name_from} (${card_id_from}) to ${board_name_to} (${card_id_to}) with workers (${workersOnBoard})');
 
         if ($worship_pos > 0) {
+            self::incStat(1, "worship", $player_id);
             $message = clienttranslate('${player_name} moved worker ${worker_power}${worker_power2} from ${board_name_from} (${card_id_from}) to worship on ${board_name_to} (${card_id_to})');
         }
         if($worker_power == 6){
@@ -4513,6 +4514,9 @@ class teotihuacan extends Table
         self::checkAction('useDiscoveryTile');
 
         $player_id = self::getCurrentPlayerId();
+        $selected_board_id_to = self::getGameStateValue('selected_board_id_to');
+        $selected_worker_id = (int)self::getGameStateValue('selected_worker_id');
+        $selected_worker2_id = (int)self::getGameStateValue('selected_worker2_id');
 
         if ($id < 0) {
             throw new BgaUserException(self::_("This move is not possible."));
@@ -4619,6 +4623,15 @@ class teotihuacan extends Table
             $countWorkers = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false");
             if ($this->gamestate->state()['name'] == 'playerTurn_show_board_actions' || $countWorkers == 0) {
                 throw new BgaUserException(self::_("You cannot use this Discovery Tile right now"));
+            }
+            if($countWorkers == 1){
+                $cocoa = (int)self::getUniqueValueFromDB("SELECT `cocoa` FROM `player` WHERE `player_id` = $player_id");
+                $worker_id = (int)self::getUniqueValueFromDB("SELECT worker_id FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to");
+                $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (45,46,47) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
+                $id = (int)self::getUniqueValueFromDB($sql);
+                if (($cocoa < 3 && !$id) && ((int)self::getGameStateValue('doMainAction') > 0) && ($selected_worker_id == $worker_id || $selected_worker2_id == $worker_id)) {
+                    throw new BgaUserException(self::_("You must finish the main action before power up the worker you just moved"));
+                }
             }
             $messageParts[] = ' ${upgrade}${token_upgrade}';// NOI18N
             self::incGameStateValue('useDiscoveryPowerUp', 2);

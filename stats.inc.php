@@ -65,6 +65,7 @@ $stats_type = array(
         "temple_red" => array("id"=> 11,"name" => totranslate("Steps on temple red"),"type" => "int" ),
         "temple_green" => array("id"=> 12,"name" => totranslate("Steps on temple green"),"type" => "int" ),
         "avenue" => array("id"=> 13,"name" => totranslate("Steps on Avenue of Dead"),"type" => "int" ),
+        "worship" => array("id"=> 13,"name" => totranslate("Worhsips"),"type" => "int" ),
         "steps_on_pyramid_track_round1" => array("id"=> 14,"name" => totranslate("Steps on pyramid track in eclipse 1"),"type" => "int" ),
         "steps_on_pyramid_track_round2" => array("id"=> 15,"name" => totranslate("Steps on pyramid track in eclipse 2"),"type" => "int" ),
         "steps_on_pyramid_track_round3" => array("id"=> 16,"name" => totranslate("Steps on pyramid track in eclipse 3"),"type" => "int" ),
