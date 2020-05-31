@@ -1247,7 +1247,7 @@ define([
                         var _this = this;
                         setTimeout(function () {
                             _this.checkIsMapComplete();
-                        }, 2300);
+                        }, 3900);
                         for (var player_id in args.args.playerInfo) {
                             var info = args.args.playerInfo[player_id];
                             this.gamedatas_local.players[player_id].cocoa = info.cocoa;
@@ -1671,7 +1671,7 @@ define([
                             this.addActionButton('button_2_id', _('No'), 'onAscensionFreeCocoaDeclined', null, false, 'red');
                             break;
                         case 'playerTurn_check_undo':
-                            this.addActionButton('button_1_id', _('Pass'), 'noUndo', null, false, 'gray');
+                            this.addActionButton('button_1_id', _('End turn'), 'noUndo', null, false, 'gray');
                             this.addActionButton('button_2_id', _('Undo complete turn'), 'undo', null, false, 'red');
                             break;
                     }
