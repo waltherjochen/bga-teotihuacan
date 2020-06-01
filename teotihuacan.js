@@ -590,6 +590,10 @@ define([
                     locked: dice_locked
                 }), target);
 
+                var _this = this;
+                setTimeout(function () {
+                    _this.checkIsMapWorker();
+                }, 100);
 
                 this.queryAndAddEvent('.dice', 'onclick', 'onDiceSelectionChanged');
                 this.resizeGame();
@@ -1839,8 +1843,16 @@ define([
                 return result;
             },
 
-            checkIsMapComplete: function () {
-                $("workers").innerHTML = '';
+            checkIsMapWorker: function () {
+                var player_id = this.getThisPlayerId();
+                var player_color = this.gamedatas_local.players[player_id].player_color;
+                var playerWorkers = dojo.query('.dice.color_' + player_color);
+
+                if(playerWorkers.length > 4){
+                    for (var j = 0; j < playerWorkers.length; j++) {
+                        playerWorkers[j].remove();
+                    }
+                }
                 for (player_id in this.gamedatas_local.map) {
                     for (var index in this.gamedatas_local.map[player_id]) {
                         var map = this.gamedatas_local.map[player_id][index];
@@ -1863,6 +1875,11 @@ define([
                         }
                     }
                 }
+            },
+
+            checkIsMapComplete: function () {
+                $("workers").innerHTML = '';
+                this.checkIsMapWorker();
                 this.setupPlayerHand(true);
                 this.resizeGame();
             },
@@ -4188,9 +4205,9 @@ define([
                 var discTile = notif.args.discTile;
                 var board_location = notif.args.selected_board_id_to;
 
-                this.gamedatas_local.playersHand = notif.args.player_hand;
+                this.setupPlayerHand(true);
 
-                this.gamedatas_local.discoveryTiles = discoveryTiles;
+                this.gamedatas_local.playersHand = notif.args.player_hand;
 
                 this.restoreServerGameState();
 
@@ -4209,6 +4226,7 @@ define([
                     }
                 }
                 this.animateClaimDiscovery(discTile, target);
+                this.gamedatas_local.discoveryTiles = discoveryTiles;
                 this.resizeGame();
             },
 
