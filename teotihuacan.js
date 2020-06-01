@@ -1213,6 +1213,7 @@ define([
                         case 'playerTurn_decoration':
                             this.countWorkersOnDecoration = parseInt(args.args.countWorkersOnDecoration);
                             dojo.query('.actionBoard .decorationTile-wrapper:not(.deck) .decorationTile').addClass('clickable');
+                            this.queryAndAddEvent('.decorationTile', 'onclick', 'onDecorationTileChanged');
                             break;
                         case 'client_playerTurn_buildDecoration_confirm':
                             if ($(this.decorationTile.id) && $(this.decorationWrapper.id)) {
