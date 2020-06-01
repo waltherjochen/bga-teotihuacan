@@ -1621,7 +1621,6 @@ define([
                         case 'client_playerTurn_paySalary_confirm':
                             this.gamedatas_local.playersHand = args.player_hand;
                             if (this.clientStateArgs) {
-                                console.log(this.clientStateArgs);
                                 this.addActionButton('decrementCocoa', "-1" + this.getTokenSymbol('cocoa', true), 'decrementSalaryCocoa', null, false, 'gray');
                                 this.addTooltipHtml('decrementCocoa', _("Decrement number of cocoa"));
                                 this.addActionButton('incrementCocoa', "+1" + this.getTokenSymbol('cocoa', true), 'incrementSalaryCocoa', null, false, 'gray');
@@ -1633,7 +1632,6 @@ define([
                                 } else {
                                     dojo.query('#decrementCocoa').removeClass('disabled');
                                 }
-                                console.log('cocoa', this.gamedatas_local.players[this.getThisPlayerId()].cocoa);
                                 if (isMax || this.clientStateArgs[this.getThisPlayerId()].cocoa == this.gamedatas_local.players[this.getThisPlayerId()].cocoa ) {
                                     dojo.query('#incrementCocoa').addClass('disabled');
                                 } else {
@@ -1826,22 +1824,6 @@ define([
 
             getPlayerData: function () {
                 return this.gamedatas_local.players[this.getActivePlayerId()];
-            },
-
-            getCountWorkersOnBoardFromPlayer: function (board_id, player_id) {
-                var result = 0;
-                for (i in this.gamedatas_local.map) {
-                    if (player_id == i) {
-                        var map_player = this.gamedatas_local.map[i];
-                        for (j in map_player) {
-                            var map = map_player[j];
-                            if (board_id == map.actionboard_id && map.locked == false) {
-                                result++;
-                            }
-                        }
-                    }
-                }
-                return result;
             },
 
             checkIsMapWorker: function () {
@@ -2122,11 +2104,12 @@ define([
 
                 for (var i = 0; i < 4; i++) {
                     target = 'POS_' + dice_group + '_dice_' + i;
-                    if (!$(target).hasChildNodes()) {
+                    if (!$(target).hasChildNodes() || (this.global_moveAnywhere && $(worker).parentElement.id == target)) {
                         workersAlreadyonBoardTemp = i;
                         break;
                     }
                 }
+
                 if(workersAlreadyonBoard != null){
                     workersAlreadyonBoard += workersAlreadyonBoardTemp;
                 } else {

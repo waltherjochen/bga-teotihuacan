@@ -4454,8 +4454,6 @@ class teotihuacan extends Table
             $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
             if ($worker && count($worker) > 0) {
                 $this->gamestate->nextState("ascension");
-            } else if (self::getGameStateValue('ascensionTempleSteps')) {
-                $this->gamestate->nextState("action");
             } else {
                 $this->goToPreviousState();
             }
@@ -4792,8 +4790,6 @@ class teotihuacan extends Table
             $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
             if ($worker && count($worker) > 0) {
                 $this->gamestate->nextState("ascension");
-            } else if (self::getGameStateValue('ascensionTempleSteps')) {
-                $this->gamestate->nextState("action");
             } else {
                 $this->goToPreviousState();
             }
@@ -5077,8 +5073,6 @@ class teotihuacan extends Table
             $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
             if ($worker && count($worker) > 0) {
                 $this->gamestate->nextState("ascension");
-            } else if (self::getGameStateValue('ascensionTempleSteps')) {
-                $this->gamestate->nextState("action");
             } else {
                 $this->goToPreviousState();
             }
