@@ -1270,9 +1270,9 @@ define([
                         break;
                     case 'pay_salary':
                         this.clientStateArgs = {};
-                        this.clientStateArgs.max = args.args.playersData[player_id]['max'];
-                        this.clientStateArgs.cocoa = args.args.playersData[player_id]['cocoa'];
-                        console.log("this.clientStateArgs",this.clientStateArgs);
+                        this.clientStateArgs[player_id] = {};
+                        this.clientStateArgs[player_id].max = args.args.playersData[player_id]['max'];
+                        this.clientStateArgs[player_id].cocoa = args.args.playersData[player_id]['cocoa'];
                         this.paySalaryConfirm();
                         break;
                     case 'choose_starting_tiles':
@@ -1621,19 +1621,20 @@ define([
                         case 'client_playerTurn_paySalary_confirm':
                             this.gamedatas_local.playersHand = args.player_hand;
                             if (this.clientStateArgs) {
+                                console.log(this.clientStateArgs);
                                 this.addActionButton('decrementCocoa', "-1" + this.getTokenSymbol('cocoa', true), 'decrementSalaryCocoa', null, false, 'gray');
                                 this.addTooltipHtml('decrementCocoa', _("Decrement number of cocoa"));
                                 this.addActionButton('incrementCocoa', "+1" + this.getTokenSymbol('cocoa', true), 'incrementSalaryCocoa', null, false, 'gray');
                                 this.addTooltipHtml('incrementCocoa', _("Increment number of cocoa"));
 
-                                var isMax = this.clientStateArgs.cocoa == this.clientStateArgs.max;
-                                if (this.clientStateArgs.cocoa == 0) {
+                                var isMax = this.clientStateArgs[this.getThisPlayerId()].cocoa == this.clientStateArgs[this.getThisPlayerId()].max;
+                                if (this.clientStateArgs[this.getThisPlayerId()].cocoa == 0) {
                                     dojo.query('#decrementCocoa').addClass('disabled');
                                 } else {
                                     dojo.query('#decrementCocoa').removeClass('disabled');
                                 }
                                 console.log('cocoa', this.gamedatas_local.players[this.getThisPlayerId()].cocoa);
-                                if (isMax || this.clientStateArgs.cocoa == this.gamedatas_local.players[this.getThisPlayerId()].cocoa ) {
+                                if (isMax || this.clientStateArgs[this.getThisPlayerId()].cocoa == this.gamedatas_local.players[this.getThisPlayerId()].cocoa ) {
                                     dojo.query('#incrementCocoa').addClass('disabled');
                                 } else {
                                     dojo.query('#incrementCocoa').removeClass('disabled');
@@ -2197,9 +2198,10 @@ define([
                         this.gamedatas_local.players[player_id].cocoa = 0;
                     }
                     if(this.clientStateArgs && this.clientStateArgs.action && this.clientStateArgs.action == 'paySalary'){
-                        this.clientStateArgs.cocoa = this.gamedatas_local.players[player_id].cocoa;
-                        if(this.clientStateArgs.cocoa > this.clientStateArgs.max){
-                            this.clientStateArgs.cocoa = this.clientStateArgs.max;
+                        this.clientStateArgs[player_id] = {};
+                        this.clientStateArgs[player_id].cocoa = this.gamedatas_local.players[player_id].cocoa;
+                        if(this.clientStateArgs[player_id].cocoa > this.clientStateArgs[player_id].max){
+                            this.clientStateArgs[player_id].cocoa = this.clientStateArgs[player_id].max;
                             this.paySalaryConfirm();
                         }
                     }
@@ -3723,15 +3725,15 @@ define([
             },
 
             decrementSalaryCocoa: function () {
-                if (this.clientStateArgs.cocoa > 0) {
-                    this.clientStateArgs.cocoa--;
+                if (this.clientStateArgs[this.getThisPlayerId()].cocoa > 0) {
+                    this.clientStateArgs[this.getThisPlayerId()].cocoa--;
                     this.paySalaryConfirm();
                 }
             },
 
             incrementSalaryCocoa: function () {
-                if (this.clientStateArgs.cocoa < this.clientStateArgs.max) {
-                    this.clientStateArgs.cocoa++;
+                if (this.clientStateArgs[this.getThisPlayerId()].cocoa < this.clientStateArgs[this.getThisPlayerId()].max) {
+                    this.clientStateArgs[this.getThisPlayerId()].cocoa++;
                     this.paySalaryConfirm();
                 }
             },
@@ -3742,18 +3744,18 @@ define([
 
                 this.clientStateArgs.action = action;
 
-                var vp = 3 * (this.clientStateArgs.max - this.clientStateArgs.cocoa);
+                var vp = 3 * (this.clientStateArgs[this.getThisPlayerId()].max - this.clientStateArgs[this.getThisPlayerId()].cocoa);
 
                 var translated_vp = dojo.string.substitute(_("${vp}${vpSymbol}"), {
                     vp: vp,
                     vpSymbol: this.getMoneySymbol('vp')
                 });
                 var translated_cocoa = dojo.string.substitute(_("${cocoa}${cocoaSymbol}"), {
-                    cocoa: this.clientStateArgs.cocoa,
+                    cocoa: this.clientStateArgs[this.getThisPlayerId()].cocoa,
                     cocoaSymbol: this.getMoneySymbol('cocoa')
                 });
                 var translated_cocoa_max = dojo.string.substitute(_("${cocoa}${cocoaSymbol}"), {
-                    cocoa: this.clientStateArgs.max,
+                    cocoa: this.clientStateArgs[this.getThisPlayerId()].max,
                     cocoaSymbol: this.getMoneySymbol('cocoa')
                 });
 
@@ -3765,7 +3767,7 @@ define([
                 var action = 'paySalary';
                 if (this.checkAction(action)) {
                     this.ajaxAction(action, {
-                        cocoa: this.clientStateArgs.cocoa,
+                        cocoa: this.clientStateArgs[this.getThisPlayerId()].cocoa,
                         freeCocoa: false
                     });
                 }
@@ -3775,7 +3777,7 @@ define([
                 var action = 'paySalary';
                 if (this.checkAction(action)) {
                     this.ajaxAction(action, {
-                        cocoa: this.clientStateArgs.cocoa,
+                        cocoa: this.clientStateArgs[this.getThisPlayerId()].cocoa,
                         freeCocoa: true
                     });
                 }

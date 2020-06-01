@@ -530,6 +530,7 @@ class teotihuacan extends Table
         self::initStat('player', 'temple_red', 0);
         self::initStat('player', 'temple_green', 0);
         self::initStat('player', 'avenue', 0);
+        self::initStat('player', 'worship', 0);
         self::initStat('player', 'steps_on_pyramid_track_round1', 0);
         self::initStat('player', 'steps_on_pyramid_track_round2', 0);
         self::initStat('player', 'steps_on_pyramid_track_round3', 0);
