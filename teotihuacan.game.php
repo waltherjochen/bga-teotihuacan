@@ -4170,6 +4170,8 @@ class teotihuacan extends Table
             self::setGameStateValue('previous_game_state', STATE_PAY_SALARY);
         } else if ($this->gamestate->state()['name'] == 'playerTurn_nobles_choose_row') {
             self::setGameStateValue('previous_game_state', STATE_PLAYER_TURN_NOBLES_BUILD);
+        } else if ($this->gamestate->state()['name'] == 'playerTurn_decoration') {
+            self::setGameStateValue('previous_game_state', STATE_PLAYER_TURN_DECORATION);
         }
         $gameStateValue = self::getGameStateValue('previous_game_state');
         if ($name == '') {
@@ -4255,6 +4257,8 @@ class teotihuacan extends Table
                 $this->gamestate->nextState("pay_salary");
             } else if (self::getGameStateValue('previous_game_state') == STATE_PLAYER_TURN_NOBLES_BUILD) {
                 $this->gamestate->nextState("choose_row");
+            } else if (self::getGameStateValue('previous_game_state') == STATE_PLAYER_TURN_DECORATION) {
+                $this->gamestate->nextState("decoration");
             }
             self::setGameStateValue('previous_game_state', 0);
         } else {
@@ -4988,7 +4992,7 @@ class teotihuacan extends Table
                 throw new BgaUserException(self::_("You already have your 4. Worker."));
             }
             $messageParts[] = ' 2${token_cocoa} and 4. Worker';// NOI18N
-            $this->collectResource($player_id, 2, 'cocoa', $source);
+            $this->collectResource($player_id, 2, 'cocoa', $source, ' ');
 
             $sql = "UPDATE `map` SET locked = false WHERE player_id = $player_id AND `worker_id` = 4";
             self::DbQuery($sql);

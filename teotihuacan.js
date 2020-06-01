@@ -1205,6 +1205,7 @@ define([
                                 dojo.addClass(this.pyramidTile.id, 'selected');
                                 dojo.addClass(this.constructionWrapper.id, 'selected');
                             }
+                            break;
                         case 'playerTurn_decoration':
                             this.countWorkersOnDecoration = parseInt(args.args.countWorkersOnDecoration);
                             dojo.query('.actionBoard .decorationTile-wrapper:not(.deck) .decorationTile').addClass('clickable');
@@ -2246,7 +2247,9 @@ define([
 
                 setTimeout(function () {
                     $("discoveryTile_-1").remove();
-                    $("discoveryTile_" + discTile.type_arg).remove();
+                    if($("discoveryTile_" + discTile.type_arg)){
+                        $("discoveryTile_" + discTile.type_arg).remove();
+                    }
 
                     dojo.place(_this.format_block('jstpl_discoveryTiles', {
                         type_arg: discTile.type_arg,
