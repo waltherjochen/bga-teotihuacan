@@ -1628,7 +1628,8 @@ define([
                                 } else {
                                     dojo.query('#decrementCocoa').removeClass('disabled');
                                 }
-                                if (isMax) {
+                                console.log('cocoa', this.gamedatas_local.players[this.getThisPlayerId()].cocoa);
+                                if (isMax || this.clientStateArgs.cocoa == this.gamedatas_local.players[this.getThisPlayerId()].cocoa ) {
                                     dojo.query('#incrementCocoa').addClass('disabled');
                                 } else {
                                     dojo.query('#incrementCocoa').removeClass('disabled');
@@ -2177,6 +2178,13 @@ define([
                     this.gamedatas_local.players[player_id].cocoa = parseInt(this.gamedatas_local.players[player_id].cocoa) + amount;
                     if(this.gamedatas_local.players[player_id].cocoa < 0){
                         this.gamedatas_local.players[player_id].cocoa = 0;
+                    }
+                    if(this.clientStateArgs && this.clientStateArgs.action && this.clientStateArgs.action == 'paySalary'){
+                        this.clientStateArgs.cocoa = this.gamedatas_local.players[player_id].cocoa;
+                        if(this.clientStateArgs.cocoa > this.clientStateArgs.max){
+                            this.clientStateArgs.cocoa = this.clientStateArgs.max;
+                            this.paySalaryConfirm();
+                        }
                     }
                 } else if (token == 'wood') {
                     this.gamedatas_local.players[player_id].wood = parseInt(this.gamedatas_local.players[player_id].wood) + amount;
