@@ -2611,6 +2611,10 @@ class teotihuacan extends Table
                 $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (51,52,53) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
                 $id = (int)self::getUniqueValueFromDB($sql);
 
+                if (self::getGameStateValue('useDiscoveryMoveTwoWorkers') && self::getGameStateValue('selected_worker2_id')) {
+                    $countWorkers++;
+                }
+
                 if (!($countWorkers > 0 || $worker_power >= 4 || $id)) {
                     throw new BgaUserException(self::_("This move is not possible."));
                 }
@@ -3121,6 +3125,33 @@ class teotihuacan extends Table
         if ($selected_board_id_to <= $selected_board_id_from && $this->isTechAquired(0) && !self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')) {
             $actionBoard_1 = 'actionBoard_1';
             $this->collectResource($player_id, 1, 'cocoa', $actionBoard_1, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 1)'));
+        }
+
+        if($selected_board_id_to == 1){
+            $royalTilesPos = $worship_pos - 1;
+            $royalTile = $this->cards->getCardsInLocation('royalTiles' . $royalTilesPos);
+            $royalTile = array_shift($royalTile);
+            $royalTiles_details = $this->royalTiles[$royalTile['type_arg']]['bonus'];
+
+            $trade_c_ws = $royalTiles_details['trade_c_ws'];
+            $trade_c_sg = $royalTiles_details['trade_c_sg'];
+            $trade_c_t = $royalTiles_details['trade_c_t'];
+            $trade_cr_r = $royalTiles_details['trade_cr_r'];
+            $trade_r_2c = $royalTiles_details['trade_r_2c'];
+
+            $cocoa = (int)self::getUniqueValueFromDB("SELECT `cocoa` FROM `player` WHERE `player_id` = $player_id");
+            $wood = (int)self::getUniqueValueFromDB("SELECT `wood` FROM `player` WHERE `player_id` = $player_id");
+            $stone = (int)self::getUniqueValueFromDB("SELECT `stone` FROM `player` WHERE `player_id` = $player_id");
+            $gold = (int)self::getUniqueValueFromDB("SELECT `gold` FROM `player` WHERE `player_id` = $player_id");
+            $resources = $wood + $stone + $gold;
+
+            if(($trade_c_ws > 0 || $trade_c_sg > 0 || $trade_c_t > 0 || $trade_cr_r > 0) && $cocoa <= 0){
+                throw new BgaUserException(self::_("You have not enough cocoa to worship"));
+            }
+            if(($trade_cr_r > 0 || $trade_r_2c > 0) && $resources <= 0){
+                throw new BgaUserException(self::_("You have not enough resources to worship"));
+            }
+
         }
 
         if ($pay || $freeCocoa) {
