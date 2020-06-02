@@ -4405,6 +4405,9 @@ class teotihuacan extends Table
         $player_id = self::getActivePlayerId();
         $enableAuto = (int)self::getUniqueValueFromDB("SELECT `enableAuto` FROM `player` WHERE `player_id` = $player_id");
 
+        $queue = self::getUniqueValueFromDB("SELECT `queue` FROM `discovery_queue` ORDER BY id DESC LIMIT 1");
+        $useDiscoveryPowerUp = (int)self::getGameStateValue('useDiscoveryPowerUp');
+
         if($enableAuto > 0){
             $this->stepAvenue();
         }
@@ -4454,6 +4457,8 @@ class teotihuacan extends Table
             $worker = self::getObjectListFromDB("SELECT `worker_id`, `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `worker_power` = 6 Limit 1");
             if ($worker && count($worker) > 0) {
                 $this->gamestate->nextState("ascension");
+            } else if (self::getGameStateValue('ascensionTempleSteps')) {
+                $this->gamestate->nextState("action");
             } else {
                 $this->goToPreviousState();
             }
