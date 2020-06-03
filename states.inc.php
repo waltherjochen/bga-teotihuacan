@@ -356,7 +356,7 @@ $machinestates = array(
             "stepAvenue",
             "pass",
         ),
-        "transitions" => array("check_end_turn" => STATE_PLAYER_TURN_CHECK_END_TURN, "pass" => STATE_PLAYER_TURN_CHECK_END_TURN, "choose_bonus" => STATE_PLAYER_TURN_CHOOSE_AVENUE_BONUS, "ascension" => STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS, "useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "zombiePass" => STATE_PLAYER_TURN_CHECK_END_TURN)
+        "transitions" => array("check_end_turn" => STATE_PLAYER_TURN_CHECK_END_TURN, "action" => STATE_PLAYER_TURN_WORSHIP_ACTIONS, "pass" => STATE_PLAYER_TURN_CHECK_END_TURN, "choose_bonus" => STATE_PLAYER_TURN_CHOOSE_AVENUE_BONUS, "ascension" => STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS, "useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "zombiePass" => STATE_PLAYER_TURN_CHECK_END_TURN)
     ),
     STATE_PLAYER_TURN_CHOOSE_AVENUE_BONUS => array(
         "name" => "playerTurn_avenue_of_dead_choose_bonus",
@@ -368,7 +368,7 @@ $machinestates = array(
             "claimDiscovery",
             "pass",
         ),
-        "transitions" => array("pass" => STATE_PLAYER_TURN_CHECK_END_TURN, "action" => STATE_PLAYER_TURN_WORSHIP_ACTIONS, "useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "ascension" => STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "zombiePass" => STATE_PLAYER_TURN_CHECK_END_TURN)
+        "transitions" => array("pass" => STATE_PLAYER_TURN_CHECK_END_TURN, "check_end_turn" => STATE_PLAYER_TURN_CHECK_END_TURN, "action" => STATE_PLAYER_TURN_WORSHIP_ACTIONS, "useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "ascension" => STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "zombiePass" => STATE_PLAYER_TURN_CHECK_END_TURN)
     ),
     STATE_PLAYER_TURN_UPGRADE_WORKERS => array(
         "name" => "playerTurn_upgrade_workers",
@@ -454,7 +454,7 @@ $machinestates = array(
             "noUndo",
             "undo",
         ),
-        "transitions" => array("next_player" => STATE_PLAYER_TURN, "pass" => STATE_PLAYER_END_TURN)
+        "transitions" => array("next_player" => STATE_PLAYER_TURN, "pass" => STATE_PLAYER_END_TURN, "zombiePass" => STATE_PLAYER_END_TURN)
     ),
 
     STATE_PLAYER_END_TURN => array(
