@@ -452,6 +452,9 @@ define([
                             dojo.style(target, 'display', "block");
                         }
                         var sum = row1 + row2 + row3;
+                        if(sum > 11){
+                            sum = 11;
+                        }
                         for (var j = 0; j < sum; j++) {
                             var target = 'building_' + j;
                             dojo.style(target, 'display', "none");
@@ -1880,7 +1883,9 @@ define([
                             if($(selectedWorker)){
                                 var selectedWorkerBoard = dojo.attr(selectedWorker, "data-board-id");
                                 if(!(this.isPalaceTechAquired && board_id == selectedWorkerBoard && map.worker_id == this.selected_worker_id && map.player_id == this.getActivePlayerId())){
-                                    workers++;
+                                    if(!(this.global_moveAnywhere && (map.worker_id == this.selected_worker_id || map.worker_id == this.selected_worker2_id))){
+                                        workers++;
+                                    }
                                 }
                             }
                         }

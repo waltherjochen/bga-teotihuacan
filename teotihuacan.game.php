@@ -2942,6 +2942,10 @@ class teotihuacan extends Table
         $row2 = (int)self::getUniqueValueFromDB("SELECT `row1` FROM `nobles`");
         $row3 = (int)self::getUniqueValueFromDB("SELECT `row2` FROM `nobles`");
 
+        if(($row1 + $row2 + $row3) == 11){
+            throw new BgaUserException(self::_("There is no house left"));
+        }
+
         $player_id = self::getActivePlayerId();
         $canUseExtraWorker = 0;
 
@@ -3432,9 +3436,10 @@ class teotihuacan extends Table
         $player_id = self::getActivePlayerId();
         $board_id = self::getGameStateValue('selected_board_id_to');
         $selected_worker_id = (int)self::getGameStateValue('selected_worker_id');
+        $selected_worker2_id = (int)self::getGameStateValue('selected_worker2_id');
 
-        if ($this->isTechAquired(0) && self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')) {
-            $sql = "SELECT COUNT(DISTINCT `player_id`) AS Count FROM `map` WHERE `actionboard_id` = $board_id and locked = false and not (`worker_id` = $selected_worker_id and `player_id` = $player_id)";
+        if ($this->isTechAquired(0) || self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')) {
+            $sql = "SELECT COUNT(DISTINCT `player_id`) AS Count FROM `map` WHERE `actionboard_id` = $board_id and locked = false and not ((`worker_id` = $selected_worker_id or `worker_id` = $selected_worker2_id) and `player_id` = $player_id)";
         } else {
 
             $sql = "SELECT COUNT(DISTINCT `player_id`) AS Count
