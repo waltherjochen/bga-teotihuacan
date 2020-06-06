@@ -3332,7 +3332,11 @@ define([
             },
 
             getActionBoardTooltip: function (id) {
-                var tooltip = this.gamedatas_local.actionBoards_data[id].tooltip;
+
+                var tooltip = '';
+                for (var i = 0; i < this.gamedatas_local.actionBoards_data[id].tooltip.length; i++) {
+                    tooltip += ' ' + this.gamedatas_local.actionBoards_data[id].tooltip[i];
+                }
 
                 tooltip = tooltip.replace('{token_temple_blue}', this.getTokenSymbol('temple_blue', true));
                 tooltip = tooltip.replace('{token_temple_red}', this.getTokenSymbol('temple_red', true));

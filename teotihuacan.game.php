@@ -1067,21 +1067,24 @@ class teotihuacan extends Table
             $player_id = $player['player_id'];
             $player_name = $playersData[$player_id]['player_name'];
 
-            $set1 = $this->scoringMask[count($player_hand[$player_id]['mask'][0])];
-            $set2 = $this->scoringMask[count($player_hand[$player_id]['mask'][1])];
-            $set3 = $this->scoringMask[count($player_hand[$player_id]['mask'][2])];
+            $count1 = count($player_hand[$player_id]['mask'][0]);
+            $count2 = count($player_hand[$player_id]['mask'][1]);
+            $count3 = count($player_hand[$player_id]['mask'][2]);
+            $set1 = $this->scoringMask[$count1];
+            $set2 = $this->scoringMask[$count2];
+            $set3 = $this->scoringMask[$count3];
 
             $amount = $set1 + $set2 + $set3;
 
             $text = '';
             if ($set1 > 0) {
-                $text = "($set1)";
+                $text = "($count1)";
             }
             if ($set2 > 0) {
-                $text = $text . "($set2)";
+                $text = $text . "($count2)";
             }
             if ($set3 > 0) {
-                $text = $text . "($set3)";
+                $text = $text . "($count3)";
             }
 
             $this->updateVP($amount, $player_id);
@@ -1969,6 +1972,7 @@ class teotihuacan extends Table
             $board_name_to = $this->actionBoards[$card["card_id"]]["name"];
 
             self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} has no more workers on ${board_name_to} to power up (${amount}x)'), array(
+                'i18n' => array('board_name_to'),
                 'player_id' => $player_id,
                 'player_name' => self::getActivePlayerName(),
                 'board_name_to' => $board_name_to,
@@ -3961,6 +3965,7 @@ class teotihuacan extends Table
                 }
 
                 self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} stays on top of temple ${temple} and gain no further benefit'), array(
+                    'i18n' => array('temple'),
                     'player_id' => $player_id,
                     'player_name' => self::getActivePlayerName(),
                     'temple' => $temple,
@@ -4924,7 +4929,7 @@ class teotihuacan extends Table
 
 
         self::notifyAllPlayers("upgradeWorker", clienttranslate('${player_name} upgrades a worker on ${board_name_to} (${card_id_to}) from ${worker_power_previous} to ${worker_power}'), array(
-            'i18n' => array('temple'),
+            'i18n' => array('board_name_to'),
             'player_id' => $player_id,
             'player_name' => self::getActivePlayerName(),
             'worker_id' => $worker_id,

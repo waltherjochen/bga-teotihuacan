@@ -32,42 +32,91 @@ $this->actionBoards = array(
     ACTION_BOARD_PALACE => array(
         "id" => ACTION_BOARD_PALACE,
         "name" => clienttranslate("Palace"),
-        "tooltip" => clienttranslate("The Palace {board1} Action Board does NOT have a Main action. When moving a worker here, you may only place it on a Royal tile to take a Worship action or in the general area to take a Collect Cocoa action.")
+        "tooltip" => array(
+            clienttranslate("The Palace {board1} Action Board does NOT have a Main action."),
+            clienttranslate("When moving a worker here, you may only place it on a Royal tile to take a Worship action or in the general area to take a Collect Cocoa action.")
+        ),
     ),
     ACTION_BOARD_FOREST => array(
         "id" => ACTION_BOARD_FOREST,
         "name" => clienttranslate("Forest"),
-        "tooltip" => clienttranslate("Count the number of your unlocked workers in the general area of the Action Board in question (including the worker you just moved) to select a row on the Action Board. Use the power of your lowest value worker to select a column on the Action Board. Gain the rewards (wood, stone, gold, cocoa, Victory Points, or temple advances) shown in the corresponding cell.")
+        "tooltip" => array(
+            clienttranslate("Count the number of your unlocked workers in the general area of the Action Board in question (including the worker you just moved) to select a row on the Action Board. "),
+            clienttranslate("Use the power of your lowest value worker to select a column on the Action Board."),
+            clienttranslate("Gain the rewards (wood, stone, gold, cocoa, Victory Points, or temple advances) shown in the corresponding cell."),
+        ),
     ),
     ACTION_BOARD_STONE => array(
         "id" => ACTION_BOARD_STONE,
         "name" => clienttranslate("Stone Quarry"),
-        "tooltip" => clienttranslate("Count the number of your unlocked workers in the general area of the Action Board in question (including the worker you just moved) to select a row on the Action Board. Use the power of your lowest value worker to select a column on the Action Board. Gain the rewards (wood, stone, gold, cocoa, Victory Points, or temple advances) shown in the corresponding cell.")
+        "tooltip" => array(
+            clienttranslate("Count the number of your unlocked workers in the general area of the Action Board in question (including the worker you just moved) to select a row on the Action Board. "),
+            clienttranslate("Use the power of your lowest value worker to select a column on the Action Board."),
+            clienttranslate("Gain the rewards (wood, stone, gold, cocoa, Victory Points, or temple advances) shown in the corresponding cell."),
+        ),
     ),
     ACTION_BOARD_GOLD => array(
         "id" => ACTION_BOARD_GOLD,
         "name" => clienttranslate("Gold Deposits"),
-        "tooltip" => clienttranslate("Count the number of your unlocked workers in the general area of the Action Board in question (including the worker you just moved) to select a row on the Action Board. Use the power of your lowest value worker to select a column on the Action Board. Gain the rewards (wood, stone, gold, cocoa, Victory Points, or temple advances) shown in the corresponding cell.")
+        "tooltip" => array(
+            clienttranslate("Count the number of your unlocked workers in the general area of the Action Board in question (including the worker you just moved) to select a row on the Action Board. "),
+            clienttranslate("Use the power of your lowest value worker to select a column on the Action Board."),
+            clienttranslate("Gain the rewards (wood, stone, gold, cocoa, Victory Points, or temple advances) shown in the corresponding cell."),
+        ),
     ),
     ACTION_BOARD_ALCHEMY => array(
         "id" => ACTION_BOARD_ALCHEMY,
         "name" => clienttranslate("Alchemy"),
-        "tooltip" => clienttranslate("Select one Technology tile on the Alchemy {board5} Action Board observing the following restrictions:<br><br>- If you have only one worker on this Action Board, you must select from the first row.<br> - If you have two or more workers on this Action Board, you may select from either row.<br> - EXCEPTION: If you have only one worker on this Action Board but its power is 4 or 5, you may still choose from the second row, but doing this will forfeit the power-up you would gain from this action.<br><br> Pay the cost in gold as shown on the selected tile and place one of your Technology markers (wooden discs) on it to mark that you have acquired this Technology. Refer to the Appendix for an explanation of the ongoing benefit of each Technology tile. Any other player who already had a disc on the tile you develop immediately scores 3{token_vp}. You may never develop a Technology you have previously acquired (you may not place a Technology marker on a Technology tile with one of your markers present). <br><br>After placing the Technology marker, advance once on one temple, depending on which column the selected Technology belongs to:{token_temple_blue} for the left column,{token_temple_red} for the centre column,{token_temple_green} for the right column.")
+        "tooltip" => array(
+            clienttranslate("Select one Technology tile on the Alchemy {board5} Action Board observing the following restrictions:"),
+            clienttranslate("<br><br>- If you have only one worker on this Action Board, you must select from the first row."),
+            clienttranslate("<br> - If you have two or more workers on this Action Board, you may select from either row."),
+            clienttranslate("<br> - EXCEPTION: If you have only one worker on this Action Board but its power is 4 or 5, you may still choose from the second row, but doing this will forfeit the power-up you would gain from this action."),
+            clienttranslate("<br><br> Pay the cost in gold as shown on the selected tile and place one of your Technology markers (wooden discs) on it to mark that you have acquired this Technology."),
+            clienttranslate("Refer to the Appendix for an explanation of the ongoing benefit of each Technology tile. Any other player who already had a disc on the tile you develop immediately scores 3{token_vp}."),
+            clienttranslate("You may never develop a Technology you have previously acquired (you may not place a Technology marker on a Technology tile with one of your markers present)."),
+            clienttranslate("<br><br>After placing the Technology marker, advance once on one temple, depending on which column the selected Technology belongs to:"),
+            clienttranslate("{token_temple_blue} for the left column,{token_temple_red} for the centre column,{token_temple_green} for the right column."),
+        ),
     ),
     ACTION_BOARD_NOBLES => array(
         "id" => ACTION_BOARD_NOBLES,
         "name" => clienttranslate("Nobles"),
-        "tooltip" => clienttranslate("Pay 2 wood to take the first available Building from the left side of the Buildings row on the Main Board (it is important that these Buildings are always taken from left to right), and place it in the leftmost available space of one of the Building rows of the Nobles {board6} Action Board:<br><br>- If you have 1 worker on this Action Board: Place the Building in the leftmost empty space of the top row. If there are no empty spaces, you may not take this action.<br>- If you have 2 workers on this Action Board: Place it in the leftmost empty space of the centre row. If there are no empty spaces on the second row, place it in the row above, if possible.<br>-If you have 3 workers on this Action Board: Place it in the leftmost empty space of the bottom row. If there are no empty spaces on the third row, place it in one of the rows above, if possible.<br><br>Then, score a number of{token_vp} equal to the printed value of the space you covered with the Building, and advance your marker one step on the Avenue of the Dead track, to a maximum of 9.")
+        "tooltip" => array(
+            clienttranslate("Pay 2 wood to take the first available Building from the left side of the Buildings row on the Main Board (it is important that these Buildings are always taken from left to right), and place it in the leftmost available space of one of the Building rows of the Nobles {board6} Action Board:"),
+            clienttranslate("<br><br>- If you have 1 worker on this Action Board: Place the Building in the leftmost empty space of the top row. If there are no empty spaces, you may not take this action."),
+            clienttranslate("<br>- If you have 2 workers on this Action Board: Place it in the leftmost empty space of the centre row. If there are no empty spaces on the second row, place it in the row above, if possible."),
+            clienttranslate("<br>-If you have 3 workers on this Action Board: Place it in the leftmost empty space of the bottom row. If there are no empty spaces on the third row, place it in one of the rows above, if possible."),
+            clienttranslate("<br><br>Then, score a number of{token_vp} equal to the printed value of the space you covered with the Building, and advance your marker one step on the Avenue of the Dead track, to a maximum of 9."),
+        ),
     ),
     ACTION_BOARD_DECORATIONS => array(
         "id" => ACTION_BOARD_DECORATIONS,
         "name" => clienttranslate("Decorations"),
-        "tooltip" => clienttranslate("Pay 3 gold to select one of the 4 available Decoration tiles. For each additional worker you have on this Action Board you receive a 1 gold discount to the cost (to a minimum of 1 gold). Add the selected Decoration tile to the Pyramid using the following restrictions:<br><br>- It must be placed in one of the marked spaces.<br>- The tile must be placed so that its arrow points towards the centre of the Pyramid.<br>- You can only place on the spaces if there is a layer of Pyramid tiles under both of its squares AND there is a Decoration one step lower<br><br> When placing the tile, check the icons you are covering. For each icon being covered by an icon of the same type on the Decoration tile, score 1{token_vp}. If you scored 1{token_vp} for an icon that is red {token_temple_red}, green {token_temple_green}, or blue {token_temple_blue} on the Decoration tile (the colour of the icon that is being covered does not matter), also advance on the corresponding temple. Then score an additional 3{token_vp} and advance your marker one step on the Pyramid track.")
+        "tooltip" => array(
+            clienttranslate("Pay 3 gold to select one of the 4 available Decoration tiles. For each additional worker you have on this Action Board you receive a 1 gold discount to the cost (to a minimum of 1 gold)."),
+            clienttranslate("Add the selected Decoration tile to the Pyramid using the following restrictions:"),
+            clienttranslate("<br><br>- It must be placed in one of the marked spaces."),
+            clienttranslate("<br>- The tile must be placed so that its arrow points towards the centre of the Pyramid."),
+            clienttranslate("<br>- You can only place on the spaces if there is a layer of Pyramid tiles under both of its squares AND there is a Decoration one step lower"),
+            clienttranslate("<br><br> When placing the tile, check the icons you are covering. For each icon being covered by an icon of the same type on the Decoration tile, score 1{token_vp}."),
+            clienttranslate("If you scored 1{token_vp} for an icon that is red {token_temple_red}, green {token_temple_green}, or blue {token_temple_blue} on the Decoration tile (the colour of the icon that is being covered does not matter), also advance on the corresponding temple."),
+            clienttranslate("Then score an additional 3{token_vp} and advance your marker one step on the Pyramid track."),
+        ),
     ),
     ACTION_BOARD_CONSTRUCTION => array(
         "id" => ACTION_BOARD_CONSTRUCTION,
         "name" => clienttranslate("Construction"),
-        "tooltip" => clienttranslate("You may select one of the available Pyramid tiles and add it to the Pyramid for each worker you have on the Construction {board8} Action Board. You must add at least one tile.<br><br>- You can place a Pyramid tile on the first (bottom) level, into one of the empty squares, by paying 2 stone. Score 1{token_vp} for each tile added to the first level.<br>-You can place a Pyramid tile on the second level, over the intersection of four tiles of the first level, by paying 2 stone and 1 wood. Score 3{token_vp} for each tile added to the second level.<br>- Same with other levels.<br>-If a tile was placed on the fourth level of the Pyramid, the Pyramid is considered finished. The active player must immediately move the white Calendar disc to the position of the black Calendar disc. This will trigger a final Eclipse, as described in the Eclipse & End of Game section, and end the game.<br><br>You may rotate the tile any way you choose. When placing the tile, check the icons you are covering. For each icon being covered by an icon of the same type on the newly placed Pyramid tile, score 1{token_vp}.<br><br>If you scored 1{token_vp} for an icon that is red {token_temple_red}, green {token_temple_green}, or blue {token_temple_blue} on the newly placed Pyramid tile (the colour of the icon that is being covered does not matter), also advance on the corresponding temple.<br>Then advance your marker one step on the Pyramid track.<br><br>If adding more than one tile to the Pyramid, always fully resolve all effects before adding the next tile, including the scoring of Victory Points, advancement on the Pyramid track, as well as temple advancements, if any.")
+        "tooltip" => array(
+            clienttranslate("You may select one of the available Pyramid tiles and add it to the Pyramid for each worker you have on the Construction {board8} Action Board."),
+            clienttranslate("You must add at least one tile."),
+            clienttranslate("<br><br>- You can place a Pyramid tile on the first (bottom) level, into one of the empty squares, by paying 2 stone. Score 1{token_vp} for each tile added to the first level."),
+            clienttranslate("<br>-You can place a Pyramid tile on the second level, over the intersection of four tiles of the first level, by paying 2 stone and 1 wood. Score 3{token_vp} for each tile added to the second level."),
+            clienttranslate("<br>- Same with other levels.<br>-If a tile was placed on the fourth level of the Pyramid, the Pyramid is considered finished. The active player must immediately move the white Calendar disc to the position of the black Calendar disc."),
+            clienttranslate("This will trigger a final Eclipse, as described in the Eclipse & End of Game section, and end the game."),
+            clienttranslate("<br><br>You may rotate the tile any way you choose. When placing the tile, check the icons you are covering. For each icon being covered by an icon of the same type on the newly placed Pyramid tile, score 1{token_vp}.<br><br>If you scored 1{token_vp} for an icon that is red {token_temple_red}, green {token_temple_green}, or blue {token_temple_blue} on the newly placed Pyramid tile (the colour of the icon that is being covered does not matter), also advance on the corresponding temple.<br>Then advance your marker one step on the Pyramid track."),
+            clienttranslate("<br><br>If adding more than one tile to the Pyramid, always fully resolve all effects before adding the next tile, including the scoring of Victory Points, advancement on the Pyramid track, as well as temple advancements, if any."),
+        ),
     ),
 );
 
