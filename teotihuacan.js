@@ -1831,16 +1831,16 @@ define([
             },
 
             checkIsMapWorker: function () {
-                var player_id = this.getThisPlayerId();
-                var player_color = this.gamedatas_local.players[player_id].player_color;
-                var playerWorkers = dojo.query('.dice.color_' + player_color);
+                for (var player_id in this.gamedatas_local.players) {
+                    var player_color = this.gamedatas_local.players[player_id].player_color;
+                    var playerWorkers = dojo.query('.dice.color_' + player_color);
 
-                if(playerWorkers.length > 4){
-                    for (var j = 0; j < playerWorkers.length; j++) {
-                        playerWorkers[j].remove();
+                    if(playerWorkers.length > 4){
+                        for (var j = 0; j < playerWorkers.length; j++) {
+                            playerWorkers[j].remove();
+                        }
                     }
-                }
-                for (player_id in this.gamedatas_local.map) {
+
                     for (var index in this.gamedatas_local.map[player_id]) {
                         var map = this.gamedatas_local.map[player_id][index];
                         var worker_id = player_id + '_worker_' + map.worker_id;
