@@ -2722,16 +2722,12 @@ class teotihuacan extends Table
             }
         }
 
-        if ($selected_board_id_to <= $selected_board_id_from && $selected_board_id_from != 1 && $this->isTechAquired(0) && !self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')) {
+        if ($selected_board_id_to <= $selected_board_id_from && $selected_board_id_from != 1 && $this->isTechAquired(0) && (!self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')|| $selected_board_id_to == 1)) {
             $actionBoard_1 = 'actionBoard_1';
 
             $selected_worker2_id = self::getGameStateValue('selected_worker2_id');
 
-            if (self::getGameStateValue('useDiscoveryMoveTwoWorkers') && $selected_worker2_id != 0) {
-                $this->collectResource($player_id, 2, 'cocoa', $actionBoard_1, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 1)'));
-            } else {
-                $this->collectResource($player_id, 1, 'cocoa', $actionBoard_1, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 1)'));
-            }
+            $this->collectResource($player_id, 1, 'cocoa', $actionBoard_1, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 1)'));
         }
 
         if (!$freeCocoa) {
@@ -3130,7 +3126,7 @@ class teotihuacan extends Table
             throw new BgaUserException(self::_("This move is not possible."));
         }
 
-        if ($selected_board_id_to <= $selected_board_id_from && $this->isTechAquired(0) && !self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')) {
+        if ($selected_board_id_to <= $selected_board_id_from && $this->isTechAquired(0) && (!self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')|| $selected_board_id_to == 1)) {
             $actionBoard_1 = 'actionBoard_1';
             $this->collectResource($player_id, 1, 'cocoa', $actionBoard_1, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 1)'));
         }
@@ -3159,7 +3155,6 @@ class teotihuacan extends Table
             if(($trade_cr_r > 0 || $trade_r_2c > 0) && $resources <= 0){
                 throw new BgaUserException(self::_("You have not enough resources to worship"));
             }
-
         }
 
         if ($pay || $freeCocoa) {
@@ -3396,16 +3391,12 @@ class teotihuacan extends Table
         $selected_board_id_to = self::getGameStateValue('selected_board_id_to');
         $selected_board_id_from = self::getGameStateValue('selected_board_id_from');
 
-        if ($selected_board_id_to <= $selected_board_id_from && $this->isTechAquired(0) && !self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')) {
+        if ($selected_board_id_to <= $selected_board_id_from && $this->isTechAquired(0) && (!self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')|| $selected_board_id_to == 1)) {
             $actionBoard_1 = 'actionBoard_1';
 
             $selected_worker2_id = self::getGameStateValue('selected_worker2_id');
 
-            if (self::getGameStateValue('useDiscoveryMoveTwoWorkers') && $selected_worker2_id != 0) {
-                $this->collectResource($player_id, 2, 'cocoa', $actionBoard_1, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 1)'));
-            } else {
-                $this->collectResource($player_id, 1, 'cocoa', $actionBoard_1, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 1)'));
-            }
+            $this->collectResource($player_id, 1, 'cocoa', $actionBoard_1, clienttranslate('${player_name} got ${amount}${token_cocoa} extra (technology tile 1)'));
         }
 
         $colors = $this->getDiffrentColorsOnBoard() + 1;
@@ -3645,7 +3636,6 @@ class teotihuacan extends Table
         if (!self::getGameStateValue('royalTileAction')) {
             throw new BgaUserException(self::_("This move is not possible."));
         }
-        self::setGameStateValue('royalTileAction', 0);
 
         $player_id = self::getActivePlayerId();
         $selected_worker_id = self::getGameStateValue('selected_worker_id');
@@ -3671,6 +3661,22 @@ class teotihuacan extends Table
         $trade_cr_r = $royalTiles_details['trade_cr_r'];
         $trade_c_t = $royalTiles_details['trade_c_t'];
         $vp_ad = $royalTiles_details['vp_ad'];
+
+        $cocoa = (int)self::getUniqueValueFromDB("SELECT `cocoa` FROM `player` WHERE `player_id` = $player_id");
+        $wood = (int)self::getUniqueValueFromDB("SELECT `wood` FROM `player` WHERE `player_id` = $player_id");
+        $stone = (int)self::getUniqueValueFromDB("SELECT `stone` FROM `player` WHERE `player_id` = $player_id");
+        $gold = (int)self::getUniqueValueFromDB("SELECT `gold` FROM `player` WHERE `player_id` = $player_id");
+        $resources = $wood + $stone + $gold;
+
+        if(($trade_c_ws > 0 || $trade_c_sg > 0 || $trade_c_t > 0 || $trade_cr_r > 0) && $cocoa <= 0){
+            throw new BgaUserException(self::_("You have not enough cocoa to worship"));
+        }
+        if(($trade_cr_r > 0 || $trade_r_2c > 0) && $resources <= 0){
+            throw new BgaUserException(self::_("You have not enough resources to worship"));
+        }
+
+        // All checks done
+        self::setGameStateValue('royalTileAction', 0);
 
         $amount = 0;
 
