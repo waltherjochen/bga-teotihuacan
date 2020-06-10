@@ -82,9 +82,9 @@ define([
                 dojo.place(this.format_block('jstpl_playerTable', current_player), 'player_table', 'first');
                 var allStartingTilesChoosed = true;
 
-                for (var i = 1; i <= this.gamedatas_local.players_count; i++ ) {
+                for (var i = 1; i <= this.gamedatas_local.players_count; i++) {
                     var next = parseInt(current_player.player_order) + i;
-                    if(next > this.gamedatas_local.players_count){
+                    if (next > this.gamedatas_local.players_count) {
                         next -= this.gamedatas_local.players_count;
                     }
 
@@ -452,7 +452,7 @@ define([
                             dojo.style(target, 'display', "block");
                         }
                         var sum = row1 + row2 + row3;
-                        if(sum > 11){
+                        if (sum > 11) {
                             sum = 11;
                         }
                         for (var j = 0; j < sum; j++) {
@@ -533,12 +533,12 @@ define([
                         var map = map_player[j];
                         var board_id = map.actionboard_id;
                         if (typeof workerOnBoard[board_id] === 'undefined') {
-                            if (map.locked == false){
+                            if (map.locked == false) {
                                 workerOnBoard[board_id] = 0;
                             }
                             this.createWorker(map.player_id, map.worker_id, map.worker_power, map.locked, map.worship_pos, board_id, 0);
                         } else {
-                            if (map.locked == false){
+                            if (map.locked == false) {
                                 workerOnBoard[board_id]++;
                             }
                             this.createWorker(map.player_id, map.worker_id, map.worker_power, map.locked, map.worship_pos, board_id, workerOnBoard[board_id]);
@@ -564,7 +564,7 @@ define([
                 var dice_selected = "";
                 var dice_locked = "";
                 if (locked == false && player_id === this.getActivePlayerId() && this.isCurrentPlayerActive()) {
-                    if(this.clickableWorkers && this.clickableWorkers.includes(worker_id.toString())){
+                    if (this.clickableWorkers && this.clickableWorkers.includes(worker_id.toString())) {
                         dice_clickable = 'clickable';
                     }
                     if (this.checkPossibleActions("selectDice")) {
@@ -803,7 +803,7 @@ define([
                         }
                         for (var discoveryTile_index in discoveryTiles_mask) {
                             var discoveryTile = discoveryTiles_mask[discoveryTile_index];
-                            if(!refresh || !$("discoveryTile_" + discoveryTile.type_arg)){
+                            if (!refresh || !$("discoveryTile_" + discoveryTile.type_arg)) {
                                 dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), row);
                                 this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                             }
@@ -817,7 +817,7 @@ define([
 
                     for (var discoveryTile_index in discoveryTiles_other) {
                         var discoveryTile = discoveryTiles_other[discoveryTile_index];
-                        if(!refresh || !$("discoveryTile_" + discoveryTile.type_arg)){
+                        if (!refresh || !$("discoveryTile_" + discoveryTile.type_arg)) {
                             dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
                             this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
                             if (refresh && this.isCurrentPlayerActive() && this.checkPossibleActions("useDiscoveryTile")) {
@@ -830,7 +830,7 @@ define([
 
                     for (var discoveryTile_index in discoveryTiles_used) {
                         var discoveryTile = discoveryTiles_used[discoveryTile_index];
-                        if(!refresh || !$("discoveryTile_" + discoveryTile.type_arg)){
+                        if (!refresh || !$("discoveryTile_" + discoveryTile.type_arg)) {
                             dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
                             dojo.query('#discoveryTile_' + discoveryTile['type_arg']).addClass('used');
                             this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
@@ -1030,22 +1030,22 @@ define([
                     }
                 }
 
-                if(!this.isSpectator){
-                    this.queryAndAddEvent('#enableUndo_'+this.getThisPlayerId(), 'onclick', 'enableUndoChanged');
-                    $('enableUndo_'+this.getThisPlayerId()+'_text').innerHTML = _('Ask for undo after my turn');
-                    this.addTooltipHtml('enableUndo_'+this.getThisPlayerId()+'_text', _('Enable, when you want to undo your turn'));
+                if (!this.isSpectator) {
+                    this.queryAndAddEvent('#enableUndo_' + this.getThisPlayerId(), 'onclick', 'enableUndoChanged');
+                    $('enableUndo_' + this.getThisPlayerId() + '_text').innerHTML = _('Ask for undo after my turn');
+                    this.addTooltipHtml('enableUndo_' + this.getThisPlayerId() + '_text', _('Enable, when you want to undo your turn'));
 
                     var enableUndo = this.gamedatas_local.players[this.getThisPlayerId()].enableUndo;
-                    if(enableUndo > 0){
+                    if (enableUndo > 0) {
                         $('enableUndo_' + this.getThisPlayerId()).innerHTML = 'X';
                     } else {
                         $('enableUndo_' + this.getThisPlayerId()).innerHTML = '';
                     }
                 }
                 $('player_side_order_2').remove();
-                if($('player_side_order_3')){
+                if ($('player_side_order_3')) {
                     $('player_side_order_3').remove();
-                    if($('player_side_order_4')){
+                    if ($('player_side_order_4')) {
                         $('player_side_order_4').remove();
                     }
                 }
@@ -1402,9 +1402,10 @@ define([
                             this.addActionButton('button_1_id', _('end turn'), 'onPassClick', null, false, "red");
                             break;
                         case 'playerTurn_worship_actions':
-                            if(!args.queue && !args.royalTileAction && args.worship_actions_discovery){
+                            if (!args.queue && !args.royalTileAction && args.worship_actions_discovery) {
                                 this.addActionButton('button_1_id', _('Skip action and pass'), 'onPassClick', null, false, "red");
                             }
+                            this.addActionButton('button_pass', _('Skip action and pass'), 'onPassClick', null, false, "red");
                             break;
                         case 'playerTurn_avenue_of_dead_choose_bonus':
                         case 'playerTurn_avenue_of_dead':
@@ -1533,7 +1534,7 @@ define([
                                 var isMax = false;
                                 if (!((this.clientStateArgs.isPayCocoa > 0 && this.clientStateArgs.isPayResource > 0 && this.clientStateArgs.multiplier < 1) ||
                                     (this.clientStateArgs.isPayCocoa == 0 && this.clientStateArgs.isPayResource > 0 && this.clientStateArgs.multiplier < this.clientStateArgs.max))) {
-                                     isMax = true;
+                                    isMax = true;
                                 }
 
                                 this.checkIfButtonsAreEnabled(this.clientStateArgs.pay.wood, this.clientStateArgs.pay.stone, this.clientStateArgs.pay.gold, isMax);
@@ -1579,7 +1580,7 @@ define([
                             this.addActionButton('button_pass_id', _('Skip action and pass'), 'onPassClick', null, false, "red");
                             break;
                         case 'playerTurn_construction':
-                            if(args.canPass){
+                            if (args.canPass) {
                                 this.addActionButton('button_pass_id', _('Skip action and pass'), 'onPassClick', null, false, "red");
                             }
                             break;
@@ -1636,7 +1637,7 @@ define([
                                 } else {
                                     dojo.query('#decrementCocoa').removeClass('disabled');
                                 }
-                                if (isMax || this.clientStateArgs[this.getThisPlayerId()].cocoa == this.gamedatas_local.players[this.getThisPlayerId()].cocoa ) {
+                                if (isMax || this.clientStateArgs[this.getThisPlayerId()].cocoa == this.gamedatas_local.players[this.getThisPlayerId()].cocoa) {
                                     dojo.query('#incrementCocoa').addClass('disabled');
                                 } else {
                                     dojo.query('#incrementCocoa').removeClass('disabled');
@@ -1793,11 +1794,11 @@ define([
              * function wrapper for this.player_id,
              * it checks if spectator
              */
-            getThisPlayerId: function(){
-                if (!this.isSpectator){
+            getThisPlayerId: function () {
+                if (!this.isSpectator) {
                     return this.player_id;
                 }
-                if (!this.cocFirstPlayerId){
+                if (!this.cocFirstPlayerId) {
                     this.cocFirstPlayerId = Object.keys(this.gamedatas_local.players)[0];
                 }
                 return this.cocFirstPlayerId;
@@ -1835,7 +1836,7 @@ define([
                     var player_color = this.gamedatas_local.players[player_id].player_color;
                     var playerWorkers = dojo.query('.dice.color_' + player_color);
 
-                    if(playerWorkers.length > 4){
+                    if (playerWorkers.length > 4) {
                         for (var j = 0; j < playerWorkers.length; j++) {
                             playerWorkers[j].remove();
                         }
@@ -1880,10 +1881,10 @@ define([
                         var map = map_player[j];
                         if (board_id == map.actionboard_id && map.locked == false) {
                             var selectedWorker = $(this.getActivePlayerId() + '_worker_' + this.selected_worker_id);
-                            if($(selectedWorker)){
+                            if ($(selectedWorker)) {
                                 var selectedWorkerBoard = dojo.attr(selectedWorker, "data-board-id");
-                                if(!(this.isPalaceTechAquired && board_id == selectedWorkerBoard && map.worker_id == this.selected_worker_id && map.player_id == this.getActivePlayerId())){
-                                    if(!(this.global_moveAnywhere && (map.worker_id == this.selected_worker_id || map.worker_id == this.selected_worker2_id))){
+                                if (!(this.isPalaceTechAquired && board_id == selectedWorkerBoard && map.worker_id == this.selected_worker_id && map.player_id == this.getActivePlayerId())) {
+                                    if (!(this.global_moveAnywhere && (map.worker_id == this.selected_worker_id || map.worker_id == this.selected_worker2_id))) {
                                         workers++;
                                     }
                                 }
@@ -1946,7 +1947,7 @@ define([
                 }
                 if (this.isPalaceTechAquired && this.selected_board_id_to <= this.selected_board_id_from && this.selected_board_id_from != 1) {
                     money++;
-                    if(this.global_moveTwoWorkers && this.selected_worker2_id){
+                    if (this.global_moveTwoWorkers && this.selected_worker2_id) {
                         money++;
                     }
                 }
@@ -2116,7 +2117,7 @@ define([
                     }
                 }
 
-                if(workersAlreadyonBoard != null){
+                if (workersAlreadyonBoard != null) {
                     workersAlreadyonBoard += workersAlreadyonBoardTemp;
                 } else {
                     workersAlreadyonBoard = workersAlreadyonBoardTemp;
@@ -2183,30 +2184,30 @@ define([
 
                 if (token == 'cocoa') {
                     this.gamedatas_local.players[player_id].cocoa = parseInt(this.gamedatas_local.players[player_id].cocoa) + amount;
-                    if(this.gamedatas_local.players[player_id].cocoa < 0){
+                    if (this.gamedatas_local.players[player_id].cocoa < 0) {
                         this.gamedatas_local.players[player_id].cocoa = 0;
                     }
-                    if(this.clientStateArgs && this.clientStateArgs.action && this.clientStateArgs.action == 'paySalary'){
+                    if (this.clientStateArgs && this.clientStateArgs.action && this.clientStateArgs.action == 'paySalary') {
                         this.clientStateArgs[player_id] = {};
                         this.clientStateArgs[player_id].cocoa = this.gamedatas_local.players[player_id].cocoa;
-                        if(this.clientStateArgs[player_id].cocoa > this.clientStateArgs[player_id].max){
+                        if (this.clientStateArgs[player_id].cocoa > this.clientStateArgs[player_id].max) {
                             this.clientStateArgs[player_id].cocoa = this.clientStateArgs[player_id].max;
                             this.paySalaryConfirm();
                         }
                     }
                 } else if (token == 'wood') {
                     this.gamedatas_local.players[player_id].wood = parseInt(this.gamedatas_local.players[player_id].wood) + amount;
-                    if(this.gamedatas_local.players[player_id].wood < 0){
+                    if (this.gamedatas_local.players[player_id].wood < 0) {
                         this.gamedatas_local.players[player_id].wood = 0;
                     }
                 } else if (token == 'stone') {
                     this.gamedatas_local.players[player_id].stone = parseInt(this.gamedatas_local.players[player_id].stone) + amount;
-                    if(this.gamedatas_local.players[player_id].stone < 0){
+                    if (this.gamedatas_local.players[player_id].stone < 0) {
                         this.gamedatas_local.players[player_id].stone = 0;
                     }
                 } else if (token == 'gold') {
                     this.gamedatas_local.players[player_id].gold = parseInt(this.gamedatas_local.players[player_id].gold) + amount;
-                    if(this.gamedatas_local.players[player_id].gold < 0){
+                    if (this.gamedatas_local.players[player_id].gold < 0) {
                         this.gamedatas_local.players[player_id].gold = 0;
                     }
                 }
@@ -2263,7 +2264,7 @@ define([
 
                 setTimeout(function () {
                     $("discoveryTile_-1").remove();
-                    if($("discoveryTile_" + discTile.type_arg)){
+                    if ($("discoveryTile_" + discTile.type_arg)) {
                         $("discoveryTile_" + discTile.type_arg).remove();
                     }
 
@@ -2408,7 +2409,7 @@ define([
 
                         if (this.global_moveTwoWorkers == true) {
                             dojo.addClass(this.getActivePlayerId() + '_worker_' + this.selected_worker_id, 'firstWorker');
-                            if($(this.getActivePlayerId() + '_worker_' + this.selected_worker2_id)){
+                            if ($(this.getActivePlayerId() + '_worker_' + this.selected_worker2_id)) {
                                 dojo.addClass(this.getActivePlayerId() + '_worker_' + this.selected_worker2_id, 'secondWorker');
                             }
                         }
@@ -2500,7 +2501,7 @@ define([
                         var translated = _("Perform Main Action?") + " " + this.moneyPreview("cocoa");
                         this.setClientStateAction(actionConfirm, translated);
                     } else {
-                        if(this.global_moveTwoWorkers && !this.selected_worker2_id){
+                        if (this.global_moveTwoWorkers && !this.selected_worker2_id) {
                             this.confirmationDialog(_('You can move two workers, but you selected only one.'), dojo.hitch(this, function () {
                                 this.ajaxAction(action);
                             }));
@@ -2519,7 +2520,7 @@ define([
                     return;
                 }
 
-                if(this.global_moveTwoWorkers && !this.selected_worker2_id){
+                if (this.global_moveTwoWorkers && !this.selected_worker2_id) {
                     this.confirmationDialog(_('You can move two workers, but you selected only one.'), dojo.hitch(this, function () {
                         this.ajaxAction(action);
                     }));
@@ -2674,7 +2675,7 @@ define([
 
             doBoardCollectCocoaClickConfirmed: function (event) {
                 var action = 'collectCocoaOnBoard';
-                if(this.global_moveTwoWorkers && !this.selected_worker2_id){
+                if (this.global_moveTwoWorkers && !this.selected_worker2_id) {
                     this.confirmationDialog(_('You can move two workers, but you selected only one.'), dojo.hitch(this, function () {
                         this.ajaxAction(action);
                     }));
@@ -2735,7 +2736,7 @@ define([
                     this.setClientStateAction(actionConfirm, translated);
                 } else {
                     this.selected_board_worship_pos = worship_pos;
-                    if(this.global_moveTwoWorkers && !this.selected_worker2_id){
+                    if (this.global_moveTwoWorkers && !this.selected_worker2_id) {
                         this.confirmationDialog(_('You can move two workers, but you selected only one.'), dojo.hitch(this, function () {
                             this.ajaxAction(action, {
                                 worship_pos: this.selected_board_worship_pos,
@@ -2754,7 +2755,7 @@ define([
 
             doBoardWorshipClickConfirmed: function (event) {
                 var action = 'doWorshipOnBoard';
-                if(this.global_moveTwoWorkers && !this.selected_worker2_id){
+                if (this.global_moveTwoWorkers && !this.selected_worker2_id) {
                     this.confirmationDialog(_('You can move two workers, but you selected only one.'), dojo.hitch(this, function () {
                         this.ajaxAction(action, {
                             worship_pos: this.selected_board_worship_pos,
@@ -2772,7 +2773,7 @@ define([
 
             doBoardWorshipClickConfirmedFree: function (event) {
                 var action = 'doWorshipOnBoard';
-                if(this.global_moveTwoWorkers && !this.selected_worker2_id){
+                if (this.global_moveTwoWorkers && !this.selected_worker2_id) {
                     this.confirmationDialog(_('You can move two workers, but you selected only one.'), dojo.hitch(this, function () {
                         this.ajaxAction(action, {
                             worship_pos: this.selected_board_worship_pos,
@@ -2821,7 +2822,7 @@ define([
                 this.gamedatas_local.global.worship_actions_discovery = true;
                 var action = 'worshipAction';
 
-                if(this.canBuyDiscoveryTile){
+                if (this.canBuyDiscoveryTile) {
                     this.ajaxAction(action, {
                         worship: this.gamedatas_local.global.worship_actions_worship,
                         discovery: this.gamedatas_local.global.worship_actions_discovery
@@ -2841,7 +2842,7 @@ define([
                 this.gamedatas_local.global.worship_actions_worship = true;
                 this.gamedatas_local.global.worship_actions_discovery = true;
                 var action = 'worshipAction';
-                if(this.canBuyDiscoveryTileBoth){
+                if (this.canBuyDiscoveryTileBoth) {
                     this.ajaxAction(action, {
                         worship: this.gamedatas_local.global.worship_actions_worship,
                         discovery: this.gamedatas_local.global.worship_actions_discovery
@@ -3284,18 +3285,18 @@ define([
             },
 
             setPyramidZoom: function (id) {
-                for(var i = 0; i < 32; i++){
-                    if($('pyramidTile_' + i)){
+                for (var i = 0; i < 32; i++) {
+                    if ($('pyramidTile_' + i)) {
                         var rotate = parseInt(dojo.attr('pyramidTile_' + i, "data-rotate"));
-                        this.addTooltipHtml("pyramidTile_" + i, '<div class="pyramidTile zoom rotate_'+rotate+'" id="pyramidTile_'+i+'"></div>');
+                        this.addTooltipHtml("pyramidTile_" + i, '<div class="pyramidTile zoom rotate_' + rotate + '" id="pyramidTile_' + i + '"></div>');
                     }
                 }
             },
 
             setDecorationZoom: function (id) {
-                for(var i = 0; i < 15; i++){
-                    if($('decorationTile_' + i)){
-                        this.addTooltipHtml("decorationTile_" + i, '<div class="decorationTile zoom" id="decorationTile_'+i+'"><span>></span></div>');
+                for (var i = 0; i < 15; i++) {
+                    if ($('decorationTile_' + i)) {
+                        this.addTooltipHtml("decorationTile_" + i, '<div class="decorationTile zoom" id="decorationTile_' + i + '"><span>></span></div>');
                     }
                 }
             },
@@ -3306,25 +3307,25 @@ define([
                 tooltip = tooltip.replace(/{token_vp}/g, this.getTokenSymbol('vp', true));
 
                 var cocoa = this.gamedatas_local.discoveryTiles_data[id].price.cocoa;
-                if(cocoa > 0){
+                if (cocoa > 0) {
                     tooltip = tooltip.replace('{cocoa}', cocoa + this.getTokenSymbol('cocoa', true));
                 } else {
                     tooltip = tooltip.replace('{cocoa}', '');
                 }
                 var wood = this.gamedatas_local.discoveryTiles_data[id].price.wood;
-                if(wood > 0){
+                if (wood > 0) {
                     tooltip = tooltip.replace('{wood}', wood + this.getTokenSymbol('wood', true));
                 } else {
                     tooltip = tooltip.replace('{wood}', '');
                 }
                 var gold = this.gamedatas_local.discoveryTiles_data[id].price.gold;
-                if(gold > 0){
+                if (gold > 0) {
                     tooltip = tooltip.replace('{gold}', gold + this.getTokenSymbol('gold', true));
                 } else {
                     tooltip = tooltip.replace('{gold}', '');
                 }
 
-                if(cocoa == 0 && wood == 0 && gold == 0){
+                if (cocoa == 0 && wood == 0 && gold == 0) {
                     tooltip = tooltip.replace('Price: ', 'Price: ' + _('free'));
                 }
 
@@ -3344,7 +3345,7 @@ define([
                 tooltip = tooltip.replace(/{token_vp}/g, this.getTokenSymbol('vp', true));
 
                 for (var i = 1; i <= 8; i++) {
-                    tooltip = tooltip.replace('{board'+i+'}', '<div class="board_color board_color_'+i+'">'+i+'</div>');
+                    tooltip = tooltip.replace('{board' + i + '}', '<div class="board_color board_color_' + i + '">' + i + '</div>');
                 }
 
                 return tooltip;
@@ -3372,7 +3373,7 @@ define([
                 tooltip = tooltip.replace(/{token_vp}/g, this.getTokenSymbol('vp', true));
 
                 for (var i = 1; i <= 8; i++) {
-                    tooltip = tooltip.replace('{board'+i+'}', '<div class="board_color board_color_'+i+'">'+i+'</div>');
+                    tooltip = tooltip.replace('{board' + i + '}', '<div class="board_color board_color_' + i + '">' + i + '</div>');
                 }
 
                 return tooltip;
@@ -3382,9 +3383,9 @@ define([
                 var tooltip = this.gamedatas_local.startingTiles_data[id].tooltip;
 
                 var board0 = this.gamedatas_local.startingTiles_data[id].board[0];
-                tooltip = tooltip.replace('{board0}', '<div class="board_color board_color_'+board0+'">'+board0+'</div>');
+                tooltip = tooltip.replace('{board0}', '<div class="board_color board_color_' + board0 + '">' + board0 + '</div>');
                 var board1 = this.gamedatas_local.startingTiles_data[id].board[1];
-                tooltip = tooltip.replace('{board1}', '<div class="board_color board_color_'+board1+'">'+board1+'</div>');
+                tooltip = tooltip.replace('{board1}', '<div class="board_color board_color_' + board1 + '">' + board1 + '</div>');
 
                 tooltip = tooltip.replace('{token_vp}', this.getTokenSymbol('vp', true));
 
@@ -3792,7 +3793,7 @@ define([
 
             isCheckbox: function (name) {
                 var checked = $(name + '_' + this.getThisPlayerId()).innerHTML == 'X';
-                if(checked){
+                if (checked) {
                     $(name + '_' + this.getThisPlayerId()).innerHTML = '';
                 } else {
                     $(name + '_' + this.getThisPlayerId()).innerHTML = 'X';
@@ -3829,53 +3830,74 @@ define([
                         var selectedStartingTiles = dojo.query('.startingTile.clickable.selected');
                         var startingTile0 = selectedStartingTiles[0].id.split('_')[1];
                         var startingTile1 = selectedStartingTiles[1].id.split('_')[1];
-                        if (startingTile0 == "6" || startingTile0 == "17") {
-                            this.clientStateArgs.max += 2;
-                        }
-                        if (startingTile1 == "6" || startingTile1 == "17") {
-                            this.clientStateArgs.max += 2;
-                        }
-                        if (this.clientStateArgs.max > 0) {
-                            for (var j in this.gamedatas_local.startingTiles) {
-                                var startingTile = this.gamedatas_local.startingTiles[j];
-                                if (startingTile.type == "startingTiles" && startingTile.type_arg != startingTile0 && startingTile.type_arg != startingTile1) {
-                                    $("startingTile_" + startingTile.type_arg + "-wrapper").remove();
-                                }
-                            }
-                            dojo.query('.startingTile').removeClass('clickable');
-                            this.StartResouceConfirm();
+
+                        if ((startingTile0 == "6" || startingTile0 == "7") && (startingTile1 == "6" || startingTile1 == "7")) {
+
+                            this.confirmationDialog(_('The Technology symbol explicitly grants you only the lowest-numbered Technology. Gaining that benefit a second time has no additional effect.'), dojo.hitch(this, function () {
+                                this.doStartingTilesConfirmedContinue(action, selectedStartingTiles, startingTile0, startingTile1);
+
+                                this.ajaxAction(action, {
+                                    startingTile0: selectedStartingTiles[0].id.split('_')[1],
+                                    startingTile1: 0,
+                                    wood: this.clientStateArgs.wood,
+                                    stone: this.clientStateArgs.stone,
+                                    gold: this.clientStateArgs.gold
+                                });
+                            }));
+                            return;
                         } else {
-                            var current_player = this.gamedatas_local.players[this.getThisPlayerId()];
-                            current_player.startingTile0 = selectedStartingTiles[0].id.split('_')[1];
-                            current_player.startingTile1 = selectedStartingTiles[1].id.split('_')[1];
-                            if ((current_player.startingTile0 == "3" || current_player.startingTile0 == "13")) {
-                                var selectedDiscoveryTiles = dojo.query('#startingTile_'+current_player.startingTile0+' + .discoveryTile.selected');
-                                if(selectedDiscoveryTiles[0]){
-                                    current_player.startingDiscovery0 = selectedDiscoveryTiles[0].id.split('_')[1];
-                                }
-                            }
-                            if ((current_player.startingTile1 == "3" || current_player.startingTile1 == "13")) {
-                                var selectedDiscoveryTiles = dojo.query('#startingTile_'+current_player.startingTile1+' + .discoveryTile.selected');
-                                if(selectedDiscoveryTiles[0]){
-                                    current_player.startingDiscovery1 = selectedDiscoveryTiles[0].id.split('_')[1];
-                                }
-                            }
-
-                            $("startingTiles-zone").remove();
-
-                            this.setupStartingTilesOnTable(current_player);
-
-                            this.ajaxAction(action, {
-                                startingTile0: selectedStartingTiles[0].id.split('_')[1],
-                                startingTile1: selectedStartingTiles[1].id.split('_')[1],
-                                wood: this.clientStateArgs.wood,
-                                stone: this.clientStateArgs.stone,
-                                gold: this.clientStateArgs.gold
-                            });
+                            this.doStartingTilesConfirmedContinue(action, selectedStartingTiles, startingTile0, startingTile1);
                         }
                     }
                 } else {
                     this.showMessage(_("You should select two starting Tiles"), "error");
+                }
+            },
+
+            doStartingTilesConfirmedContinue: function (action, selectedStartingTiles, startingTile0, startingTile1) {
+                if (startingTile0 == "6" || startingTile0 == "17") {
+                    this.clientStateArgs.max += 2;
+                }
+                if (startingTile1 == "6" || startingTile1 == "17") {
+                    this.clientStateArgs.max += 2;
+                }
+                if (this.clientStateArgs.max > 0) {
+                    for (var j in this.gamedatas_local.startingTiles) {
+                        var startingTile = this.gamedatas_local.startingTiles[j];
+                        if (startingTile.type == "startingTiles" && startingTile.type_arg != startingTile0 && startingTile.type_arg != startingTile1) {
+                            $("startingTile_" + startingTile.type_arg + "-wrapper").remove();
+                        }
+                    }
+                    dojo.query('.startingTile').removeClass('clickable');
+                    this.StartResouceConfirm();
+                } else {
+                    var current_player = this.gamedatas_local.players[this.getThisPlayerId()];
+                    current_player.startingTile0 = selectedStartingTiles[0].id.split('_')[1];
+                    current_player.startingTile1 = selectedStartingTiles[1].id.split('_')[1];
+                    if ((current_player.startingTile0 == "3" || current_player.startingTile0 == "13")) {
+                        var selectedDiscoveryTiles = dojo.query('#startingTile_' + current_player.startingTile0 + ' + .discoveryTile.selected');
+                        if (selectedDiscoveryTiles[0]) {
+                            current_player.startingDiscovery0 = selectedDiscoveryTiles[0].id.split('_')[1];
+                        }
+                    }
+                    if ((current_player.startingTile1 == "3" || current_player.startingTile1 == "13")) {
+                        var selectedDiscoveryTiles = dojo.query('#startingTile_' + current_player.startingTile1 + ' + .discoveryTile.selected');
+                        if (selectedDiscoveryTiles[0]) {
+                            current_player.startingDiscovery1 = selectedDiscoveryTiles[0].id.split('_')[1];
+                        }
+                    }
+
+                    $("startingTiles-zone").remove();
+
+                    this.setupStartingTilesOnTable(current_player);
+
+                    this.ajaxAction(action, {
+                        startingTile0: selectedStartingTiles[0].id.split('_')[1],
+                        startingTile1: selectedStartingTiles[1].id.split('_')[1],
+                        wood: this.clientStateArgs.wood,
+                        stone: this.clientStateArgs.stone,
+                        gold: this.clientStateArgs.gold
+                    });
                 }
             },
 
@@ -3885,16 +3907,44 @@ define([
                     if (this.checkAction(action)) {
                         var selectedStartingTiles = dojo.query('.startingTile.clickable.selected');
                         var startingTile0 = selectedStartingTiles[0].id.split('_')[1];
-                        if (startingTile0 == "6" || startingTile0 == "17") {
-                            this.clientStateArgs.max += 2;
+                        var alreadySelected = false;
+                        if (startingTile0 == "6") {
+                            if ($('startingTile_7') && $('startingTile_7').parentElement.parentElement.id == 'player_' + this.getThisPlayerId() + '_startingTiles') {
+                                alreadySelected = true;
+                            }
+                        } else if (startingTile0 == "7") {
+                            if ($('startingTile_6') && $('startingTile_6').parentElement.parentElement.id == 'player_' + this.getThisPlayerId() + 'startingTiles') {
+                                alreadySelected = true;
+                            }
                         }
-                        this.ajaxAction(action, {
-                            startingTile0: selectedStartingTiles[0].id.split('_')[1],
-                            startingTile1: 0,
-                            wood: this.clientStateArgs.wood,
-                            stone: this.clientStateArgs.stone,
-                            gold: this.clientStateArgs.gold
-                        });
+                        if (alreadySelected) {
+                            this.confirmationDialog(_('The Technology symbol explicitly grants you only the lowest-numbered Technology. Gaining that benefit a second time has no additional effect.'), dojo.hitch(this, function () {
+                                if (startingTile0 == "6" || startingTile0 == "17") {
+                                    this.clientStateArgs.max += 2;
+                                }
+
+                                this.ajaxAction(action, {
+                                    startingTile0: selectedStartingTiles[0].id.split('_')[1],
+                                    startingTile1: 0,
+                                    wood: this.clientStateArgs.wood,
+                                    stone: this.clientStateArgs.stone,
+                                    gold: this.clientStateArgs.gold
+                                });
+                            }));
+                            return;
+                        } else {
+                            if (startingTile0 == "6" || startingTile0 == "17") {
+                                this.clientStateArgs.max += 2;
+                            }
+
+                            this.ajaxAction(action, {
+                                startingTile0: selectedStartingTiles[0].id.split('_')[1],
+                                startingTile1: 0,
+                                wood: this.clientStateArgs.wood,
+                                stone: this.clientStateArgs.stone,
+                                gold: this.clientStateArgs.gold
+                            });
+                        }
                     }
                 } else {
                     this.showMessage(_("You should select one starting Tile only"), "error");
@@ -3955,14 +4005,14 @@ define([
                 current_player.startingTile0 = startingTile0;
                 current_player.startingTile1 = startingTile1;
                 if ((current_player.startingTile0 == "3" || current_player.startingTile0 == "13")) {
-                    var selectedDiscoveryTiles = dojo.query('#startingTile_'+current_player.startingTile0+' + .discoveryTile.selected');
-                    if(selectedDiscoveryTiles[0]){
+                    var selectedDiscoveryTiles = dojo.query('#startingTile_' + current_player.startingTile0 + ' + .discoveryTile.selected');
+                    if (selectedDiscoveryTiles[0]) {
                         current_player.startingDiscovery0 = selectedDiscoveryTiles[0].id.split('_')[1];
                     }
                 }
                 if ((current_player.startingTile1 == "3" || current_player.startingTile1 == "13")) {
-                    var selectedDiscoveryTiles = dojo.query('#startingTile_'+current_player.startingTile1+' + .discoveryTile.selected');
-                    if(selectedDiscoveryTiles[0]){
+                    var selectedDiscoveryTiles = dojo.query('#startingTile_' + current_player.startingTile1 + ' + .discoveryTile.selected');
+                    if (selectedDiscoveryTiles[0]) {
                         current_player.startingDiscovery1 = selectedDiscoveryTiles[0].id.split('_')[1];
                     }
                 }
@@ -4406,7 +4456,7 @@ define([
                         var board = newTile.location.split('b')[1];
                         board = this.gamedatas_local.actionBoards[board].card_location_arg;
                         var position = 0;
-                        if(board == 1){
+                        if (board == 1) {
                             position = 1;
                         }
                         var target = 'POS_aBoard_' + board + '_discoveryTile_' + position;
@@ -4460,7 +4510,7 @@ define([
 
                 this.slideTemporaryObject($(id), 'workers', source, target);
 
-                if(color == 'white'){
+                if (color == 'white') {
                     this.global_eclipseDiscWhite = parseInt(step);
                 } else {
                     this.global_eclipseDiscBlack = parseInt(step);
@@ -4485,18 +4535,18 @@ define([
             },
 
             showEclipseBanner: function () {
-                if(this.global_eclipseDiscWhite >= this.global_eclipseDiscBlack){
+                if (this.global_eclipseDiscWhite >= this.global_eclipseDiscBlack) {
                     $('eclipse-title').innerHTML = dojo.string.substitute(_('Eclipse ${number} is triggered'), {
                         number: this.global_eclipseNumber
                     });
                     dojo.query('#eclipse-zone').addClass('show');
-                    if(this.global_lastRound == 3){
+                    if (this.global_lastRound == 3) {
                         $('eclipse-subtitle').innerHTML = _('Scoring happens immediately after the turn of the current player');
-                    } else if(this.global_lastRound == 2){
+                    } else if (this.global_lastRound == 2) {
                         $('eclipse-subtitle').innerHTML = _('Finish current round and then play another full round, before eclipse scoring happens');
-                    }  else if(this.global_lastRound == 1){
+                    } else if (this.global_lastRound == 1) {
                         $('eclipse-subtitle').innerHTML = _('Finish current round, before eclipse scoring happens');
-                    }  else {
+                    } else {
                         $('eclipse-title').innerHTML = dojo.string.substitute(_('Eclipse ${number} salary and scoring'), {
                             number: this.global_eclipseNumber
                         });
