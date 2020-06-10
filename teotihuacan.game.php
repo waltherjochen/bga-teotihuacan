@@ -3612,7 +3612,7 @@ class teotihuacan extends Table
                     'player_id' => $player_id,
                     'player_name' => self::getActivePlayerName(),
                     'token_cocoa_free' => 'cocoa_free',
-                    'amount' => 1,
+                    'amount' => 0,
                 ));
                 $this->useDiscoveryTile($id, true);
             } else {
@@ -3668,7 +3668,10 @@ class teotihuacan extends Table
         $gold = (int)self::getUniqueValueFromDB("SELECT `gold` FROM `player` WHERE `player_id` = $player_id");
         $resources = $wood + $stone + $gold;
 
-        if(($trade_c_ws > 0 || $trade_c_sg > 0 || $trade_c_t > 0 || $trade_cr_r > 0) && $cocoa <= 0){
+        $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (45,46,47) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
+        $id = (int)self::getUniqueValueFromDB($sql);
+
+        if(($trade_c_ws > 0 || $trade_c_sg > 0 || $trade_c_t > 0 || $trade_cr_r > 0) && $cocoa <= 0 && !$id){
             throw new BgaUserException(self::_("You have not enough cocoa to worship"));
         }
         if(($trade_cr_r > 0 || $trade_r_2c > 0) && $resources <= 0){
