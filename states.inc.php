@@ -305,7 +305,7 @@ $machinestates = array(
             "claimDiscovery",
             "pass",
         ),
-        "transitions" => array("check_end_turn" => STATE_PLAYER_TURN_CHECK_END_TURN, "calculate_next_bonus" => STATE_CALCULATE_NEXT_TILES_BONUS, "construction" => STATE_PLAYER_TURN_CONSTRUCTION, "buy" => STATE_PLAYER_TURN_UPGRADE_WORKERS_BUY, "trade" => STATE_PLAYER_TURN_WORSHIP_TRADE, "ascension" => STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS, "pass" => STATE_PLAYER_TURN_CHECK_END_TURN, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "action" => STATE_PLAYER_TURN_WORSHIP_ACTIONS, "choose_bonus" => STATE_PLAYER_TURN_CHOOSE_TEMPLE_BONUS, "choose_resources" => STATE_PLAYER_TURN_CHOOSE_TEMPLE_RESOURCES, "useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "zombiePass" => STATE_PLAYER_TURN_CHECK_END_TURN)
+        "transitions" => array("check_end_turn" => STATE_PLAYER_TURN_CHECK_END_TURN, "trade" => STATE_PLAYER_TURN_WORSHIP_TRADE, "calculate_next_bonus" => STATE_CALCULATE_NEXT_TILES_BONUS, "construction" => STATE_PLAYER_TURN_CONSTRUCTION, "buy" => STATE_PLAYER_TURN_UPGRADE_WORKERS_BUY, "trade" => STATE_PLAYER_TURN_WORSHIP_TRADE, "ascension" => STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS, "pass" => STATE_PLAYER_TURN_CHECK_END_TURN, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "action" => STATE_PLAYER_TURN_WORSHIP_ACTIONS, "choose_bonus" => STATE_PLAYER_TURN_CHOOSE_TEMPLE_BONUS, "choose_resources" => STATE_PLAYER_TURN_CHOOSE_TEMPLE_RESOURCES, "useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "zombiePass" => STATE_PLAYER_TURN_CHECK_END_TURN)
     ),
 
     STATE_PLAYER_TURN_WORSHIP_TRADE => array(
@@ -313,6 +313,7 @@ $machinestates = array(
         "description" => clienttranslate('${actplayer} must trade for royal tile'),
         "descriptionmyturn" => '',
         "type" => "activeplayer",
+        "action" => "preTrade",
         "args" => "getTradeInfo",
         "possibleactions" => array(
             "useDiscoveryTile",
@@ -332,7 +333,7 @@ $machinestates = array(
             "temple_bonus",
             "claimDiscovery",
         ),
-        "transitions" => array("check_end_turn" => STATE_PLAYER_TURN_CHECK_END_TURN, "buy" => STATE_PLAYER_TURN_UPGRADE_WORKERS_BUY, "construction" => STATE_PLAYER_TURN_CONSTRUCTION, "ascension" => STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS, "action" => STATE_PLAYER_TURN_WORSHIP_ACTIONS, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "choose_resources" => STATE_PLAYER_TURN_CHOOSE_TEMPLE_RESOURCES, "useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "zombiePass" => STATE_PLAYER_TURN_CHECK_END_TURN)
+        "transitions" => array("check_end_turn" => STATE_PLAYER_TURN_CHECK_END_TURN, "trade" => STATE_PLAYER_TURN_WORSHIP_TRADE, "buy" => STATE_PLAYER_TURN_UPGRADE_WORKERS_BUY, "construction" => STATE_PLAYER_TURN_CONSTRUCTION, "ascension" => STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS, "action" => STATE_PLAYER_TURN_WORSHIP_ACTIONS, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "choose_resources" => STATE_PLAYER_TURN_CHOOSE_TEMPLE_RESOURCES, "useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "zombiePass" => STATE_PLAYER_TURN_CHECK_END_TURN)
     ),
     STATE_PLAYER_TURN_CHOOSE_TEMPLE_RESOURCES => array(
         "name" => "playerTurn_choose_temple_resources",
