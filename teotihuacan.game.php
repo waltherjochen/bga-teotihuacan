@@ -132,7 +132,7 @@ class teotihuacan extends Table
             "progression" => 47,
             "draftReverse" => 48,
             "getTechnologyDiscount" => 49,
-            "royalTileTempleSteps" => 50,
+            "newGlobal1" => 50,
             "newGlobal2" => 51,
             "newGlobal3" => 52,
             "newGlobal4" => 53,
@@ -229,17 +229,6 @@ class teotihuacan extends Table
         self::setGameStateInitialValue('progression', 0);
         self::setGameStateInitialValue('draftReverse', 0);
         self::setGameStateInitialValue('getTechnologyDiscount', 0);
-        self::setGameStateInitialValue('royalTileTempleSteps', 0);
-        self::setGameStateInitialValue('newGlobal2', 0);
-        self::setGameStateInitialValue('newGlobal3', 0);
-        self::setGameStateInitialValue('newGlobal4', 0);
-        self::setGameStateInitialValue('newGlobal5', 0);
-        self::setGameStateInitialValue('newGlobal6', 0);
-        self::setGameStateInitialValue('newGlobal7', 0);
-        self::setGameStateInitialValue('newGlobal8', 0);
-        self::setGameStateInitialValue('newGlobal9', 0);
-        self::setGameStateInitialValue('newGlobal10', 0);
-        self::setGameStateInitialValue('newGlobal11', 0);
 
         // Create actionBoards
         $sql = "INSERT INTO `card`(`card_id`, `card_type`, `card_type_arg`, `card_location`, `card_location_arg`) VALUES";
@@ -928,7 +917,6 @@ class teotihuacan extends Table
         self::setGameStateValue('isConstruction', 0);
         self::setGameStateValue('isDecoration', 0);
         self::setGameStateValue('extraWorker', 0);
-        self::setGameStateValue('royalTileTempleSteps', 0);
         self::setGameStateValue('startingTileBonus', 0);
         self::setGameStateValue('getTechnologyDiscount', 0);
         self::setGameStateValue('aquiredTechnologyTile', -1);
@@ -1523,7 +1511,6 @@ class teotihuacan extends Table
         $selected_worker_id = (int)self::getGameStateValue('selected_worker_id');
         $selected_board_id_to = (int)self::getGameStateValue('selected_board_id_to');
         $royalTileAction = (int)self::getGameStateValue('royalTileAction');
-        $royalTileTempleSteps = (int)self::getGameStateValue('royalTileTempleSteps');
 
         $worship_pos = -1;
         if ($selected_board_id_to == 1 && $royalTileAction) {
@@ -1533,11 +1520,6 @@ class teotihuacan extends Table
 
         $queueCount = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `temple_queue`");
         $worship_actions_discovery = (int)self::getGameStateValue('worship_actions_discovery');
-
-        if($royalTileTempleSteps){
-            $worship_actions_discovery = false;
-            $royalTileAction = false;
-        }
 
         if ($worship_actions_discovery && $queueCount > 0) {
             $description = clienttranslate('have to select a temple advance or may claim the discovery tile');
@@ -1551,38 +1533,16 @@ class teotihuacan extends Table
 
         return array(
             'queue' => $queue,
-            'worship_actions_discovery' => $worship_actions_discovery,
+            'worship_actions_discovery' => self::getGameStateValue('worship_actions_discovery'),
             'worship_pos' => $worship_pos,
             'description' => $description,
             'royalTileAction' => $royalTileAction
         );
     }
 
-    function preTrade()
-    {
-        $id = (int)self::getGameStateValue('royalTileTradeId');
-        $tradeInfo = $this->royalTilesTrade[$id];
-
-        $player_id = self::getActivePlayerId();
-        $selected_worker_id = self::getGameStateValue('selected_worker_id');
-
-        $sql = "SELECT `worker_power` FROM `map` WHERE `player_id` = $player_id AND `worker_id` = $selected_worker_id";
-        $worker_power = (int)self::getUniqueValueFromDB($sql);
-
-        $max = $worker_power;
-
-        if ($tradeInfo['id'] == 'trade_c_t') {
-            $max--;
-            if (!self::getGameStateValue('royalTileTempleSteps')) {
-                self::setGameStateValue('royalTileTempleSteps', $max);
-            }
-        }
-    }
-
     function getTradeInfo()
     {
         $id = (int)self::getGameStateValue('royalTileTradeId');
-        $tradeInfo = $this->royalTilesTrade[$id];
 
         $player_id = self::getActivePlayerId();
         $selected_worker_id = self::getGameStateValue('selected_worker_id');
@@ -1597,13 +1557,11 @@ class teotihuacan extends Table
         $stone = (int)self::getUniqueValueFromDB("SELECT `stone` FROM `player` WHERE `player_id` = $player_id");
         $gold = (int)self::getUniqueValueFromDB("SELECT `gold` FROM `player` WHERE `player_id` = $player_id");
 
+        $tradeInfo = $this->royalTilesTrade[$id];
         $r = $wood + $stone + $gold;
 
         if ($tradeInfo['id'] == 'trade_c_t') {
             $max--;
-            if (self::getGameStateValue('royalTileTempleSteps')) {
-                $max = self::getGameStateValue('royalTileTempleSteps');
-            }
             $max = min($max, $cocoa);
         }
 
@@ -3191,10 +3149,7 @@ class teotihuacan extends Table
             $gold = (int)self::getUniqueValueFromDB("SELECT `gold` FROM `player` WHERE `player_id` = $player_id");
             $resources = $wood + $stone + $gold;
 
-            $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (45,46,47) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
-            $id = (int)self::getUniqueValueFromDB($sql);
-
-            if(($trade_c_ws > 0 || $trade_c_sg > 0 || $trade_c_t > 0 || $trade_cr_r > 0) && $cocoa <= 0 && !$id){
+            if(($trade_c_ws > 0 || $trade_c_sg > 0 || $trade_c_t > 0 || $trade_cr_r > 0) && $cocoa <= 0){
                 throw new BgaUserException(self::_("You have not enough cocoa to worship"));
             }
             if(($trade_cr_r > 0 || $trade_r_2c > 0) && $resources <= 0){
@@ -3839,11 +3794,10 @@ class teotihuacan extends Table
         self::checkAction('stepTemple');
 
         $player_id = self::getActivePlayerId();
+        $templeSteps = (int)self::getGameStateValue('ascensionTempleSteps');
 
         $sql = "SELECT count(*) FROM `temple_queue`";
         $queueCount = (int)self::getUniqueValueFromDB($sql);
-
-        $discoveryQueueCount = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `discovery_queue` ORDER BY id DESC LIMIT 1");
 
         if ($queueCount <= 0) {
             throw new BgaUserException(self::_("This move is not possible."));
@@ -3866,9 +3820,6 @@ class teotihuacan extends Table
             if (self::getGameStateValue('ascensionTempleSteps')) {
                 self::incGameStateValue('ascensionTempleSteps', -1);
             }
-            if (self::getGameStateValue('royalTileTempleSteps') && !$discoveryQueueCount) {
-                self::incGameStateValue('royalTileTempleSteps', -1);
-            }
 
             if (substr($temple_queue['queue'], 0, 4) === "deco") {
                 $temple1 = explode("_", $temple_queue['queue'])[1];
@@ -3884,7 +3835,6 @@ class teotihuacan extends Table
                 $sql = "DELETE FROM `temple_queue` ORDER BY id DESC limit 1";
                 self::DbQuery($sql);
             }
-
 
             $notification = true;
             $temple_queue = self::getUniqueValueFromDB("SELECT `queue` FROM `temple_queue` ORDER BY id DESC LIMIT 1");
@@ -4006,9 +3956,6 @@ class teotihuacan extends Table
             } else {
                 if (self::getGameStateValue('ascensionTempleSteps')) {
                     self::incGameStateValue('ascensionTempleSteps', -1);
-                }
-                if (self::getGameStateValue('royalTileTempleSteps') && !$discoveryQueueCount) {
-                    self::incGameStateValue('royalTileTempleSteps', -1);
                 }
 
                 if (substr($temple_queue['queue'], 0, 4) === "deco") {
@@ -4551,7 +4498,6 @@ class teotihuacan extends Table
         $discoveryQueueCount = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `discovery_queue` ORDER BY id DESC LIMIT 1");
         $worship_actions_discovery = (int)self::getGameStateValue('worship_actions_discovery');
         $royalTileAction = (int)self::getGameStateValue('royalTileAction');
-        $royalTileTempleSteps = (int)self::getGameStateValue('royalTileTempleSteps');
         $canBuildPyramidTiles = (int)self::getGameStateValue('canBuildPyramidTiles');
         $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = false AND `actionboard_id`=$selected_board_id_to";
         $countWorkers = (int)self::getUniqueValueFromDB($sql);
@@ -4568,11 +4514,7 @@ class teotihuacan extends Table
             }
         } else if ((int)self::getGameStateValue('startingTileBonus') > 0 && !$queueCount) {
             $this->gamestate->nextState("calculate_next_bonus");
-        } else if ($queueCount > 0) {
-            $this->gamestate->nextState("action");
-        } else if ($royalTileTempleSteps > 0) {
-            $this->gamestate->nextState("trade");
-        } else if ($worship_actions_discovery > 0 || $royalTileAction > 0) {
+        } else if ($queueCount > 0 || $worship_actions_discovery > 0 || $royalTileAction > 0) {
             $this->gamestate->nextState("action");
         } else if (self::getGameStateValue('isNobles')) {
             self::setGameStateValue('isNobles', 0);
