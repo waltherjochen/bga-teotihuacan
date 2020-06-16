@@ -2219,10 +2219,7 @@ define([
                     }
                 }, delay);
 
-
-                setTimeout(function () {
-                    _this.bindData(_this.gamedatas_local);
-                }, delay + 2000 + amount * 200);
+                this.bindData(_this.gamedatas_local);
             },
 
             animateVP: function (player_id, amount, token, source, target, delay) {
@@ -2237,10 +2234,7 @@ define([
                 }, delay);
 
                 this.gamedatas_local.players[player_id].score = parseInt(this.gamedatas_local.players[player_id].score) + amount;
-                setTimeout(function () {
-                    _this.bindData(_this.gamedatas_local);
-                    $('player_score_' + player_id).innerHTML = _this.gamedatas_local.players[player_id].score;
-                }, delay + 2000 + amount * 200);
+                $('player_score_' + player_id).innerHTML = this.gamedatas_local.players[player_id].score;
             },
 
             animateClaimDiscovery: function (discTile, target) {
