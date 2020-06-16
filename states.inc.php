@@ -108,13 +108,13 @@ $machinestates = array(
         "name" => "starting_tiles_place_workers",
         "description" => clienttranslate('${actplayer} must place the workers'),
         "descriptionmyturn" => clienttranslate('${you} must place the workers'),
-        "type" => "activeplayer",
+        "type" => "multipleactiveplayer",
         'args' => 'getPossibleBoards',
         'action' => 'setupPlayerWorkers',
         "possibleactions" => array(
             "placeWorker",
         ),
-        "transitions" => array("get_bonus" => STATE_GET_STARTING_TILES_BONUS_AUTO, "zombiePass" => STATE_ZOMBIE, "playerTurn" => STATE_PLAYER_TURN)
+        "transitions" => array("get_bonus" => STATE_CLEANUP_PLACE_WORKERS, "zombiePass" => STATE_ZOMBIE, "playerTurn" => STATE_PLAYER_TURN)
     ),
 
     STATE_ZOMBIE => array(
@@ -122,6 +122,14 @@ $machinestates = array(
         "description" => '',
         "type" => "game",
         "transitions" => array("place_workers" => STATE_STARTING_TILES_PLACE_WORKERS, "playerTurn" => STATE_PLAYER_TURN)
+    ),
+
+    STATE_CLEANUP_PLACE_WORKERS => array(
+        "name" => "cleanup_place_workers",
+        "description" => '',
+        "type" => "game",
+        'action' => 'cleanupPlaceWorkers',
+        "transitions" => array("get_bonus" => STATE_GET_STARTING_TILES_BONUS_AUTO)
     ),
 
     STATE_GET_STARTING_TILES_BONUS_AUTO => array(
@@ -138,7 +146,7 @@ $machinestates = array(
         "type" => "game",
         'action' => 'calculateNextBonus',
         "updateGameProgression" => true,
-        "transitions" => array("playerTurn" => STATE_START_TURN, "claim_starting_Discovery" => STATE_CLAIM_STARTING_DISCOVERY_TILES, "place_workers" => STATE_STARTING_TILES_PLACE_WORKERS, "action" => STATE_PLAYER_TURN_WORSHIP_ACTIONS, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS)
+        "transitions" => array("playerTurn" => STATE_START_TURN, "claim_starting_Discovery" => STATE_CLAIM_STARTING_DISCOVERY_TILES, "place_workers" => STATE_GET_STARTING_TILES_BONUS_AUTO, "action" => STATE_PLAYER_TURN_WORSHIP_ACTIONS, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS)
     ),
 
     STATE_CLAIM_STARTING_DISCOVERY_TILES => array(

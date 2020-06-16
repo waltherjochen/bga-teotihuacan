@@ -1228,8 +1228,8 @@ define([
                             this.isGamePreparation = true;
                             for (var i = 1; i <= 8; i++) {
                                 var board = this.gamedatas.actionBoards[i];
-                                for (var j = 0; j < args.args.length; j++) {
-                                    if (board.card_id == args.args[j]) {
+                                for (var j = 0; j < args.args.playersData[player_id].length; j++) {
+                                    if (board.card_id == args.args.playersData[player_id][j]) {
                                         dojo.addClass('actionBoard_' + board.card_location_arg, 'clickable');
                                     }
                                 }
@@ -3832,14 +3832,6 @@ define([
 
                             this.confirmationDialog(_('The Technology symbol explicitly grants you only the lowest-numbered Technology. Gaining that benefit a second time has no additional effect.'), dojo.hitch(this, function () {
                                 this.doStartingTilesConfirmedContinue(action, selectedStartingTiles, startingTile0, startingTile1);
-
-                                this.ajaxAction(action, {
-                                    startingTile0: selectedStartingTiles[0].id.split('_')[1],
-                                    startingTile1: 0,
-                                    wood: this.clientStateArgs.wood,
-                                    stone: this.clientStateArgs.stone,
-                                    gold: this.clientStateArgs.gold
-                                });
                             }));
                             return;
                         } else {

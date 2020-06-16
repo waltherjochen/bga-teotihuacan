@@ -60,6 +60,7 @@ define("STATE_PLAYER_TURN_ALCHEMY", 47);
 define("STATE_PLAYER_TURN_UPGRADE_WORKERS_BUY", 48);
 define("STATE_PLAYER_TURN_CONSTRUCTION", 49);
 define("STATE_PLAYER_TURN_DECORATION", 50);
+define("STATE_CLEANUP_PLACE_WORKERS", 51);
 
 define("STATE_PLAYER_TURN_PASS", 55);
 define("STATE_PLAYER_TURN_CHECK_END_TURN", 58);
@@ -2090,7 +2091,7 @@ class teotihuacan extends Table
 
         self::setGameStateValue('progression', 2);
 
-        $this->activeNextPlayer();
+        $this->activateMultiPlayer();
         $this->gamestate->nextState("place_workers");
     }
 
@@ -2107,27 +2108,43 @@ class teotihuacan extends Table
 
     }
 
+    function cleanupPlaceWorkers()
+    {
+        $player_id = self::activeNextPlayer();
+        self::giveExtraTime($player_id);
+        $this->gamestate->nextState("get_bonus");
+    }
+
     function getPossibleBoards()
     {
-        $player_id = self::getActivePlayerId();
+        $players = self::getObjectListFromDB("SELECT `player_id` FROM `player`");
+        $playersData = self::getCollectionFromDB("SELECT player_id id FROM `player`");
 
-        $startingTile0 = (int)self::getUniqueValueFromDB("SELECT `startingTile0` FROM `player` WHERE `player_id` = $player_id");
-        $startingTile1 = (int)self::getUniqueValueFromDB("SELECT `startingTile1` FROM `player` WHERE `player_id` = $player_id");
+        foreach ($players as $player) {
+            $player_id = $player['player_id'];
 
-        $boardsTile0 = $this->startingTiles[$startingTile0]['board'];
-        $boardsTile1 = $this->startingTiles[$startingTile1]['board'];
+            $startingTile0 = (int)self::getUniqueValueFromDB("SELECT `startingTile0` FROM `player` WHERE `player_id` = $player_id");
+            $startingTile1 = (int)self::getUniqueValueFromDB("SELECT `startingTile1` FROM `player` WHERE `player_id` = $player_id");
 
-        $boards = array_merge($boardsTile0, $boardsTile1);
-        $boards = array_unique($boards);
-        $boards = array_values($boards);
+            $boardsTile0 = $this->startingTiles[$startingTile0]['board'];
+            $boardsTile1 = $this->startingTiles[$startingTile1]['board'];
 
-        $workers = self::getObjectListFromDB("SELECT `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false", true);
-        $ids = join("','", $workers);
-        $card_id = self::getObjectListFromDB("SELECT `card_id` FROM `card` WHERE `card_type` = 'actionBoards' AND `card_location_arg` in ('$ids')", true);
-        $boards = array_diff($boards, $card_id);
-        $boards = array_values($boards);
+            $boards = array_merge($boardsTile0, $boardsTile1);
+            $boards = array_unique($boards);
+            $boards = array_values($boards);
 
-        return $boards;
+            $workers = self::getObjectListFromDB("SELECT `actionboard_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false", true);
+            $ids = join("','", $workers);
+            $card_id = self::getObjectListFromDB("SELECT `card_id` FROM `card` WHERE `card_type` = 'actionBoards' AND `card_location_arg` in ('$ids')", true);
+            $boards = array_diff($boards, $card_id);
+            $boards = array_values($boards);
+
+            $playersData[$player_id] = $boards;
+        }
+
+        return array(
+            'playersData' => $playersData,
+        );
     }
 
     function setStartingTilesBonus()
@@ -3805,7 +3822,10 @@ class teotihuacan extends Table
 
     function stepTemple($temple)
     {
-        self::checkAction('stepTemple');
+        $useStartingTile = (int)self::getGameStateValue('startingTileBonus') > 0;
+        if(!$useStartingTile){
+            self::checkAction('stepTemple');
+        }
 
         $player_id = self::getActivePlayerId();
         $templeSteps = (int)self::getGameStateValue('ascensionTempleSteps');
@@ -6229,9 +6249,9 @@ class teotihuacan extends Table
     function placeWorker($board_id, $board_pos)
     {
         self::checkAction('placeWorker');
-        $player_id = $this->getActivePlayerId();
+        $player_id = $this->getCurrentPlayerId();
 
-        if (!in_array($board_id, $this->getPossibleBoards())) {
+        if (!in_array($board_id, $this->getPossibleBoards()['playersData'][$player_id])) {
             throw new BgaUserException(self::_("This move is not possible."));
         }
         $countWorkers = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `map` WHERE `player_id` = $player_id");
@@ -6247,7 +6267,7 @@ class teotihuacan extends Table
 
         self::notifyAllPlayers("placeWorker", clienttranslate('${player_name} placed a worker on ${board_name} (${board_id})'), array(
             'player_id' => $player_id,
-            'player_name' => self::getActivePlayerName(),
+            'player_name' => self::getCurrentPlayerName(),
             'board_name' => $board_name,
             'board_id' => $board_id,
             'board_pos' => $board_pos,
@@ -6256,7 +6276,8 @@ class teotihuacan extends Table
         ));
 
         if ($countWorkers >= 3) {
-            $this->gamestate->nextState("get_bonus");
+            $this->gamestate->setPlayerNonMultiactive($player_id, 'get_bonus');
+            self::giveExtraTime($player_id);
         }
 
     }
@@ -6377,13 +6398,13 @@ class teotihuacan extends Table
 
                     return;
                 case 'starting_tiles_place_workers':
-                    $workersLeft = count($this->getPossibleBoards());
+                    $workersLeft = count($this->getPossibleBoards()['playersData'][$player_id]);
                     if ($workersLeft > 3) {
                         $workersLeft = 3;
                     }
 
                     for ($i = 0; $i < $workersLeft; $i++) {
-                        $board_id = $this->getPossibleBoards()[0];
+                        $board_id = $this->getPossibleBoards()['playersData'][$player_id][0];
                         $board_pos = (int)self::getUniqueValueFromDB("SELECT `card_location_arg` FROM `card` WHERE `card_type` = 'actionBoards' AND `card_id` = $board_id");
                         $sql = "INSERT INTO `map`(`actionboard_id`, `player_id`, `worker_id`,`worker_power`, `locked`, `worship_pos`) VALUES";
                         $values = array();
