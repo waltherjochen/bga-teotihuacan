@@ -229,6 +229,17 @@ class teotihuacan extends Table
         self::setGameStateInitialValue('progression', 0);
         self::setGameStateInitialValue('draftReverse', 0);
         self::setGameStateInitialValue('getTechnologyDiscount', 0);
+        self::setGameStateInitialValue('newGlobal1', 0);
+        self::setGameStateInitialValue('newGlobal2', 0);
+        self::setGameStateInitialValue('newGlobal3', 0);
+        self::setGameStateInitialValue('newGlobal4', 0);
+        self::setGameStateInitialValue('newGlobal5', 0);
+        self::setGameStateInitialValue('newGlobal6', 0);
+        self::setGameStateInitialValue('newGlobal7', 0);
+        self::setGameStateInitialValue('newGlobal8', 0);
+        self::setGameStateInitialValue('newGlobal9', 0);
+        self::setGameStateInitialValue('newGlobal10', 0);
+        self::setGameStateInitialValue('newGlobal11', 0);
 
         // Create actionBoards
         $sql = "INSERT INTO `card`(`card_id`, `card_type`, `card_type_arg`, `card_location`, `card_location_arg`) VALUES";
@@ -1187,11 +1198,11 @@ class teotihuacan extends Table
             self::incGameStateValue('eclipseDiscBlack', -1);
             self::setGameStateValue('eclipseDiscWhite', 0);
 
-            self::notifyAllPlayers("updateCalenderTrack", clienttranslate('Dark disc updated on the Calender track'), array(
+            self::notifyAllPlayers("updateCalenderTrack", clienttranslate('Dark disc updated on the Calendar track'), array(
                 'step' => self::getGameStateValue('eclipseDiscBlack'),
                 'color' => 'black',
             ));
-            self::notifyAllPlayers("updateCalenderTrack", clienttranslate('Reset the light disc on the Calender track'), array(
+            self::notifyAllPlayers("updateCalenderTrack", clienttranslate('Reset the light disc on the Calendar track'), array(
                 'step' => 0,
                 'color' => 'white',
             ));
@@ -3149,7 +3160,10 @@ class teotihuacan extends Table
             $gold = (int)self::getUniqueValueFromDB("SELECT `gold` FROM `player` WHERE `player_id` = $player_id");
             $resources = $wood + $stone + $gold;
 
-            if(($trade_c_ws > 0 || $trade_c_sg > 0 || $trade_c_t > 0 || $trade_cr_r > 0) && $cocoa <= 0){
+            $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (45,46,47) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
+            $id = (int)self::getUniqueValueFromDB($sql);
+
+            if(($trade_c_ws > 0 || $trade_c_sg > 0 || $trade_c_t > 0 || $trade_cr_r > 0) && $cocoa <= 0 && !$id){
                 throw new BgaUserException(self::_("You have not enough cocoa to worship"));
             }
             if(($trade_cr_r > 0 || $trade_r_2c > 0) && $resources <= 0){
@@ -5154,7 +5168,7 @@ class teotihuacan extends Table
             $white = $white + 1;
             self::incGameStateValue('eclipseDiscWhite', 1);
             if ($message == '') {
-                $message = clienttranslate('The light disc advanced one step on the Calender track');
+                $message = clienttranslate('The light disc advanced one step on the Calendar track');
             }
             self::notifyAllPlayers("updateCalenderTrack", $message, array(
                 'step' => (int)self::getGameStateValue('eclipseDiscWhite'),

@@ -1402,9 +1402,6 @@ define([
                             this.addActionButton('button_1_id', _('end turn'), 'onPassClick', null, false, "red");
                             break;
                         case 'playerTurn_worship_actions':
-                            if (!args.queue && !args.royalTileAction && args.worship_actions_discovery) {
-                                this.addActionButton('button_1_id', _('Skip action and pass'), 'onPassClick', null, false, "red");
-                            }
                             this.addActionButton('button_pass', _('Skip action and pass'), 'onPassClick', null, false, "red");
                             break;
                         case 'playerTurn_avenue_of_dead_choose_bonus':
