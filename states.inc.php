@@ -179,7 +179,7 @@ $machinestates = array(
         "description" => clienttranslate('${actplayer} must move a worker'),
         "descriptionmyturn" => clienttranslate('${you} must move one worker ${lockedWorkersText}'),
         "type" => "activeplayer",
-        "args" => "getGlobalVariables",
+        "args" => "getPlayerTurnVariables",
         "updateGameProgression" => true,
         "possibleactions" => array(
             "useDiscoveryTile",
@@ -497,7 +497,7 @@ $machinestates = array(
         "type" => "game",
         "possibleactions" => array(),
         "action" => "checkEndGame",
-        "args" => "getGlobalVariables",
+        "args" => "getPlayerTurnVariables",
         "updateGameProgression" => true,
         "transitions" => array("next_player" => STATE_START_TURN, "game_end" => 99)
     ),

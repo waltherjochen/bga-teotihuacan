@@ -832,8 +832,10 @@ define([
                         var discoveryTile = discoveryTiles_used[discoveryTile_index];
                         if (!refresh || !$("discoveryTile_" + discoveryTile.type_arg)) {
                             dojo.place(this.format_block('jstpl_discoveryTiles', discoveryTile), target);
-                            dojo.query('#discoveryTile_' + discoveryTile['type_arg']).addClass('used');
                             this.addTooltipHtml("discoveryTile_" + discoveryTile.type_arg, this.getDiscoveryTileTooltip(discoveryTile.type_arg));
+                        }
+                        if (!dojo.hasClass($("discoveryTile_" + discoveryTile.type_arg), 'used')) {
+                            dojo.query('#discoveryTile_' + discoveryTile['type_arg']).addClass('used');
                         }
                     }
                 }
@@ -1090,10 +1092,8 @@ define([
                     switch (stateName) {
 
                         case 'playerTurn':
-                            this.clickableWorkers = args.args.clickableWorkers;
                             this.isGamePreparation = false;
-                            this.gamedatas_local.global = args.args.global;
-                            this.setupGlobalVariables();
+                            this.clickableWorkers = args.args.clickableWorkers;
                             this.setAllWorkersClickable(args.args.clickableWorkers);
                             break;
                         case 'playerTurn_show_board_actions':
@@ -1257,16 +1257,11 @@ define([
                         setTimeout(function () {
                             _this.checkIsMapComplete();
                         }, 3900);
+                        this.gamedatas_local = args.args.getAllDatas;
+                        this.setupGlobalVariables();
+                        this.bindData(this.gamedatas_local);
                         for (var player_id in args.args.playerInfo) {
-                            var info = args.args.playerInfo[player_id];
-                            this.gamedatas_local.players[player_id].cocoa = info.cocoa;
-                            this.gamedatas_local.players[player_id].wood = info.wood;
-                            this.gamedatas_local.players[player_id].stone = info.stone;
-                            this.gamedatas_local.players[player_id].gold = info.gold;
-                            this.gamedatas_local.players[player_id].score = info.score;
-
                             $('player_score_' + player_id).innerHTML = this.gamedatas_local.players[player_id].score;
-                            this.bindData(this.gamedatas_local);
                         }
                         break;
                     case 'client_playerTurn_paySalary_confirm':
@@ -3872,8 +3867,6 @@ define([
 
                     $("startingTiles-zone").remove();
 
-                    this.setupStartingTilesOnTable(current_player);
-
                     this.ajaxAction(action, {
                         startingTile0: selectedStartingTiles[0].id.split('_')[1],
                         startingTile1: selectedStartingTiles[1].id.split('_')[1],
@@ -4058,6 +4051,7 @@ define([
                 dojo.subscribe('updateCalenderTrack', this, "notif_updateCalenderTrack");
                 dojo.subscribe('showEclipseBanner', this, "notif_showEclipseBanner");
                 dojo.subscribe('calculateEndGameScoring', this, "notif_calculateEndGameScoring");
+                dojo.subscribe('choosedMyStartingTiles', this, "notif_choosedMyStartingTiles");
                 dojo.subscribe('choosedStartingTiles', this, "notif_choosedStartingTiles");
                 dojo.subscribe('choosedStartingTilesDraft', this, "notif_choosedStartingTilesDraft");
                 dojo.subscribe('placeWorker', this, "notif_placeWorker");
@@ -4547,6 +4541,15 @@ define([
                 $('player_score_' + player_id).innerHTML = this.gamedatas_local.players[player_id].score;
             },
 
+            notif_choosedMyStartingTiles: function (notif) {
+                var player_id = parseInt(notif.args.player_id);
+                var players = notif.args.players;
+                this.gamedatas_local.players = players;
+                if(player_id == this.getThisPlayerId()){
+                    var current_player = this.gamedatas_local.players[this.getThisPlayerId()];
+                    this.setupStartingTilesOnTable(current_player);
+                }
+            },
             notif_choosedStartingTiles: function (notif) {
                 var players = notif.args.players;
                 this.gamedatas_local.players = players;

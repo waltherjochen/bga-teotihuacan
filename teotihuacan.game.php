@@ -1446,6 +1446,26 @@ class teotihuacan extends Table
 
     }
 
+    function getPlayerTurnVariables()
+    {
+        $player_id = self::getActivePlayerId();
+        $lockedWorkers = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = true AND `worship_pos` > 0");
+
+        $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false", true);
+
+        $lockedWorkersText = '';
+        if ($lockedWorkers > 0) {
+            $lockedWorkersText = 'or';
+        }
+
+        return array(
+            'getAllDatas' => $this->getAllDatas(),
+            'lockedWorkersText' => $lockedWorkersText,
+            'lockedWorkers' => $lockedWorkers,
+            'clickableWorkers' => $clickableWorkers
+        );
+    }
+
     function getGlobalVariables()
     {
         $player_id = self::getActivePlayerId();
@@ -1478,22 +1498,11 @@ class teotihuacan extends Table
             "isDraftMode" => $this->isDraftMode(),
         );
 
-        $lockedWorkers = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = true AND `worship_pos` > 0");
-
-        $lockedWorkersText = '';
-        if ($lockedWorkers > 0) {
-            $lockedWorkersText = 'or';
-        }
-
         $playerInfo = self::getCollectionFromDb("SELECT player_id id, player_score score, cocoa, wood, stone, gold FROM player ");
-        $clickableWorkers = self::getObjectListFromDB("SELECT `worker_id` FROM `map` WHERE `player_id` = $player_id AND `locked` = false", true);
 
         return array(
             'global' => $global,
-            'lockedWorkers' => $lockedWorkers,
-            'lockedWorkersText' => $lockedWorkersText,
             'playerInfo' => $playerInfo,
-            'clickableWorkers' => $clickableWorkers
         );
     }
 
@@ -2484,21 +2493,29 @@ class teotihuacan extends Table
             $this->collectResource($player_id, $bonus[0], 'cocoa', $source);
         }
 
+        if ($temple == 'blue') {
+            $temple_name = clienttranslate('blue');
+        } else if ($temple == 'red') {
+            $temple_name = clienttranslate('red');
+        } else {
+            $temple_name = clienttranslate('green');
+        }
+
         if ($notification) {
-            self::notifyAllPlayers("stepTemple", clienttranslate('${player_name} advanced one space on temple ${temple}'), array(
-                'i18n' => array('temple'),
+            self::notifyAllPlayers("stepTemple", clienttranslate('${player_name} advanced one space on temple ${temple_name}'), array(
                 'player_id' => $player_id,
                 'player_name' => self::getActivePlayerName(),
                 'temple' => $temple,
+                'temple_name' => $temple_name,
                 'step' => $step,
                 'bonus' => $bonus,
             ));
         } else {
-            self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} advanced one space on temple ${temple}'), array(
-                'i18n' => array('temple'),
+            self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} advanced one space on temple ${temple_name}'), array(
                 'player_id' => $player_id,
                 'player_name' => self::getActivePlayerName(),
                 'temple' => $temple,
+                'temple_name' => $temple_name,
             ));
         }
 
@@ -3849,6 +3866,14 @@ class teotihuacan extends Table
         $sql = "SELECT * FROM `temple_queue` ORDER BY id DESC LIMIT 1";
         $temple_queue = self::getObjectFromDB($sql);
 
+        if ($temple == 'blue') {
+            $temple_name = clienttranslate('blue');
+        } else if ($temple == 'red') {
+            $temple_name = clienttranslate('red');
+        } else {
+            $temple_name = clienttranslate('green');
+        }
+
         // all checks done
         if (!($step >= 11 || $step == 10 && $used)) {
             if (self::getGameStateValue('ascensionTempleSteps')) {
@@ -3903,11 +3928,11 @@ class teotihuacan extends Table
                 $temple == 'green' && $step == 3 ||
                 $temple == 'green' && $step == 6) {
 
-                self::notifyAllPlayers("stepTemple", clienttranslate('${player_name} advanced one space on temple ${temple}'), array(
-                    'i18n' => array('temple'),
+                self::notifyAllPlayers("stepTemple", clienttranslate('${player_name} advanced one space on temple ${temple_name}'), array(
                     'player_id' => $player_id,
                     'player_name' => self::getActivePlayerName(),
                     'temple' => $temple,
+                    'temple_name' => $temple_name,
                     'step' => $step,
                     'bonus' => $bonus,
                     'last_temple_id' => self::getGameStateValue('last_temple_id'),
@@ -3946,20 +3971,20 @@ class teotihuacan extends Table
                 }
 
                 if($notification){
-                    self::notifyAllPlayers("stepTemple", clienttranslate('${player_name} advanced one space on temple ${temple}'), array(
-                        'i18n' => array('temple'),
+                    self::notifyAllPlayers("stepTemple", clienttranslate('${player_name} advanced one space on temple ${temple_name}'), array(
                         'player_id' => $player_id,
                         'player_name' => self::getActivePlayerName(),
                         'temple' => $temple,
                         'step' => $step,
                         'bonus' => $bonus,
+                        'temple_name' => $temple_name,
                     ));
                 } else {
-                    self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} advanced one space on temple ${temple}'), array(
-                        'i18n' => array('temple'),
+                    self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} advanced one space on temple ${temple_name}'), array(
                         'player_id' => $player_id,
                         'player_name' => self::getActivePlayerName(),
                         'temple' => $temple,
+                        'temple_name' => $temple_name,
                     ));
                 }
 
@@ -4007,11 +4032,11 @@ class teotihuacan extends Table
                     self::DbQuery($sql);
                 }
 
-                self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} stays on top of temple ${temple} and gain no further benefit'), array(
-                    'i18n' => array('temple'),
+                self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} stays on top of temple ${temple_name} and gain no further benefit'), array(
                     'player_id' => $player_id,
                     'player_name' => self::getActivePlayerName(),
                     'temple' => $temple,
+                    'temple_name' => $temple_name,
                 ));
                 $this->goToNextState();
             }
@@ -4813,7 +4838,6 @@ class teotihuacan extends Table
         $sql = "SELECT `avenue_of_dead` FROM `player` WHERE `player_id` = $player_id";
         $step = (int)self::getUniqueValueFromDB($sql);
 
-
         // all checks done
         if ($step < 9) {
             $sql = "UPDATE `player` SET `avenue_of_dead`  = `avenue_of_dead` + 1 WHERE player_id = $player_id";
@@ -4830,7 +4854,6 @@ class teotihuacan extends Table
             if ($step == 3 || $step == 6 || $step == 8) {
 
                 self::notifyAllPlayers("stepAvenue", clienttranslate('${player_name} advanced one space on Avenue of Dead'), array(
-                    'i18n' => array('temple'),
                     'player_id' => $player_id,
                     'player_name' => self::getActivePlayerName(),
                     'step' => $step,
@@ -4853,7 +4876,6 @@ class teotihuacan extends Table
             } else {
 
                 self::notifyAllPlayers("stepAvenue", clienttranslate('${player_name} advanced one space on Avenue of Dead'), array(
-                    'i18n' => array('temple'),
                     'player_id' => $player_id,
                     'player_name' => self::getActivePlayerName(),
                     'step' => $step,
@@ -6208,9 +6230,11 @@ class teotihuacan extends Table
             self::DbQuery("UPDATE `player` SET startingResourceStone = $stone WHERE player_id = $player_id");
             self::DbQuery("UPDATE `player` SET startingResourceGold = $gold WHERE player_id = $player_id");
 
-            self::notifyAllPlayers("messageOnly", clienttranslate('${player_name} chose the starting tiles'), array(
+            $players = $this->getAllDatas()['players'];
+            self::notifyAllPlayers("choosedMyStartingTiles", clienttranslate('${player_name} chose the starting tiles'), array(
                 'player_id' => $player_id,
                 'player_name' => self::getCurrentPlayerName(),
+                'players' => $players,
             ));
 
             $this->gamestate->setPlayerNonMultiactive($player_id, 'next');
