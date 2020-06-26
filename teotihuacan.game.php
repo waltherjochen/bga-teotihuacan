@@ -1458,11 +1458,23 @@ class teotihuacan extends Table
             $lockedWorkersText = 'or';
         }
 
+        $playerInfo = self::getCollectionFromDb("SELECT player_id id, player_score score, cocoa, wood, stone, gold FROM player ");
+
+        $decorationTiles = $this->getAllDatas()['decorationTiles'];
+        $pyramidTiles = $this->getAllDatas()['pyramidTiles'];
+        $player_hand = $this->getAllDatas()['playersHand'];
+        $map = $this->getAllDatas()['map'];
+
         return array(
-            'getAllDatas' => $this->getAllDatas(),
             'lockedWorkersText' => $lockedWorkersText,
             'lockedWorkers' => $lockedWorkers,
-            'clickableWorkers' => $clickableWorkers
+            'playerInfo' => $playerInfo,
+            'clickableWorkers' => $clickableWorkers,
+            'decorationTiles' => $decorationTiles,
+            'pyramidTiles' => $pyramidTiles,
+            'player_hand' => $player_hand,
+            'map' => $map,
+            'global' => $this->getGlobalVariables()['global'],
         );
     }
 
@@ -1498,11 +1510,8 @@ class teotihuacan extends Table
             "isDraftMode" => $this->isDraftMode(),
         );
 
-        $playerInfo = self::getCollectionFromDb("SELECT player_id id, player_score score, cocoa, wood, stone, gold FROM player ");
-
         return array(
             'global' => $global,
-            'playerInfo' => $playerInfo,
         );
     }
 

@@ -1253,16 +1253,28 @@ define([
                 switch (stateName) {
                     case 'check_end_game':
                     case 'playerTurn':
+                        this.gamedatas_local.decorationTiles = args.args.decorationTiles;
+                        this.gamedatas_local.pyramidTiles = args.args.pyramidTiles;
+                        this.gamedatas_local.player_hand = args.args.player_hand;
+                        this.gamedatas_local.map = args.args.map;
+                        this.gamedatas_local.global = args.args.global;
+                        this.setupGlobalVariables();
+                        for (var player_id in args.args.playerInfo) {
+                            var info = args.args.playerInfo[player_id];
+                            this.gamedatas_local.players[player_id].cocoa = info.cocoa;
+                            this.gamedatas_local.players[player_id].wood = info.wood;
+                            this.gamedatas_local.players[player_id].stone = info.stone;
+                            this.gamedatas_local.players[player_id].gold = info.gold;
+                            this.gamedatas_local.players[player_id].score = info.score;
+
+                            $('player_score_' + player_id).innerHTML = this.gamedatas_local.players[player_id].score;
+                            this.bindData(this.gamedatas_local);
+                        }
+                        this.bindData(this.gamedatas_local);
                         var _this = this;
                         setTimeout(function () {
                             _this.checkIsMapComplete();
                         }, 3900);
-                        this.gamedatas_local = args.args.getAllDatas;
-                        this.setupGlobalVariables();
-                        this.bindData(this.gamedatas_local);
-                        for (var player_id in args.args.playerInfo) {
-                            $('player_score_' + player_id).innerHTML = this.gamedatas_local.players[player_id].score;
-                        }
                         break;
                     case 'client_playerTurn_paySalary_confirm':
                         dojo.query('#other_' + player_id + ' .discoveryTile').addClass('clickable');
