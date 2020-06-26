@@ -2031,21 +2031,6 @@ define([
             },
 
             cancelLocalStateEffects: function () {
-                if (this.on_client_state) {
-                    this.clientStateArgs = {
-                        action: 'none',
-                    };
-                    this.gamedatas_local = dojo.clone(this.gamedatas);
-                    if (this.restoreList) {
-                        var restoreList = this.restoreList;
-                        this.restoreList = [];
-                        for (var i = 0; i < restoreList.length; i++) {
-                            //var token = restoreList[i];
-                            //var tokenInfo = this.gamedatas.tokens[token];
-                            //this.placeTokenWithTips(token, tokenInfo, true);
-                        }
-                    }
-                }
                 //workaround for problem restoreServerGameState and error calculating reflexion times...
                 try {
                     if (this.last_server_state && this.last_server_state && this.last_server_state.reflexion && !this.last_server_state.reflexion.initial_ts) {
