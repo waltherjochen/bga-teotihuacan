@@ -611,18 +611,8 @@ class teotihuacan extends Table
         $result['actionBoards'] = self::getCollectionFromDb($sql);
         $result['actionBoards_data'] = $this->actionBoards;
 
-        $map_sorted = array();
-        foreach ($result['players'] as $player_id => $player) {
-            $sql = "SELECT * FROM `map` WHERE `player_id` = " . $player_id;
-            $map_player = self::getCollectionFromDb($sql);
-            $map_sorted[$player_id] = $map_player;
-        }
-        for ($i = 0; $i < (4 - count($result['players'])); $i++) {
-            $sql = "SELECT * FROM `map` WHERE `player_id` = " . $i;
-            $map_player = self::getCollectionFromDb($sql);
-            $map_sorted[$i] = $map_player;
-        }
-        $result['map'] = $map_sorted;
+
+        $result['map'] = $this->getMap();
 
         $result['global'] = $this->getGlobalVariables()['global'];
 
@@ -675,61 +665,13 @@ class teotihuacan extends Table
         $result['templeBonusTiles'] = $templeBonusTiles;
         $result['templeBonusTiles_data'] = $this->templeBonusTiles;
 
-        $decorationTiles = array(
-            "decoTiles_0" => $this->cards->getCardsInLocation('decoTiles_0'),
-            "decoTiles_1" => $this->cards->getCardsInLocation('decoTiles_1'),
-            "decoTiles_2" => $this->cards->getCardsInLocation('decoTiles_2'),
-            "decoTiles_3" => $this->cards->getCardsInLocation('decoTiles_3'),
-            "deco_p_left" => $this->cards->getCardsInLocation('deco_p_left'),
-            "deco_p_top" => $this->cards->getCardsInLocation('deco_p_top'),
-            "deco_p_right" => $this->cards->getCardsInLocation('deco_p_right'),
-            "deco_p_bottom" => $this->cards->getCardsInLocation('deco_p_bottom'),
-        );
-
-        $result['decorationTiles'] = $decorationTiles;
+        $result['decorationTiles'] = $this->getDecorationTiles();
         $result['decorationTiles_data'] = $this->decorationTiles;
 
-        $pyramidTiles = array(
-            "pyramidTiles_0" => $this->cards->getCardsInLocation('pyramidTiles_0'),
-            "pyramidTiles_1" => $this->cards->getCardsInLocation('pyramidTiles_1'),
-            "pyramidTiles_2" => $this->cards->getCardsInLocation('pyramidTiles_2'),
-            "pyra_rotate_0" => $this->cards->getCardsInLocation('pyra_rotate_0'),
-            "pyra_rotate_1" => $this->cards->getCardsInLocation('pyra_rotate_1'),
-            "pyra_rotate_2" => $this->cards->getCardsInLocation('pyra_rotate_2'),
-            "pyra_rotate_3" => $this->cards->getCardsInLocation('pyra_rotate_3'),
-        );
-
-        $result['pyramidTiles'] = $pyramidTiles;
+        $result['pyramidTiles'] = $this->getPyramidTiles();
         $result['pyramidTiles_data'] = $this->pyramidTiles;
 
-        $player_hand = array();
-
-        foreach ($result['players'] as $player_id => $player) {
-            $player_hand[$player_id]['mask'][0] = array();
-            $player_hand[$player_id]['mask'][1] = array();
-            $player_hand[$player_id]['mask'][2] = array();
-            $player_hand[$player_id]['other'] = array();
-            $player_hand[$player_id]['used'] = array();
-            foreach ($this->cards->getPlayerHand($player_id) as $i => $hand) {
-                $id_mask = $this->discoveryTiles[$hand['type_arg']]['bonus']['mask'];
-                if ($id_mask > 0) {
-                    if (!$this->isMaskInArray($id_mask, $player_hand[$player_id]['mask'][0])) {
-                        array_push($player_hand[$player_id]['mask'][0], $hand);
-                    } else if (!$this->isMaskInArray($id_mask, $player_hand[$player_id]['mask'][1])) {
-                        array_push($player_hand[$player_id]['mask'][1], $hand);
-                    } else {
-                        array_push($player_hand[$player_id]['mask'][2], $hand);
-                    }
-                } else {
-                    array_push($player_hand[$player_id]['other'], $hand);
-                }
-            }
-
-            foreach ($this->cards->getCardsInLocation("hand_used", $player_id) as $i => $hand) {
-                array_push($player_hand[$player_id]['used'], $hand);
-            }
-        }
-        $result['playersHand'] = $player_hand;
+        $result['playersHand'] = $this->getPlayerHand();
 
         if ($this->isDraftMode()) {
             $result['startingTiles'] = $this->cards->getCardsInLocation('sChoose_all');
@@ -756,6 +698,79 @@ class teotihuacan extends Table
     {
         $prog = $this->getGameStateValue('progression');
         return $prog;
+    }
+    function getMap()
+    {
+        $players = self::getCollectionFromDb("SELECT player_id FROM player");
+        $map_sorted = array();
+        foreach ($players as $player_id => $player) {
+            $sql = "SELECT * FROM `map` WHERE `player_id` = " . $player_id;
+            $map_player = self::getCollectionFromDb($sql);
+            $map_sorted[$player_id] = $map_player;
+        }
+        for ($i = 0; $i < (4 - count($players)); $i++) {
+            $sql = "SELECT * FROM `map` WHERE `player_id` = " . $i;
+            $map_player = self::getCollectionFromDb($sql);
+            $map_sorted[$i] = $map_player;
+        }
+        return $map_sorted;
+    }
+    function getDecorationTiles()
+    {
+        return array(
+            "decoTiles_0" => $this->cards->getCardsInLocation('decoTiles_0'),
+            "decoTiles_1" => $this->cards->getCardsInLocation('decoTiles_1'),
+            "decoTiles_2" => $this->cards->getCardsInLocation('decoTiles_2'),
+            "decoTiles_3" => $this->cards->getCardsInLocation('decoTiles_3'),
+            "deco_p_left" => $this->cards->getCardsInLocation('deco_p_left'),
+            "deco_p_top" => $this->cards->getCardsInLocation('deco_p_top'),
+            "deco_p_right" => $this->cards->getCardsInLocation('deco_p_right'),
+            "deco_p_bottom" => $this->cards->getCardsInLocation('deco_p_bottom'),
+        );
+    }
+    function getPyramidTiles()
+    {
+        return array(
+            "pyramidTiles_0" => $this->cards->getCardsInLocation('pyramidTiles_0'),
+            "pyramidTiles_1" => $this->cards->getCardsInLocation('pyramidTiles_1'),
+            "pyramidTiles_2" => $this->cards->getCardsInLocation('pyramidTiles_2'),
+            "pyra_rotate_0" => $this->cards->getCardsInLocation('pyra_rotate_0'),
+            "pyra_rotate_1" => $this->cards->getCardsInLocation('pyra_rotate_1'),
+            "pyra_rotate_2" => $this->cards->getCardsInLocation('pyra_rotate_2'),
+            "pyra_rotate_3" => $this->cards->getCardsInLocation('pyra_rotate_3'),
+        );
+    }
+    function getPlayerHand()
+    {
+        $player_hand = array();
+        $players = self::getCollectionFromDb("SELECT player_id FROM player");
+
+        foreach ($players as $player_id => $player) {
+            $player_hand[$player_id]['mask'][0] = array();
+            $player_hand[$player_id]['mask'][1] = array();
+            $player_hand[$player_id]['mask'][2] = array();
+            $player_hand[$player_id]['other'] = array();
+            $player_hand[$player_id]['used'] = array();
+            foreach ($this->cards->getPlayerHand($player_id) as $i => $hand) {
+                $id_mask = $this->discoveryTiles[$hand['type_arg']]['bonus']['mask'];
+                if ($id_mask > 0) {
+                    if (!$this->isMaskInArray($id_mask, $player_hand[$player_id]['mask'][0])) {
+                        array_push($player_hand[$player_id]['mask'][0], $hand);
+                    } else if (!$this->isMaskInArray($id_mask, $player_hand[$player_id]['mask'][1])) {
+                        array_push($player_hand[$player_id]['mask'][1], $hand);
+                    } else {
+                        array_push($player_hand[$player_id]['mask'][2], $hand);
+                    }
+                } else {
+                    array_push($player_hand[$player_id]['other'], $hand);
+                }
+            }
+
+            foreach ($this->cards->getCardsInLocation("hand_used", $player_id) as $i => $hand) {
+                array_push($player_hand[$player_id]['used'], $hand);
+            }
+        }
+        return $player_hand;
     }
 
 
@@ -1460,10 +1475,16 @@ class teotihuacan extends Table
 
         $playerInfo = self::getCollectionFromDb("SELECT player_id id, player_score score, cocoa, wood, stone, gold FROM player ");
 
-        $decorationTiles = $this->getAllDatas()['decorationTiles'];
-        $pyramidTiles = $this->getAllDatas()['pyramidTiles'];
-        $player_hand = $this->getAllDatas()['playersHand'];
-        $map = $this->getAllDatas()['map'];
+        $result['decorationTiles'] =
+        $result['decorationTiles_data'] = $this->decorationTiles;
+
+        $result['pyramidTiles'] =
+        $result['pyramidTiles_data'] = $this->pyramidTiles;
+
+        $decorationTiles = $this->getDecorationTiles();
+        $pyramidTiles = $this->getPyramidTiles();
+        $player_hand = $this->getPlayerHand();
+        $map = $this->getMap();
 
         return array(
             'lockedWorkersText' => $lockedWorkersText,
@@ -1480,8 +1501,6 @@ class teotihuacan extends Table
 
     function getGlobalVariables()
     {
-        $player_id = self::getActivePlayerId();
-
         $row1 = (int)self::getUniqueValueFromDB("SELECT `row0` FROM `nobles`");
         $row2 = (int)self::getUniqueValueFromDB("SELECT `row1` FROM `nobles`");
         $row3 = (int)self::getUniqueValueFromDB("SELECT `row2` FROM `nobles`");
@@ -3402,13 +3421,13 @@ class teotihuacan extends Table
                 $target = 'player_table_' . $player_id;
                 $this->payResource($player_id, -3, 'cocoa', $target);
 
-                $this->gamestate->nextState("playerTurn");
                 self::notifyAllPlayers("unlockAllWorkers", clienttranslate('${player_name} unlocked all Workers and pay 3${token_cocoa} to do a normal turn'), array(
                     'player_id' => $player_id,
                     'player_name' => self::getActivePlayerName(),
                     'token_cocoa' => 'cocoa',
                     'pay' => $pay,
                 ));
+                $this->gamestate->nextState("playerTurn");
             } else {
                 $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (45,46,47) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
                 $id = (int)self::getUniqueValueFromDB($sql);

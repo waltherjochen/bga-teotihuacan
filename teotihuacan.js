@@ -2331,11 +2331,19 @@ define([
                         if (this.checkAction("placeWorker")) {
                             var board_pos = dojo.attr(target, "id").split('_')[1];
                             var board_id = dojo.attr(target, "data-id");
-                            dojo.query('#actionBoard_' + board_pos).removeClass('clickable');
                             this.ajaxAction('placeWorker', {
                                 board_id: board_id,
                                 board_pos: board_pos
                             });
+                            var player_color = this.gamedatas_local.players[this.getThisPlayerId()].player_color;
+                            var playerWorkers = dojo.query('.dice.color_' + player_color);
+
+                            if (playerWorkers.length < 3) {
+                                dojo.query('#actionBoard_' + board_pos).removeClass('clickable');
+                            } else {
+                                dojo.query('.actionBoard.selected').removeClass('selected');
+                                dojo.query('.actionBoard.clickable').removeClass('clickable');
+                            }
                         }
                     } else if (this.checkAction("selectBoard")) {
                         dojo.query('.actionBoard.clickable').removeClass('clickable');
@@ -4137,9 +4145,9 @@ define([
                             }
                             multipleWorkers++;
                         }
-                        this.animateWorker(player_id, worship_pos, worker_id, nextBoard, animateWorkerOnNextPostion);
                         this.gamedatas_local.map[player_id][index].locked = false;
                         this.gamedatas_local.map[player_id][index].worship_pos = 0;
+                        this.animateWorker(player_id, worship_pos, worker_id, nextBoard, animateWorkerOnNextPostion);
                     }
                 }
 
