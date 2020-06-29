@@ -4596,6 +4596,8 @@ class teotihuacan extends Table
                 $this->gamestate->nextState("ascension");
             } else if (self::getGameStateValue('ascensionTempleSteps')) {
                 $this->gamestate->nextState("action");
+            } else if (self::getGameStateValue('ascensionBonusChoosed')) {
+                $this->ascensionCleanUp();
             } else {
                 $this->goToPreviousState();
             }
