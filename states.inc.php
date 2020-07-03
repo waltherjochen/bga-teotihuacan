@@ -442,15 +442,17 @@ $machinestates = array(
     ),
     STATE_PLAYER_TURN_PASS => array(
         "name" => "playerTurn_check_pass",
-        "description" => clienttranslate('${actplayer} can end turn or use discovery Tiles'),
-        "descriptionmyturn" => clienttranslate('${you} can end your turn or use discovery Tiles'),
+        "description" => clienttranslate('${actplayer} can use discovery tiles or unlock all workers'),
+        "descriptionmyturn" => clienttranslate('${you} can use discovery tiles or unlock all workers'),
         "type" => "activeplayer",
+        "args" => "getLockedWorkers",
         "action" => "areDiscoveryTilesLeft",
         "possibleactions" => array(
             "useDiscoveryTile",
+            "unlockAllWorkers",
             "pass",
         ),
-        "transitions" => array("undo" => STATE_PLAYER_TURN_UNDO, "pass" => STATE_PLAYER_END_TURN, "ascension" => STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "zombiePass" => STATE_PLAYER_END_TURN)
+        "transitions" => array("undo" => STATE_PLAYER_TURN_UNDO, "playerTurn" => STATE_PLAYER_TURN_CHECK_END_TURN, "pass" => STATE_PLAYER_END_TURN, "ascension" => STATE_PLAYER_TURN_ASCENSION_CHOOSE_BONUS, "upgrade_workers" => STATE_PLAYER_TURN_UPGRADE_WORKERS, "useDiscoveryTile" => STATE_PLAYER_TURN_USE_DISCOVERY_TILE, "zombiePass" => STATE_PLAYER_END_TURN)
     ),
 
     STATE_PLAYER_TURN_UNDO => array(

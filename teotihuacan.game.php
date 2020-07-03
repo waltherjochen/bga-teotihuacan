@@ -1634,7 +1634,16 @@ class teotihuacan extends Table
 
     function checkEndTurn()
     {
-        if ($this->canUseDiscoveryTiles()) {
+        $player_id = self::getActivePlayerId();
+        $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = true AND `worship_pos` > 0";
+        $countWorkers = (int)self::getUniqueValueFromDB($sql);
+
+        $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (45,46,47) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
+        $id = (int)self::getUniqueValueFromDB($sql);
+
+        $cocoa = (int)self::getUniqueValueFromDB("SELECT `cocoa` FROM `player` WHERE `player_id` = $player_id");
+
+        if ($this->canUseDiscoveryTiles() || ($countWorkers > 0 && ($cocoa >= 3 || $id))) {
             $this->gamestate->nextState("check_pass");
         } else {
             $player_id = self::getCurrentPlayerId();
@@ -1808,12 +1817,22 @@ class teotihuacan extends Table
                 }
             }
             if (!$isInArray) {
-                $enableUndo = (int)self::getUniqueValueFromDB("SELECT `enableUndo` FROM `player` WHERE `player_id` = $player_id");
+                $sql = "SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = true AND `worship_pos` > 0";
+                $countWorkers = (int)self::getUniqueValueFromDB($sql);
 
-                if($enableUndo > 0){
-                    $this->gamestate->nextState("undo");
-                } else {
-                    $this->gamestate->nextState("pass");
+                $sql = "SELECT `card_type_arg` FROM `card` WHERE `card_type` = 'discoveryTiles' AND `card_type_arg` in (45,46,47) and `card_location_arg`= $player_id and `card_location` = 'hand' limit 1";
+                $id = (int)self::getUniqueValueFromDB($sql);
+
+                $cocoa = (int)self::getUniqueValueFromDB("SELECT `cocoa` FROM `player` WHERE `player_id` = $player_id");
+
+                if(!($countWorkers > 0 && ($cocoa >= 3 || $id))){
+                    $enableUndo = (int)self::getUniqueValueFromDB("SELECT `enableUndo` FROM `player` WHERE `player_id` = $player_id");
+
+                    if($enableUndo > 0){
+                        $this->gamestate->nextState("undo");
+                    } else {
+                        $this->gamestate->nextState("pass");
+                    }
                 }
             }
         }
@@ -2079,6 +2098,14 @@ class teotihuacan extends Table
         );
     }
 
+    function getLockedWorkers()
+    {
+        $player_id = self::getActivePlayerId();
+        $lockedWorkers = (int)self::getUniqueValueFromDB("SELECT count(*) FROM `map` WHERE `player_id` = $player_id AND `locked` = true AND `worship_pos` > 0");
+        return array(
+            'lockedWorkers' => $lockedWorkers,
+        );
+    }
     function getAscensionBonusAmount()
     {
         $ascension = (int)self::getGameStateValue('ascension');
@@ -2690,6 +2717,10 @@ class teotihuacan extends Table
 
                 if (self::getGameStateValue('useDiscoveryMoveTwoWorkers') && self::getGameStateValue('selected_worker2_id')) {
                     $countWorkers++;
+                }
+
+                if($selected_board_id_from == $selected_board_id_to && self::getGameStateValue('useDiscoveryMoveWorkerAnywhere')){
+                    $countWorkers--;
                 }
 
                 if (!($countWorkers > 0 || $worker_power >= 4 || $id)) {

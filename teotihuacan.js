@@ -1407,6 +1407,14 @@ define([
                             break;
                         case 'playerTurn_check_pass':
                             this.addActionButton('button_1_id', _('end turn'), 'onPassClick', null, false, "red");
+                            if (args.lockedWorkers > 0) {
+                                this.addActionButton('unlock_all', _('Unlock all Workers') + "(-3" + this.getTokenSymbol('cocoa', true) + ")", 'unlockWorkersAndPayConfirmed', null, false, 'gray');
+
+                                if (this.isFreeCocoa()) {
+                                    this.addActionButton('cocoa_free', this.getTokenSymbol('cocoa_free', true), 'unlockWorkersAndPayConfirmedFree', null, false, 'gray');
+                                    this.addTooltipHtml('cocoa_free', _("Ignore paying cocoa"));
+                                }
+                            }
                             break;
                         case 'playerTurn_worship_actions':
                             this.addActionButton('button_pass', _('Skip action and pass'), 'onPassClick', null, false, "red");
